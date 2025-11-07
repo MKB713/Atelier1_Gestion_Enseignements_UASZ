@@ -9,9 +9,16 @@ import org.springframework.ui.Model;
 public class FiliereController {
     @Autowired
     private FiliereService filiereService;
+
+    @RequestMapping("/addFiliere")
     public String addFiliere(Model model) {
         Filiere filiere = new Filiere();
         model.addAttribute("filere",filiere);
         return "filiere-add";
+    }
+    @RequestMapping("/save")
+    public String save(Filiere filiere) {
+        filiereService.addFiliere(filiere);
+        return "redirect:/filiere-add";
     }
 }
