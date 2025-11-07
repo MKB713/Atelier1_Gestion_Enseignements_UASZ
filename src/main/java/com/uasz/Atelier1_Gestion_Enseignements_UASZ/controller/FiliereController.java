@@ -4,13 +4,14 @@ import  org.springframework.beans.factory.annotation.Autowired;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.FiliereService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class FiliereController {
     @Autowired
     private FiliereService filiereService;
 
-    @RequestMapping("/addFiliere")
+    @RequestMapping("/add-filiere")
     public String addFiliere(Model model) {
         Filiere filiere = new Filiere();
         model.addAttribute("filere",filiere);

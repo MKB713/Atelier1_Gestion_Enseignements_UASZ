@@ -10,6 +10,8 @@ public class Maquette {
     private Long id;
     private String nom;
     @OneToOne
+    private Formation formation;
+
     public Maquette() {
     }
 

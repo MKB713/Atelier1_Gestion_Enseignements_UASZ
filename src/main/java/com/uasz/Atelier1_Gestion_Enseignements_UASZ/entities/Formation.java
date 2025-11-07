@@ -17,7 +17,9 @@ public class Formation {
     private Filiere filiere;
     @ManyToOne
     private Niveau niveau;
-    @OneToOne(mappedBy="formation")
+    @OneToOne(mappedBy = "formation")
+    private Maquette maquette;
+
     public Formation() {
     }
 

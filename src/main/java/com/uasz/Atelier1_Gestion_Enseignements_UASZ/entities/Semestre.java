@@ -1,6 +1,9 @@
 package com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities;
 
-import org.hibernate.annotations.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Table;
 import org.springframework.data.annotation.Id;
 
 @Entity

@@ -18,4 +18,52 @@ public class Module {
 
     public Module() {
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public Ec getEc() {
+        return ec;
+    }
+
+    public void setEc(Ec ec) {
+        this.ec = ec;
+    }
+
+    public Maquette getMaquette() {
+        return maquette;
+    }
+
+    public void setMaquette(Maquette maquette) {
+        this.maquette = maquette;
+    }
+
+    public Semestre getSemestre() {
+        return semestre;
+    }
+
+    public void setSemestre(Semestre semestre) {
+        this.semestre = semestre;
+    }
 }
