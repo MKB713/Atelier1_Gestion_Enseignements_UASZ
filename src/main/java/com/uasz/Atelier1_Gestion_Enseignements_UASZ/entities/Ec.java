@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "ecs")
 public class Ec {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String libelle;
     private String code;

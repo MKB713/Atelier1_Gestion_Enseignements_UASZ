@@ -9,7 +9,7 @@ import java.util.Date;
 @Table(name="Enseignants")
 public class Enseignant {
     @Id
-    @GeneratedValue(strategy=GenerationType.Identity)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
     private Long matricule;
     private String nom;

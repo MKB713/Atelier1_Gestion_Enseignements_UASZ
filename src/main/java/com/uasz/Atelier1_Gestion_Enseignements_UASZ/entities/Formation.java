@@ -8,6 +8,7 @@ import java.util.Date;
 @Table(name = "Formations")
 public class Formation {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String code;
     private String libelle;

@@ -10,6 +10,7 @@ public class Niveau {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private int numero;
+    @Enumerated(EnumType.STRING)
     private Cycle cycle;
 
     public Niveau() {

@@ -1,10 +1,7 @@
 package com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
-import org.springframework.data.annotation.Id;
+import jakarta.persistence.*;
+
 
 @Entity
 @Table(name = "semestres")
@@ -16,5 +13,24 @@ public class Semestre {
 
     public Semestre() {}
 
+    public Semestre(Long id, String nom) {
+        this.id = id;
+        this.nom = nom;
+    }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
 }
