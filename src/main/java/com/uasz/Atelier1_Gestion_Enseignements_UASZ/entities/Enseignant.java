@@ -20,8 +20,7 @@ public class Enseignant {
     private String grade;
     private String DateNaissance;
     private Date LieuNaissance;
-    @ManyToOne
-    @JoinColumn(name = "statut_id")
+    @Enumerated(EnumType.STRING)
     private Statut statut;
     private boolean estActif;
 
