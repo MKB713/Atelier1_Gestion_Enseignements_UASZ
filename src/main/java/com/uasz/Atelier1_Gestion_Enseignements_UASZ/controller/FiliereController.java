@@ -11,6 +11,12 @@ public class FiliereController {
     @Autowired
     private FiliereService filiereService;
 
+        @RequestMapping("/lst-filieres")
+        public String index(Model model){
+            model.addAttribute("filieres",filiereService.getAllFiliere());
+            return "filiere-list";
+        }
+
     @RequestMapping("/add-filiere")
     public String addFiliere(Model model) {
         Filiere filiere = new Filiere();
