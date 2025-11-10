@@ -20,12 +20,12 @@ public class FiliereController {
     @RequestMapping("/add-filiere")
     public String addFiliere(Model model) {
         Filiere filiere = new Filiere();
-        model.addAttribute("filere",filiere);
+        model.addAttribute("filiere",filiere);
         return "filiere-add";
     }
     @RequestMapping("/save")
     public String save(Filiere filiere) {
         filiereService.addFiliere(filiere);
-        return "redirect:/filiere-add";
+        return "redirect:/lst-filieres";
     }
 }

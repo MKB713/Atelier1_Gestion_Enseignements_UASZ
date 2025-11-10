@@ -1,23 +1,28 @@
 package com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities;
 
-import jakarta.persistence.*;
-
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "semestres")
 public class Semestre {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String nom;
 
     public Semestre() {}
 
-    public Semestre(Long id, String nom) {
-        this.id = id;
+    public Semestre(String nom) {
         this.nom = nom;
     }
 
+    // Getters et setters
     public Long getId() {
         return id;
     }

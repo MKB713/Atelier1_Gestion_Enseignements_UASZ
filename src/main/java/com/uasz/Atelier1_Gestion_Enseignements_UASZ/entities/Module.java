@@ -1,6 +1,9 @@
 package com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities;
 
 import jakarta.persistence.*;
+import jakarta.persistence.Basic;
+import jakarta.persistence.FetchType;
+
 @Entity
 @Table(name = "modules")
 public class Module {
