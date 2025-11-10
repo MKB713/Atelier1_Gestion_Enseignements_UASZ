@@ -3,7 +3,8 @@ package com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.enums.Statut;
 import jakarta.persistence.*;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name="Enseignants")
@@ -18,16 +19,20 @@ public class Enseignant {
     private String telephone;
     private String email;
     private String grade;
-    private String DateNaissance;
-    private Date LieuNaissance;
+    private LocalDate dateEmbauche;
+    private LocalDateTime dateCreation;
+    private LocalDateTime dateModification;
+    private LocalDate dateNaissance;
+    private String lieuNaissance;
     @Enumerated(EnumType.STRING)
     private Statut statut;
     private boolean estActif;
+    private String specialite;
 
     public Enseignant() {
     }
 
-    public Enseignant(Long id, Long matricule, String nom, String prenom, String adresse, String telephone, String email, String grade, String dateNaissance, Date lieuNaissance, Statut statut, boolean estActif) {
+    public Enseignant(Long id, Long matricule, String nom, String prenom, String adresse, String telephone, String email, String grade, LocalDate dateEmbauche, LocalDateTime dateCreation, LocalDateTime dateModification, LocalDate dateNaissance, String lieuNaissance, Statut statut, boolean estActif, String specialite) {
         this.id = id;
         this.matricule = matricule;
         this.nom = nom;
@@ -36,10 +41,14 @@ public class Enseignant {
         this.telephone = telephone;
         this.email = email;
         this.grade = grade;
-        DateNaissance = dateNaissance;
-        LieuNaissance = lieuNaissance;
+        this.dateEmbauche = dateEmbauche;
+        this.dateCreation = dateCreation;
+        this.dateModification = dateModification;
+        this.dateNaissance = dateNaissance;
+        this.lieuNaissance = lieuNaissance;
         this.statut = statut;
         this.estActif = estActif;
+        this.specialite = specialite;
     }
 
     public Long getId() {
@@ -106,20 +115,44 @@ public class Enseignant {
         this.grade = grade;
     }
 
-    public String getDateNaissance() {
-        return DateNaissance;
+    public LocalDate getDateEmbauche() {
+        return dateEmbauche;
     }
 
-    public void setDateNaissance(String dateNaissance) {
-        DateNaissance = dateNaissance;
+    public void setDateEmbauche(LocalDate dateEmbauche) {
+        this.dateEmbauche = dateEmbauche;
     }
 
-    public Date getLieuNaissance() {
-        return LieuNaissance;
+    public LocalDateTime getDateCreation() {
+        return dateCreation;
     }
 
-    public void setLieuNaissance(Date lieuNaissance) {
-        LieuNaissance = lieuNaissance;
+    public void setDateCreation(LocalDateTime dateCreation) {
+        this.dateCreation = dateCreation;
+    }
+
+    public LocalDateTime getDateModification() {
+        return dateModification;
+    }
+
+    public void setDateModification(LocalDateTime dateModification) {
+        this.dateModification = dateModification;
+    }
+
+    public LocalDate getDateNaissance() {
+        return dateNaissance;
+    }
+
+    public void setDateNaissance(LocalDate dateNaissance) {
+        this.dateNaissance = dateNaissance;
+    }
+
+    public String getLieuNaissance() {
+        return lieuNaissance;
+    }
+
+    public void setLieuNaissance(String lieuNaissance) {
+        this.lieuNaissance = lieuNaissance;
     }
 
     public Statut getStatut() {
@@ -136,5 +169,13 @@ public class Enseignant {
 
     public void setEstActif(boolean estActif) {
         this.estActif = estActif;
+    }
+
+    public String getSpecialite() {
+        return specialite;
+    }
+
+    public void setSpecialite(String specialite) {
+        this.specialite = specialite;
     }
 }
