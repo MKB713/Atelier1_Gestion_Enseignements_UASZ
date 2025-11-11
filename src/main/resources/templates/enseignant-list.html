@@ -145,12 +145,22 @@
                                                    title="Modifier">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
-                                                <a th:href="@{/delete-enseignant/{id}(id=${enseignant.id})}"
-                                                   class="btn btn-sm btn-outline-danger"
-                                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet enseignant?')"
-                                                   title="Supprimer">
-                                                    <i class="bi bi-trash"></i>
+<!--                                                <a th:href="@{/delete-enseignant/{id}(id=${enseignant.id})}"-->
+<!--                                                   class="btn btn-sm btn-outline-danger"-->
+<!--                                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet enseignant?')"-->
+<!--                                                   title="Supprimer">-->
+<!--                                                    <i class="bi bi-trash"></i>-->
+<!--                                                </a>   Lahat on sest dit quon ne supprime pas enseignant du coup cette partie cst pour?-->
+
+
+
+                                                <a th:href="@{/enseignants/{id}/archiver(id=${enseignant.id})}"
+                                                   class="btn btn-sm btn-outline-warning"
+                                                   onclick="return confirm('Archiver cet enseignant ?')"
+                                                   title="Archiver">
+                                                    <i class="bi bi-archive"></i>
                                                 </a>
+
                                             </div>
                                         </td>
                                     </tr>
