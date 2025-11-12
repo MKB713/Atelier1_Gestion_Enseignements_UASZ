@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping("/enseignants")
+
 public class EnseignantController {
 
     @Autowired
