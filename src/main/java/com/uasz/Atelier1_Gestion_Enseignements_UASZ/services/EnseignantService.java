@@ -15,9 +15,7 @@ public class EnseignantService {
     @Autowired
     private EnseignantRepository enseignantRepository;
 
-    public List<Enseignant> getAllEnseignants() {
-        return enseignantRepository.findAll();
-    }
+
 
     public Enseignant getEnseignantById(Long id) {
         return enseignantRepository.findById(id)
@@ -47,5 +45,12 @@ public class EnseignantService {
         enseignantRepository.save(enseignant);
 
         return enseignant;
+    }
+
+    public List<Enseignant> getAllEnseignants() {
+        return enseignantRepository.findByStatutEnseignantNot(StatutEnseignant.ARCHIVE);
+    }
+    public List<Enseignant> getAllEnseignantsArchives() {
+        return enseignantRepository.findByStatutEnseignant(StatutEnseignant.ARCHIVE);
     }
 }

@@ -44,4 +44,10 @@ public class EnseignantController {
         return ResponseEntity.ok("L'enseignant avec l'id " + id + " a été archivé avec succès.");
     }
 
+    @GetMapping("/lst-archives")
+    public String listeArchives(Model model) {
+        model.addAttribute("enseignants", enseignantService.getAllEnseignantsArchives());
+        return "enseignant-archive-list";
+    }
+
 }
