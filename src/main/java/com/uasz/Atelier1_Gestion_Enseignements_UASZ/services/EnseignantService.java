@@ -93,7 +93,7 @@ public class EnseignantService {
     }
 
     private boolean isValidTelephone(String telephone) {
-        return telephone != null && telephone.matches("^[+]?[(]?[0-9]{1,4}[)]?[-\\s.]?[(]?[0-9]{1,4}[)]?[-\\s.]?[0-9]{1,9}$");
+        return telephone != null && telephone.matches("^[+]?[0-9\\s\\-\\(\\)]{7,20}$");
     }
 
     public void deleteEnseignant(Long id) {

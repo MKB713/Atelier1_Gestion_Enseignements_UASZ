@@ -13,8 +13,8 @@ public class EnseignantUpdateDTO {
     @Email(message = "L'email doit être valide")
     private String email;
 
-    @Pattern(regexp = "^[+]?[(]?[0-9]{1,4}[)]?[-\\s.]?[(]?[0-9]{1,4}[)]?[-\\s.]?[0-9]{1,9}$",
-            message = "Le numéro de téléphone doit être valide")
+    @Pattern(regexp = "^[+]?[0-9\\s\\-\\(\\)]{7,20}$",
+            message = "Le numéro de téléphone doit être valide (7 à 20 caractères, peut contenir +, espaces, tirets, parenthèses)")
     private String telephone;
 
     public EnseignantUpdateDTO() {
