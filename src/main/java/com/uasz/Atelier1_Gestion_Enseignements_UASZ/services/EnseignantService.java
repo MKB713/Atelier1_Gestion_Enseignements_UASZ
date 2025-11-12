@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EnseignantService {
@@ -33,5 +34,11 @@ public class EnseignantService {
 
     public void deleteEnseignant(Long id) {
         enseignantRepository.deleteById(id);
+    }
+    public Optional<Enseignant> rechercherEnseignant(Long matricule) {
+        if (matricule == null) {
+            return Optional.empty();
+        }
+        return enseignantRepository.findByMatricule(matricule);
     }
 }
