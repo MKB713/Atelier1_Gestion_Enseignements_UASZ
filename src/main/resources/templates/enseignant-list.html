@@ -21,6 +21,40 @@
         }
         .badge-actif { background-color: #28a745; }
         .badge-inactif { background-color: #dc3545; }
+        /* Styles pour le formulaire de recherche */
+        .search-container {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        .search-input {
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            background: rgba(255,255,255,0.95);
+            transition: all 0.3s;
+        }
+        .search-input:focus {
+            border-color: #fff;
+            box-shadow: 0 0 0 0.2rem rgba(255,255,255,0.25);
+            background: #fff;
+        }
+        .btn-search {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid #fff;
+            color: #fff;
+            font-weight: 600;
+            padding: 0.6rem 1.5rem;
+            transition: all 0.3s;
+        }
+        .btn-search:hover {
+            background: #fff;
+            color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
     </style>
 </head>
 <body>
@@ -83,7 +117,31 @@
                     <span th:text="${success}">Success message</span>
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
-
+                <!-- Formulaire de recherche -->
+                <div class="search-container">
+                    <form th:action="@{/recherche}" method="get" class="row g-3 align-items-center">
+                        <div class="col-auto">
+                            <label class="text-white fw-semibold mb-0">
+                                <i class="bi bi-search me-2"></i>Rechercher un enseignant :
+                            </label>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <input
+                                    type="number"
+                                    name="matricule"
+                                    class="form-control search-input"
+                                    placeholder="Entrez le matricule..."
+                                    min="1"
+                                    required
+                                    aria-label="Matricule de l'enseignant">
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-search">
+                                <i class="bi bi-search me-2"></i>Rechercher
+                            </button>
+                        </div>
+                    </form>
+                </div>
                 <!-- Enseignants Table -->
                 <div class="card shadow-sm">
                     <div class="card-body">

@@ -45,7 +45,7 @@ public class EnseignantController {
         // Si pas de matricule, retourner la vue vide
         if (matricule == null) {
             model.addAttribute("enseignants", enseignants);
-            return "lst-enseignants";
+            return "redirect:/lst-enseignants";
         }
         // Rechercher l'enseignant
         Optional<Enseignant> enseignantOpt = enseignantService.rechercherEnseignant(matricule);
