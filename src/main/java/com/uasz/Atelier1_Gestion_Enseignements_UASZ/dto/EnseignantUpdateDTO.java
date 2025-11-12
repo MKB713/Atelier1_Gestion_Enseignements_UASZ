@@ -1,0 +1,62 @@
+package com.uasz.Atelier1_Gestion_Enseignements_UASZ.dto;
+
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.enums.Statut;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
+
+public class EnseignantUpdateDTO {
+
+    private String grade;
+
+    private Statut statut;
+
+    @Email(message = "L'email doit être valide")
+    private String email;
+
+    @Pattern(regexp = "^[+]?[(]?[0-9]{1,4}[)]?[-\\s.]?[(]?[0-9]{1,4}[)]?[-\\s.]?[0-9]{1,9}$",
+            message = "Le numéro de téléphone doit être valide")
+    private String telephone;
+
+    public EnseignantUpdateDTO() {
+    }
+
+    public EnseignantUpdateDTO(String grade, Statut statut, String email, String telephone) {
+        this.grade = grade;
+        this.statut = statut;
+        this.email = email;
+        this.telephone = telephone;
+    }
+
+    public String getGrade() {
+        return grade;
+    }
+
+    public void setGrade(String grade) {
+        this.grade = grade;
+    }
+
+    public Statut getStatut() {
+        return statut;
+    }
+
+    public void setStatut(Statut statut) {
+        this.statut = statut;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getTelephone() {
+        return telephone;
+    }
+
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
+}
+
