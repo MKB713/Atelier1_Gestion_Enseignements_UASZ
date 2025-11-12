@@ -66,6 +66,10 @@ public class EnseignantService {
             enseignant.setTelephone(updateDTO.getTelephone());
         }
 
+        if (updateDTO.getAdresse() != null && !updateDTO.getAdresse().trim().isEmpty()) {
+            enseignant.setAdresse(updateDTO.getAdresse());
+        }
+
         // Enregistrer la date de modification
         enseignant.setDateModification(LocalDateTime.now());
 

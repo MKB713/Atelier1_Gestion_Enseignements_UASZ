@@ -92,7 +92,7 @@
             <div class="alert alert-info d-flex align-items-center" role="alert">
                 <i class="bi bi-info-circle me-2"></i>
                 <div>
-                    <strong>Note :</strong> Seuls les champs <strong>Grade</strong>, <strong>Statut</strong>, <strong>Email</strong> et <strong>Téléphone</strong> peuvent être modifiés.
+                    <strong>Note :</strong> Seuls les champs <strong>Grade</strong>, <strong>Statut</strong>, <strong>Email</strong>, <strong>Téléphone</strong> et <strong>Adresse</strong> peuvent être modifiés.
                 </div>
             </div>
 
@@ -176,6 +176,17 @@
                                                name="telephone" th:value="${enseignant.telephone}"
                                                placeholder="+221 77 123 45 67" required>
                                         <div class="form-text">Format valide requis (ex: +221771234567)</div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <label for="adresse" class="form-label">
+                                            Adresse <span class="text-danger">*</span>
+                                        </label>
+                                        <input type="text" class="form-control" id="adresse"
+                                               name="adresse" th:value="${enseignant.adresse}"
+                                               placeholder="Adresse complète" required>
                                     </div>
                                 </div>
 

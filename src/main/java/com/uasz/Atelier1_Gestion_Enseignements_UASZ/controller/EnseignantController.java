@@ -55,7 +55,8 @@ public class EnseignantController {
                                    @RequestParam(required = false) String grade,
                                    @RequestParam(required = false) String statut,
                                    @RequestParam(required = false) String email,
-                                   @RequestParam(required = false) String telephone) {
+                                   @RequestParam(required = false) String telephone,
+                                   @RequestParam(required = false) String adresse) {
         EnseignantUpdateDTO updateDTO = new EnseignantUpdateDTO();
         updateDTO.setGrade(grade);
         if (statut != null && !statut.isEmpty()) {
@@ -67,6 +68,7 @@ public class EnseignantController {
         }
         updateDTO.setEmail(email);
         updateDTO.setTelephone(telephone);
+        updateDTO.setAdresse(adresse);
 
         enseignantService.updateEnseignant(id, updateDTO);
         return "redirect:/lst-enseignants";

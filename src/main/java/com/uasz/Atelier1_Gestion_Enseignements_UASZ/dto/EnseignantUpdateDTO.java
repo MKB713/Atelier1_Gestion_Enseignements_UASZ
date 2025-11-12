@@ -17,14 +17,17 @@ public class EnseignantUpdateDTO {
             message = "Le numéro de téléphone doit être valide (7 à 20 caractères, peut contenir +, espaces, tirets, parenthèses)")
     private String telephone;
 
+    private String adresse;
+
     public EnseignantUpdateDTO() {
     }
 
-    public EnseignantUpdateDTO(String grade, Statut statut, String email, String telephone) {
+    public EnseignantUpdateDTO(String grade, Statut statut, String email, String telephone, String adresse) {
         this.grade = grade;
         this.statut = statut;
         this.email = email;
         this.telephone = telephone;
+        this.adresse = adresse;
     }
 
     public String getGrade() {
@@ -57,6 +60,14 @@ public class EnseignantUpdateDTO {
 
     public void setTelephone(String telephone) {
         this.telephone = telephone;
+    }
+
+    public String getAdresse() {
+        return adresse;
+    }
+
+    public void setAdresse(String adresse) {
+        this.adresse = adresse;
     }
 }
 
