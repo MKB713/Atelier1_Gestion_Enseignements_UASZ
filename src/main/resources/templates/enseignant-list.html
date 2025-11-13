@@ -23,6 +23,30 @@
         .badge-inactif { background-color: #dc3545; }
     </style>
 </head>
+<!--    <script>-->
+<!--        function activer(id) {-->
+<!--            fetch(`/enseignants/${id}/activer`, {-->
+<!--                method: "PATCH"-->
+<!--            })-->
+<!--                .then(res => res.text())-->
+<!--                .then(msg => {-->
+<!--                    alert(msg);-->
+<!--                    location.reload();-->
+<!--                });-->
+<!--        }-->
+
+<!--        function desactiver(id) {-->
+<!--            fetch(`/enseignants/${id}/desactiver`, {-->
+<!--                method: "PATCH"-->
+<!--            })-->
+<!--                .then(res => res.text())-->
+<!--                .then(msg => {-->
+<!--                    alert(msg);-->
+<!--                    location.reload();-->
+<!--                });-->
+<!--        }-->
+<!--    </script>-->
+
 <body>
     <div class="container-fluid">
         <div class="row">
@@ -151,6 +175,20 @@
                                                    title="Archiver">
                                                     <i class="bi bi-archive"></i>
                                                 </a>
+                                                <!-- Activer / Désactiver : affichage dynamique -->
+                                                <button th:if="${enseignant.estActif}"
+                                                        class="btn btn-sm btn-outline-danger"
+                                                        onclick="desactiver([[${enseignant.id}]])"
+                                                        title="Désactiver">
+                                                    <i class="bi bi-x-circle"></i>
+                                                </button>
+
+                                                <button th:if="${!enseignant.estActif}"
+                                                        class="btn btn-sm btn-outline-success"
+                                                        onclick="activer([[${enseignant.id}]])"
+                                                        title="Activer">
+                                                    <i class="bi bi-check-circle"></i>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
