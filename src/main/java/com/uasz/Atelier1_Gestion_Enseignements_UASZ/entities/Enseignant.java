@@ -1,6 +1,7 @@
 package com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities;
 
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.enums.Statut;
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.enums.StatutEnseignant;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -28,6 +29,10 @@ public class Enseignant {
     private Statut statut;
     private boolean estActif;
     private String specialite;
+
+    @Enumerated(EnumType.STRING)
+    private StatutEnseignant statutEnseignant = StatutEnseignant.ACTIF;
+
 
     public Enseignant() {
     }
@@ -178,4 +183,14 @@ public class Enseignant {
     public void setSpecialite(String specialite) {
         this.specialite = specialite;
     }
+
+
+    public StatutEnseignant getStatutEnseignant() {
+        return statutEnseignant;
+    }
+
+    public void setStatutEnseignant(StatutEnseignant statutEnseignant) {
+        this.statutEnseignant = statutEnseignant;
+    }
+
 }

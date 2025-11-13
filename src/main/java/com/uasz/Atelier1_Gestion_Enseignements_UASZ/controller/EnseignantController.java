@@ -3,11 +3,14 @@ package com.uasz.Atelier1_Gestion_Enseignements_UASZ.controller;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Enseignant;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.EnseignantService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
+
 public class EnseignantController {
 
     @Autowired
@@ -31,4 +34,20 @@ public class EnseignantController {
         enseignantService.saveEnseignant(enseignant);
         return "redirect:/lst-enseignants";
     }
+
+
+
+    @PatchMapping("/{id}/archiver")
+    @ResponseBody
+    public ResponseEntity<String> archiverEnseignant(@PathVariable Long id) {
+        enseignantService.archiverEnseignant(id);
+        return ResponseEntity.ok("L'enseignant avec l'id " + id + " a été archivé avec succès.");
+    }
+
+    @GetMapping("/lst-archives")
+    public String listeArchives(Model model) {
+        model.addAttribute("enseignants", enseignantService.getAllEnseignantsArchives());
+        return "enseignant-archive-list";
+    }
+
 }
