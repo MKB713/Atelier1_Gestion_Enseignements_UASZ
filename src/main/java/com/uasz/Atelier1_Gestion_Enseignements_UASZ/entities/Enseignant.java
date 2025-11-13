@@ -1,7 +1,9 @@
 package com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities;
 
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.enums.Statut;
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.validation.MinimumAge;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.PastOrPresent;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,9 +21,12 @@ public class Enseignant {
     private String telephone;
     private String email;
     private String grade;
+    @PastOrPresent(message = "La date d'embauche ne peut pas être dans le futur")
     private LocalDate dateEmbauche;
     private LocalDateTime dateCreation;
     private LocalDateTime dateModification;
+    @PastOrPresent(message = "La date de naissance ne peut pas être dans le futur")
+    @MinimumAge(value = 25, message = "L'enseignant doit avoir au moins 25 ans")
     private LocalDate dateNaissance;
     private String lieuNaissance;
     @Enumerated(EnumType.STRING)

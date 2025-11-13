@@ -2,9 +2,11 @@ package com.uasz.Atelier1_Gestion_Enseignements_UASZ.controller;
 
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Enseignant;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.EnseignantService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -27,7 +29,10 @@ public class EnseignantController {
     }
 
     @RequestMapping("/save-enseignant")
-    public String save(Enseignant enseignant) {
+    public String save(@Valid Enseignant enseignant, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            return "enseignant-add";
+        }
         enseignantService.saveEnseignant(enseignant);
         return "redirect:/lst-enseignants";
     }
