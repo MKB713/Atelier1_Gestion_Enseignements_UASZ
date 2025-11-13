@@ -145,12 +145,12 @@
                                                    title="Modifier">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
-                                                <a th:href="@{/delete-enseignant/{id}(id=${enseignant.id})}"
+                                                <button type="button"
                                                    class="btn btn-sm btn-outline-danger"
-                                                   onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet enseignant?')"
-                                                   title="Supprimer">
-                                                    <i class="bi bi-trash"></i>
-                                                </a>
+                                                   th:onclick="'archiverEnseignant(' + ${enseignant.id} + ')'"
+                                                   title="Archiver">
+                                                    <i class="bi bi-archive"></i>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -171,5 +171,32 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function archiverEnseignant(id) {
+            if (confirm('Êtes-vous sûr de vouloir archiver cet enseignant?')) {
+                fetch('/' + id + '/archiver', {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.text();
+                    } else {
+                        throw new Error('Erreur lors de l\'archivage');
+                    }
+                })
+                .then(data => {
+                    alert('Enseignant archivé avec succès!');
+                    window.location.reload();
+                })
+                .catch(error => {
+                    alert('Erreur: ' + error.message);
+                    console.error('Erreur:', error);
+                });
+            }
+        }
+    </script>
 </body>
 </html>

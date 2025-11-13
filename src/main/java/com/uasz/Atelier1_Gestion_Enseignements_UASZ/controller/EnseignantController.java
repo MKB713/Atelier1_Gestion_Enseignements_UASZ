@@ -1,6 +1,7 @@
 package com.uasz.Atelier1_Gestion_Enseignements_UASZ.controller;
 
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Enseignant;
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.exceptions.MatriculeAlreadyExistsException;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.EnseignantService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +35,24 @@ public class EnseignantController {
     @RequestMapping("/save-enseignant")
     public String save(@Valid Enseignant enseignant, BindingResult bindingResult, Model model) {
         if (bindingResult.hasErrors()) {
+            bindingResult.getAllErrors().forEach(error -> {
+                System.out.println("Erreur de validation: " + error.getDefaultMessage());
+            });
             return "enseignant-add";
         }
-        enseignantService.saveEnseignant(enseignant);
-        return "redirect:/lst-enseignants";
+
+        try {
+            enseignantService.saveEnseignant(enseignant);
+            return "redirect:/lst-enseignants";
+        } catch (MatriculeAlreadyExistsException e) {
+            model.addAttribute("matriculeError", e.getMessage());
+            return "enseignant-add";
+        } catch (Exception e) {
+            System.err.println("Erreur lors de la sauvegarde: " + e.getMessage());
+            e.printStackTrace();
+            model.addAttribute("error", "Erreur lors de la sauvegarde: " + e.getMessage());
+            return "enseignant-add";
+        }
     }
 
 
