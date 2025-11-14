@@ -159,4 +159,38 @@ public class EnseignantController {
                     .body(e.getMessage());
         }
     }
+
+    // ENDPOINTS POUR L'ACTIVATION/DÉSACTIVATION (Optimisés pour AJAX)
+
+    /**
+     * Gère l'activation d'un enseignant via une requête POST/API.
+     * @param id L'identifiant de l'enseignant.
+     * @return Réponse HTTP (OK ou Erreur).
+     */
+    @PostMapping("/activer-enseignant/{id}")
+    @ResponseBody
+    public ResponseEntity<String> activerEnseignant(@PathVariable Long id) {
+        try {
+            enseignantService.activerEnseignant(id);
+            return ResponseEntity.ok("Enseignant activé avec succès.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    /**
+     * Gère la désactivation d'un enseignant via une requête POST/API.
+     * @param id L'identifiant de l'enseignant.
+     * @return Réponse HTTP (OK ou Erreur).
+     */
+    @PostMapping("/desactiver-enseignant/{id}")
+    @ResponseBody
+    public ResponseEntity<String> desactiverEnseignant(@PathVariable Long id) {
+        try {
+            enseignantService.desactiverEnseignant(id);
+            return ResponseEntity.ok("Enseignant désactivé avec succès.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
 }

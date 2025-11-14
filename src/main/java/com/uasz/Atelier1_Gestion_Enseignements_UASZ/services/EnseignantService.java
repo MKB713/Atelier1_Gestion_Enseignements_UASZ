@@ -20,7 +20,6 @@ public class EnseignantService {
     private EnseignantRepository enseignantRepository;
 
 
-
     public Enseignant getEnseignantById(Long id) {
         return enseignantRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Enseignant non trouvé avec l'id: " + id));
@@ -40,6 +39,8 @@ public class EnseignantService {
         if (enseignant.getId() == null) {
             enseignant.setDateCreation(LocalDateTime.now());
             enseignant.setStatutEnseignant(StatutEnseignant.ACTIF);
+            // Initialisation de estActif à true par défaut lors de la création
+            enseignant.setEstActif(true);
         }
         enseignant.setDateModification(LocalDateTime.now());
         enseignantRepository.save(enseignant);
@@ -139,5 +140,37 @@ public class EnseignantService {
 
     public void deleteEnseignant(Long id) {
         enseignantRepository.deleteById(id);
+    }
+
+    // NOUVELLES MÉTHODES POUR L'ACTIVATION/DÉSACTIVATION
+
+    /**
+     * Active l'enseignant (estActif = true).
+     * @param id L'identifiant de l'enseignant.
+     * @return L'enseignant mis à jour.
+     */
+    @Transactional
+    public Enseignant activerEnseignant(Long id) {
+        Enseignant enseignant = enseignantRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Enseignant non trouvé avec l'id: " + id));
+
+        enseignant.setEstActif(true);
+        enseignant.setDateModification(LocalDateTime.now());
+        return enseignantRepository.save(enseignant);
+    }
+
+    /**
+     * Désactive l'enseignant (estActif = false).
+     * @param id L'identifiant de l'enseignant.
+     * @return L'enseignant mis à jour.
+     */
+    @Transactional
+    public Enseignant desactiverEnseignant(Long id) {
+        Enseignant enseignant = enseignantRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Enseignant non trouvé avec l'id: " + id));
+
+        enseignant.setEstActif(false);
+        enseignant.setDateModification(LocalDateTime.now());
+        return enseignantRepository.save(enseignant);
     }
 }
