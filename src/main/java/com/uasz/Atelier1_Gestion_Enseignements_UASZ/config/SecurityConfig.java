@@ -16,7 +16,15 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 .anyRequest().permitAll()
             )
-            .csrf(csrf -> csrf.disable());
+
+            .csrf(csrf -> csrf.disable()
+            )
+
+                // ✅ Désactive la protection CSRF (utile en développement)
+                .formLogin(form -> form.disable())
+
+                // ✅ Désactive aussi la déconnexion sécurisée
+                .logout(logout -> logout.disable());
 
         return http.build();
     }
