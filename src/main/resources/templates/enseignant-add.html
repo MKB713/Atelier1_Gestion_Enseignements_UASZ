@@ -95,6 +95,20 @@
                                 </h5>
                             </div>
                             <div class="card-body">
+                                <!-- Alerte en cas d'erreur de matricule -->
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${matriculeError != null}">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                    <strong>Erreur!</strong> <span th:text="${matriculeError}"></span>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+
+                                <!-- Alerte en cas d'erreur générale -->
+                                <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${error != null}">
+                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                    <strong>Erreur!</strong> <span th:text="${error}"></span>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+
                                 <form method="post" th:action="@{/save-enseignant}" th:object="${enseignant}">
                                     <input type="hidden" th:field="*{id}" />
 
@@ -108,7 +122,12 @@
                                                 Matricule <span class="text-danger">*</span>
                                             </label>
                                             <input type="number" class="form-control" id="matricule"
-                                                   th:field="*{matricule}" placeholder="Ex: 20240001" required>
+                                                   th:field="*{matricule}"
+                                                   th:classappend="${matriculeError != null} ? 'is-invalid' : ''"
+                                                   placeholder="Ex: 20240001" required>
+                                            <div class="invalid-feedback" th:if="${matriculeError != null}" th:text="${matriculeError}">
+                                                Erreur de matricule
+                                            </div>
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label for="grade" class="form-label">
@@ -150,9 +169,15 @@
                                         <div class="col-md-6 mb-3">
                                             <label for="dateNaissance" class="form-label">
                                                 Date de naissance <span class="text-danger">*</span>
+                                                <small class="text-muted">(minimum 25 ans)</small>
                                             </label>
                                             <input type="date" class="form-control" id="dateNaissance"
-                                                   th:field="*{dateNaissance}" required>
+                                                   th:field="*{dateNaissance}"
+                                                   th:classappend="${#fields.hasErrors('dateNaissance')} ? 'is-invalid' : ''"
+                                                   required>
+                                            <div class="invalid-feedback" th:if="${#fields.hasErrors('dateNaissance')}" th:errors="*{dateNaissance}">
+                                                Erreur de validation
+                                            </div>
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label for="lieuNaissance" class="form-label">
@@ -208,7 +233,12 @@
                                                 Date d'embauche <span class="text-danger">*</span>
                                             </label>
                                             <input type="date" class="form-control" id="dateEmbauche"
-                                                   th:field="*{dateEmbauche}" required>
+                                                   th:field="*{dateEmbauche}"
+                                                   th:classappend="${#fields.hasErrors('dateEmbauche')} ? 'is-invalid' : ''"
+                                                   th:max="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}" required>
+                                            <div class="invalid-feedback" th:if="${#fields.hasErrors('dateEmbauche')}" th:errors="*{dateEmbauche}">
+                                                Erreur de validation
+                                            </div>
                                         </div>
                                     </div>
 
@@ -257,5 +287,20 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Définir la date max pour la date de naissance (aujourd'hui - 25 ans)
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateNaissanceInput = document.getElementById('dateNaissance');
+            const dateEmbaucheInput = document.getElementById('dateEmbauche');
+
+            // Calculer la date max pour la date de naissance (aujourd'hui - 25 ans)
+            const today = new Date();
+            const maxDateNaissance = new Date(today.getFullYear() - 25, today.getMonth(), today.getDate());
+            dateNaissanceInput.max = maxDateNaissance.toISOString().split('T')[0];
+
+            // Définir la date max pour la date d'embauche (aujourd'hui)
+            dateEmbaucheInput.max = today.toISOString().split('T')[0];
+        });
+    </script>
 </body>
 </html>
