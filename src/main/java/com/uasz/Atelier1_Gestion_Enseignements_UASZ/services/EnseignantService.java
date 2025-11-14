@@ -89,12 +89,11 @@ public class EnseignantService {
         }
 
         if (updateDTO.getEmail() != null && !updateDTO.getEmail().trim().isEmpty()) {
-            // Vérifier que l'email n'est pas déjà utilisé par un autre enseignant
-            enseignantRepository.findByEmail(updateDTO.getEmail())
+            // Cherche un enseignant avec cet email MAIS un ID différent de celui qu'on modifie
+            enseignantRepository.findByEmailAndIdIsNot(updateDTO.getEmail(), id)
                     .ifPresent(existingEnseignant -> {
-                        if (!existingEnseignant.getId().equals(id)) {
-                            throw new RuntimeException("Cet email est déjà utilisé par un autre enseignant");
-                        }
+                        // Si un résultat est présent, l'email est utilisé par un AUTRE enseignant.
+                        throw new IllegalArgumentException("Cet email est déjà utilisé par un autre enseignant.");
                     });
             enseignant.setEmail(updateDTO.getEmail());
         }

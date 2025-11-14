@@ -219,7 +219,7 @@
 
                                 <!-- Buttons -->
                                 <div class="d-flex gap-2 justify-content-end mt-4">
-                                    <a href="/edit-enseignant/{id}" th:href="@{/edit-enseignant/{id}}"
+                                    <a href="/lst-enseignants" th:href="@{/lst-enseignants}"
                                        class="btn btn-secondary">
                                         <i class="bi bi-x-circle me-2"></i>Annuler
                                     </a>
@@ -237,6 +237,20 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:if="${param.error}">
+    // Récupère le message d'erreur du paramètre d'URL
+    var errorMessage = new URLSearchParams(window.location.search).get('error');
+
+    // Remplace les %20 par des espaces si la redirection les a encodés
+    if (errorMessage) {
+        errorMessage = decodeURIComponent(errorMessage.replace(/\+/g, ' '));
+        // Affiche une boîte d'alerte JavaScript
+        alert("Erreur de modification : " + errorMessage);
+
+        // Optionnel : Nettoie l'URL pour retirer le message d'erreur
+        window.history.replaceState(null, null, window.location.pathname);
+    }
+</script>
 </body>
 </html>
 

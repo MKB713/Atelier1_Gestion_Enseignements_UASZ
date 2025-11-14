@@ -135,8 +135,13 @@ public class EnseignantController {
         updateDTO.setTelephone(telephone);
         updateDTO.setAdresse(adresse);
 
-        enseignantService.updateEnseignant(id, updateDTO);
-        return "redirect:/lst-enseignants";
+        try {
+            enseignantService.updateEnseignant(id, updateDTO);
+            return "redirect:/lst-enseignants";
+        } catch (IllegalArgumentException e) {
+            // Capture l'erreur spécifique d'unicité (lancée dans le Service)
+            return "redirect:/edit-enseignant/" + id + "?error=" + e.getMessage();
+        }
     }
 
     // Endpoint REST pour la mise à jour via API
