@@ -12,6 +12,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 @Controller
 
 public class EnseignantController {
@@ -68,6 +72,34 @@ public class EnseignantController {
     public String listeArchives(Model model) {
         model.addAttribute("enseignants", enseignantService.getAllEnseignantsArchives());
         return "enseignant-archive-list";
+    }
+
+    @GetMapping("/recherche")
+    public String rechercherEnseignant(@RequestParam(required = false) Long matricule,
+                                       Model model) {
+        List<Enseignant> enseignants = new ArrayList<>();
+
+        // Si pas de matricule, retourner la vue vide
+        if (matricule == null) {
+            model.addAttribute("enseignants", enseignants);
+            return "redirect:/lst-enseignants";
+        }
+        // Rechercher l'enseignant
+        Optional<Enseignant> enseignantOpt = enseignantService.rechercherEnseignant(matricule);
+
+        if (enseignantOpt.isPresent()) {
+            // Enseignant trouvé
+            enseignants.add(enseignantOpt.get());
+            model.addAttribute("message", "Enseignant trouvé ✓");
+        } else {
+            // Enseignant non trouvé
+            model.addAttribute("message", "Aucun enseignant avec le matricule : " + matricule);
+        }
+
+        model.addAttribute("enseignants", enseignants);
+        model.addAttribute("matricule", matricule);
+
+        return "resultatRecherche";
     }
 
 }
