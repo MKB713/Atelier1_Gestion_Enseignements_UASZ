@@ -16,9 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
-
 public class EnseignantController {
 
     @Autowired
@@ -164,4 +165,17 @@ public class EnseignantController {
                     .body(e.getMessage());
         }
     }
-}
+        @GetMapping("/view-enseignant/{id}")
+        public String viewEnseignant(@PathVariable Long id, Model model) {
+            Enseignant enseignant = enseignantService.getEnseignantById(id);
+
+            if (enseignant != null) {
+                model.addAttribute("enseignant", enseignant);
+                return "enseignant-details"; // vue normale
+            } else {
+                model.addAttribute("errorMessage", "Enseignant introuvable avec l'ID " + id);
+                return "error-page"; // vue d'erreur personnalisée
+            }
+        }
+    }
+
