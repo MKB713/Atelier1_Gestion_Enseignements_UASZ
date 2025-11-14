@@ -43,11 +43,6 @@ public class EnseignantService {
         enseignantRepository.save(enseignant);
     }
 
-    public void deleteEnseignant(Long id) {
-        enseignantRepository.deleteById(id);
-    }
-
-
 
     public Enseignant archiverEnseignant(Long id) {
         Enseignant enseignant = enseignantRepository.findById(id)
@@ -65,5 +60,12 @@ public class EnseignantService {
     }
     public List<Enseignant> getAllEnseignantsArchives() {
         return enseignantRepository.findByStatutEnseignant(StatutEnseignant.ARCHIVE);
+    }
+
+    public Optional<Enseignant> rechercherEnseignant(Long matricule) {
+        if (matricule == null) {
+            return Optional.empty();
+        }
+        return enseignantRepository.findByMatricule(matricule);
     }
 }
