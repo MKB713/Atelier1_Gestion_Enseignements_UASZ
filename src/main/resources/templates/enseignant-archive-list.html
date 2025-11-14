@@ -67,7 +67,7 @@
                                 <th>Email</th>
                                 <th>Grade</th>
                                 <th>Spécialité</th>
-                                <th>Statut</th>
+                                <th class="text-end">Actions</th>
 
                             </tr>
                             </thead>
@@ -93,8 +93,12 @@
                                     <span class="badge bg-info" th:text="${enseignant.grade}">Professeur</span>
                                 </td>
                                 <td th:text="${enseignant.specialite}">Informatique</td>
-                                <td>
-                                    <span class="badge badge-archive" th:text="${enseignant.statutEnseignant}">ARCHIVE</span>
+                                <td class="text-end">
+                                        <a th:href="@{/view-enseignant/{id}(id=${enseignant.id})}"
+                                           class="btn btn-sm btn-outline-info"
+                                           title="Voir">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
                                 </td>
                             </tr>
                             </tbody>
