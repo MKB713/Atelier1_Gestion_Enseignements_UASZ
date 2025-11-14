@@ -1,5 +1,6 @@
 package com.uasz.Atelier1_Gestion_Enseignements_UASZ.controller;
 
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.dto.EnseignantUpdateDTO;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Enseignant;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.exceptions.MatriculeAlreadyExistsException;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.EnseignantService;
@@ -11,10 +12,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.http.HttpStatus;
 
 @Controller
 
@@ -59,8 +60,6 @@ public class EnseignantController {
         }
     }
 
-
-
     @PatchMapping("/{id}/archiver")
     @ResponseBody
     public ResponseEntity<String> archiverEnseignant(@PathVariable Long id) {
@@ -102,4 +101,62 @@ public class EnseignantController {
         return "resultatRecherche";
     }
 
+    @GetMapping("/edit-enseignant/{id}")
+    public String editEnseignant(@PathVariable Long id, Model model) {
+        try {
+            Enseignant enseignant = enseignantService.getEnseignantById(id);
+            if (enseignant == null) {
+                return "redirect:/lst-enseignants?error=Enseignant non trouvé";
+            }
+            model.addAttribute("enseignant", enseignant);
+            return "enseignant-edit";
+        } catch (RuntimeException e) {
+            return "redirect:/lst-enseignants?error=" + e.getMessage();
+        }
+    }
+
+    @PostMapping("/update-enseignant")
+    public String updateEnseignant(@RequestParam Long id,
+                                   @RequestParam(required = false) String grade,
+                                   @RequestParam(required = false) String statut,
+                                   @RequestParam(required = false) String email,
+                                   @RequestParam(required = false) String telephone,
+                                   @RequestParam(required = false) String adresse) {
+        EnseignantUpdateDTO updateDTO = new EnseignantUpdateDTO();
+        updateDTO.setGrade(grade);
+        if (statut != null && !statut.isEmpty()) {
+            try {
+                updateDTO.setStatut(com.uasz.Atelier1_Gestion_Enseignements_UASZ.enums.Statut.valueOf(statut));
+            } catch (IllegalArgumentException e) {
+                // Gérer l'erreur si le statut n'est pas valide
+            }
+        }
+        updateDTO.setEmail(email);
+        updateDTO.setTelephone(telephone);
+        updateDTO.setAdresse(adresse);
+
+        enseignantService.updateEnseignant(id, updateDTO);
+        return "redirect:/lst-enseignants";
+    }
+
+    // Endpoint REST pour la mise à jour via API
+    @PutMapping("/api/enseignants/{id}")
+    @ResponseBody
+    public ResponseEntity<?> updateEnseignantRest(@PathVariable Long id,
+                                                  @Valid @RequestBody EnseignantUpdateDTO updateDTO) {
+        try {
+            Enseignant updatedEnseignant = enseignantService.updateEnseignant(id, updateDTO);
+            return ResponseEntity.ok(updatedEnseignant);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Erreur de validation: " + e.getMessage());
+        } catch (RuntimeException e) {
+            if (e.getMessage().contains("non trouvé")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Enseignant non trouvé avec l'id: " + id);
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
+    }
 }
