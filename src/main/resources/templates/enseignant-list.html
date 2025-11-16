@@ -205,11 +205,12 @@
                                                    title="Modifier">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
-                                                <button type="button" class="btn btn-sm btn-outline-danger"
-                                                        th:onclick="'archiverEnseignant(' + ${enseignant.id} + ')'"
+                                                <a th:href="@{/lst-archives}"
+                                                   class="btn btn-sm btn-outline-warning"
+                                                   onclick="return confirm('Archiver cet enseignant ?')"
                                                    title="Archiver">
                                                     <i class="bi bi-archive"></i>
-                                                </button>
+                                                </a>
                                             </div>
                                         </td>
                                     </tr>
