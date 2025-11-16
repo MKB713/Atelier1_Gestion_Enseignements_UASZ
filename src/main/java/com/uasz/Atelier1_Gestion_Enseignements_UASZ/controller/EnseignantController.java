@@ -16,10 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
 
 @Controller
+
 public class EnseignantController {
 
     @Autowired
@@ -136,13 +135,8 @@ public class EnseignantController {
         updateDTO.setTelephone(telephone);
         updateDTO.setAdresse(adresse);
 
-        try {
-            enseignantService.updateEnseignant(id, updateDTO);
-            return "redirect:/lst-enseignants";
-        } catch (IllegalArgumentException e) {
-            // Capture l'erreur spécifique d'unicité (lancée dans le Service)
-            return "redirect:/edit-enseignant/" + id + "?error=" + e.getMessage();
-        }
+        enseignantService.updateEnseignant(id, updateDTO);
+        return "redirect:/lst-enseignants";
     }
 
     // Endpoint REST pour la mise à jour via API
@@ -165,17 +159,38 @@ public class EnseignantController {
                     .body(e.getMessage());
         }
     }
-        @GetMapping("/view-enseignant/{id}")
-        public String viewEnseignant(@PathVariable Long id, Model model) {
-            Enseignant enseignant = enseignantService.getEnseignantById(id);
 
-            if (enseignant != null) {
-                model.addAttribute("enseignant", enseignant);
-                return "enseignant-details"; // vue normale
-            } else {
-                model.addAttribute("errorMessage", "Enseignant introuvable avec l'ID " + id);
-                return "error-page"; // vue d'erreur personnalisée
-            }
+    // ENDPOINTS POUR L'ACTIVATION/DÉSACTIVATION (Optimisés pour AJAX)
+
+    /**
+     * Gère l'activation d'un enseignant via une requête POST/API.
+     * @param id L'identifiant de l'enseignant.
+     * @return Réponse HTTP (OK ou Erreur).
+     */
+    @PostMapping("/activer-enseignant/{id}")
+    @ResponseBody
+    public ResponseEntity<String> activerEnseignant(@PathVariable Long id) {
+        try {
+            enseignantService.activerEnseignant(id);
+            return ResponseEntity.ok("Enseignant activé avec succès.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 
+    /**
+     * Gère la désactivation d'un enseignant via une requête POST/API.
+     * @param id L'identifiant de l'enseignant.
+     * @return Réponse HTTP (OK ou Erreur).
+     */
+    @PostMapping("/desactiver-enseignant/{id}")
+    @ResponseBody
+    public ResponseEntity<String> desactiverEnseignant(@PathVariable Long id) {
+        try {
+            enseignantService.desactiverEnseignant(id);
+            return ResponseEntity.ok("Enseignant désactivé avec succès.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+}
