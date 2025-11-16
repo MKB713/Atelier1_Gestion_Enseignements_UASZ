@@ -19,6 +19,7 @@ public class Enseignant {
     private String prenom;
     private String adresse;
     private String telephone;
+    @Column(unique = true)
     private String email;
     private String grade;
     private LocalDate dateEmbauche;

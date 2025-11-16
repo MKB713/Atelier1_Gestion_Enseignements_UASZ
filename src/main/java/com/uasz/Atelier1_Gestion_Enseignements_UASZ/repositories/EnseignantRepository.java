@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface EnseignantRepository extends JpaRepository<Enseignant, Long> {
     Optional<Enseignant> findByMatricule(Long matricule);
     Optional<Enseignant> findByEmail(String email);
-    Optional<Enseignant> findByEmailAndIdIsNot(String email, Long id);
+    List<Enseignant> findByEmailAndIdIsNot(String email, Long id);
     List<Enseignant> findByNomContainingIgnoreCaseOrPrenomContainingIgnoreCase(String nom, String prenom);
     List<Enseignant> findByEstActif(boolean estActif);
     List<Enseignant> findByGrade(String grade);

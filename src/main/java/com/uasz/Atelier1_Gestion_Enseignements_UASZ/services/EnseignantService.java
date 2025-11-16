@@ -90,12 +90,12 @@ public class EnseignantService {
         }
 
         if (updateDTO.getEmail() != null && !updateDTO.getEmail().trim().isEmpty()) {
-            // Cherche un enseignant avec cet email MAIS un ID différent de celui qu'on modifie
-            enseignantRepository.findByEmailAndIdIsNot(updateDTO.getEmail(), id)
-                    .ifPresent(existingEnseignant -> {
-                        // Si un résultat est présent, l'email est utilisé par un AUTRE enseignant.
-                        throw new IllegalArgumentException("Cet email est déjà utilisé par un autre enseignant.");
-                    });
+            List<Enseignant> existingEnseignants = enseignantRepository.findByEmailAndIdIsNot(updateDTO.getEmail(), id);
+
+            // Si la liste contient AU MOINS un enseignant, l'email est déjà pris.
+            if (!existingEnseignants.isEmpty()) {
+                throw new IllegalArgumentException("Cet email est déjà utilisé par un autre enseignant.");
+            }
             enseignant.setEmail(updateDTO.getEmail());
         }
 
