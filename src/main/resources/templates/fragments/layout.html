@@ -69,6 +69,45 @@
                 <i class="bi bi-box-arrow-left"></i> Déconnexion
             </a>
         </li>
+
+
+
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'formations'} ? 'active'" th:href="@{/lst-formations}">
+                <i class="bi bi-mortarboard"></i> Formations
+            </a>
+        </li>
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'classes'} ? 'active'" th:href="@{/lst-classes}">
+                <i class="bi bi-people-fill"></i> Classes
+            </a>
+        </li>
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'maquettes'} ? 'active'" th:href="@{/lst-maquettes}">
+                <i class="bi bi-diagram-2"></i> Maquettes
+            </a>
+        </li>
+
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'ues'} ? 'active'" th:href="@{/lst-ues}">
+                <i class="bi bi-layers"></i> UEs & ECs
+            </a>
+        </li>
+
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'emploi-temps'} ? 'active'" th:href="@{/emploi-du-temps}">
+                <i class="bi bi-calendar-week"></i> Emploi du Temps
+            </a>
+        </li>
+
+        <li class="nav-item mb-1 mt-3">
+            <small class="text-white-50 text-uppercase px-3" style="font-size: 0.7rem;">Administration</small>
+        </li>
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'utilisateurs'} ? 'active'" th:href="@{/lst-utilisateurs}">
+                <i class="bi bi-shield-lock"></i> Utilisateurs
+            </a>
+        </li>
     </ul>
 </nav>
 

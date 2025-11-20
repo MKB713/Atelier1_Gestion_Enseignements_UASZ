@@ -3,13 +3,19 @@ package com.uasz.Atelier1_Gestion_Enseignements_UASZ.controller;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.dto.EnseignantUpdateDTO;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Enseignant;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.enums.Statut;
+//import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.EnseignantPDFExporter;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.EnseignantService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Controller
