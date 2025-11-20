@@ -39,11 +39,10 @@ public class ViewController {
     @Autowired
     private EcService ecService;
 
-    // --- Home Page ---
+    // --- Home Page (redirect to Seances list) ---
     @GetMapping("/")
-    public String home(Model model) {
-        model.addAttribute("message", "Bienvenue sur la gestion des emplois du temps !");
-        return "home"; // Assuming you have a home.html template
+    public String home() {
+        return "redirect:/seances";
     }
 
     // --- Gestion des Emplois du Temps (List all Seances) ---
@@ -74,7 +73,7 @@ public class ViewController {
             return "planning-salle";
         } catch (EntityNotFoundException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/"; // Redirect to home or an error page
+            return "redirect:/seances"; // Redirect to seances list
         }
     }
 
@@ -110,10 +109,10 @@ public class ViewController {
             model.addAttribute("enseignants", enseignantService.getAllEnseignants());
             model.addAttribute("salles", salleService.getAllSalles());
             model.addAttribute("ecs", ecService.getAllEcs());
-            return "seance-edit";
+            return "seance-edit"; // Correctly return the view name here
         } catch (EntityNotFoundException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/";
+            return "redirect:/seances"; // Redirect to seances list on error
         }
     }
 
@@ -128,7 +127,7 @@ public class ViewController {
             return "seance-delete-confirm";
         } catch (EntityNotFoundException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/";
+            return "redirect:/seances"; // Redirect to seances list
         }
     }
 
@@ -169,7 +168,7 @@ public class ViewController {
         try {
             seanceService.createSeance(seanceDTO);
             redirectAttributes.addFlashAttribute("message", "Séance ajoutée avec succès !");
-            return "redirect:/";
+            return "redirect:/seances"; // Redirect to seances list
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Erreur lors de l'ajout de la séance : " + e.getMessage());
             return "redirect:/seances/add";
@@ -182,7 +181,7 @@ public class ViewController {
         try {
             seanceService.updateSeance(id, seanceDTO);
             redirectAttributes.addFlashAttribute("message", "Séance modifiée avec succès !");
-            return "redirect:/";
+            return "redirect:/seances"; // Redirect to seances list
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Erreur lors de la modification de la séance : " + e.getMessage());
             return "redirect:/seances/edit/" + id;
@@ -195,7 +194,7 @@ public class ViewController {
         try {
             seanceService.deleteSeance(id);
             redirectAttributes.addFlashAttribute("message", "Séance supprimée avec succès !");
-            return "redirect:/";
+            return "redirect:/seances"; // Redirect to seances list
         } catch (EntityNotFoundException e) {
             redirectAttributes.addFlashAttribute("error", "Erreur lors de la suppression : " + e.getMessage());
             return "redirect:/seances/delete/" + id;
