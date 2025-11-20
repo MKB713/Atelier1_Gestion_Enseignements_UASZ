@@ -1,15 +1,17 @@
 package com.uasz.Atelier1_Gestion_Enseignements_UASZ.services;
 
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.dto.EnseignantUpdateDTO;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Enseignant;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.enums.StatutEnseignant;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.exceptions.MatriculeAlreadyExistsException;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.repositories.EnseignantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.Normalizer;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Year;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,152 +21,197 @@ public class EnseignantService {
     @Autowired
     private EnseignantRepository enseignantRepository;
 
+    // ----------------------------------------------------------------------
+    // --- LOGIQUE METIER : VALIDATIONS & UTILITAIRES ---
+    // ----------------------------------------------------------------------
+
+    /**
+     * Nettoie une chaîne (enlève accents, espaces, met en minuscule)
+     */
+    private String cleanString(String input) {
+        if (input == null) return "";
+        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
+        return normalized.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "")
+                .toLowerCase()
+                .trim()
+                .replace(" ", "");
+    }
+
+    /**
+     * Génère un email institutionnel unique : prenom.nom@univ-zig.sn
+     */
+    private String generateUniqueEmail(String prenom, String nom) {
+        String cleanPrenom = cleanString(prenom);
+        String cleanNom = cleanString(nom);
+        String domain = "@univ-zig.sn";
+
+        String baseEmail = cleanPrenom + "." + cleanNom;
+        String candidateEmail = baseEmail + domain;
+
+        int counter = 1;
+        while (enseignantRepository.findByEmail(candidateEmail).isPresent()) {
+            candidateEmail = baseEmail + counter + domain;
+            counter++;
+        }
+        return candidateEmail;
+    }
+
+    /**
+     * Vérifie que la date n'est pas dans le futur
+     */
+    private void validateDateEmbauche(LocalDate dateEmbauche) {
+        if (dateEmbauche != null && dateEmbauche.isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("La date d'embauche ne peut pas être une date future (" + dateEmbauche + ").");
+        }
+    }
+
+    /**
+     * Vérifie que l'enseignant a au moins 25 ans
+     */
+    private void validateAge(LocalDate dateNaissance) {
+        if (dateNaissance != null) {
+            LocalDate dateMinimum = LocalDate.now().minusYears(25);
+            // Si la date de naissance est APRÈS la date limite (donc plus jeune que 25 ans)
+            if (dateNaissance.isAfter(dateMinimum)) {
+                throw new IllegalArgumentException("L'enseignant doit être âgé d'au moins 25 ans.");
+            }
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    // --- GENERATION MATRICULE ---
+    // ----------------------------------------------------------------------
+    private Long generateNextMatricule() {
+        int currentYear = Year.now().getValue();
+        final long YEAR_BASE = (long) currentYear * 100000L;
+
+        List<Enseignant> allEnseignants = enseignantRepository.findAll();
+
+        Optional<Long> maxMatriculeThisYearOpt = allEnseignants.stream()
+                .filter(e -> e.getMatricule() != null && e.getMatricule() >= YEAR_BASE && e.getMatricule() < YEAR_BASE + 100000)
+                .map(Enseignant::getMatricule)
+                .max(Comparator.naturalOrder());
+
+        long nextRank = maxMatriculeThisYearOpt.map(maxMatricule -> (maxMatricule % 100000L) + 1L).orElse(1L);
+
+        if (nextRank >= 100000L) {
+            throw new RuntimeException("Erreur de séquence : Limite atteinte pour l'année " + currentYear);
+        }
+
+        return YEAR_BASE + nextRank;
+    }
+
+    // ----------------------------------------------------------------------
+    // --- CRUD OPERATIONS ---
+    // ----------------------------------------------------------------------
 
     public Enseignant getEnseignantById(Long id) {
         return enseignantRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Enseignant non trouvé avec l'id: " + id));
     }
 
+    @Transactional
     public void saveEnseignant(Enseignant enseignant) {
-        // Vérifier l'unicité du matricule
-        Optional<Enseignant> existingEnseignant = enseignantRepository.findByMatricule(enseignant.getMatricule());
+        // 1. Validations
+        validateDateEmbauche(enseignant.getDateEmbauche());
+        validateAge(enseignant.getDateNaissance()); // Ajout de la validation d'âge
 
-        if (existingEnseignant.isPresent()) {
-            // Si c'est une modification, vérifier que ce n'est pas le même enseignant
-            if (enseignant.getId() == null || !existingEnseignant.get().getId().equals(enseignant.getId())) {
-                throw new MatriculeAlreadyExistsException("Le matricule " + enseignant.getMatricule() + " existe déjà");
-            }
-        }
+        // 2. Génération email
+        String generatedEmail = generateUniqueEmail(enseignant.getPrenom(), enseignant.getNom());
+        enseignant.setEmail(generatedEmail);
 
+        // 3. Initialisation
         if (enseignant.getId() == null) {
+            enseignant.setMatricule(generateNextMatricule());
             enseignant.setDateCreation(LocalDateTime.now());
             enseignant.setStatutEnseignant(StatutEnseignant.ACTIF);
-            // Initialisation de estActif à true par défaut lors de la création
             enseignant.setEstActif(true);
         }
+
         enseignant.setDateModification(LocalDateTime.now());
         enseignantRepository.save(enseignant);
     }
 
-    public Enseignant archiverEnseignant(Long id) {
-        Enseignant enseignant = enseignantRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Enseignant non trouvé avec l'id : " + id));
+    @Transactional
+    public Enseignant updateEnseignant(Long id, Enseignant enseignantForm) {
+        Enseignant enseignant = getEnseignantById(id);
 
-        enseignant.setStatutEnseignant(StatutEnseignant.ARCHIVE);
+        // 1. Validations
+        validateDateEmbauche(enseignantForm.getDateEmbauche());
+        validateAge(enseignantForm.getDateNaissance()); // Ajout de la validation d'âge
+
+        // 2. Mise à jour des champs
+        enseignant.setNom(enseignantForm.getNom());
+        enseignant.setPrenom(enseignantForm.getPrenom());
+        enseignant.setSpecialite(enseignantForm.getSpecialite());
+
+        enseignant.setDateNaissance(enseignantForm.getDateNaissance()); // Ajouté
+        enseignant.setLieuNaissance(enseignantForm.getLieuNaissance()); // Ajouté
+
+        enseignant.setDateEmbauche(enseignantForm.getDateEmbauche());
+        enseignant.setGrade(enseignantForm.getGrade());
+        enseignant.setStatut(enseignantForm.getStatut());
+
+        // On met à jour le téléphone et l'adresse, mais pas l'email pro (généralement fixe)
+        enseignant.setTelephone(enseignantForm.getTelephone());
+        enseignant.setAdresse(enseignantForm.getAdresse());
+
         enseignant.setDateModification(LocalDateTime.now());
-        enseignantRepository.save(enseignant);
 
-        return enseignant;
+        return enseignantRepository.save(enseignant);
     }
+
+    // ----------------------------------------------------------------------
+    // --- LISTE ET RECHERCHE ---
+    // ----------------------------------------------------------------------
 
     public List<Enseignant> getAllEnseignants() {
         return enseignantRepository.findByStatutEnseignantNot(StatutEnseignant.ARCHIVE);
     }
+
     public List<Enseignant> getAllEnseignantsArchives() {
         return enseignantRepository.findByStatutEnseignant(StatutEnseignant.ARCHIVE);
     }
 
-    public Optional<Enseignant> rechercherEnseignant(Long matricule) {
-        if (matricule == null) {
-            return Optional.empty();
-        }
-        return enseignantRepository.findByMatricule(matricule);
-    }
+    // ----------------------------------------------------------------------
+    // --- GESTION DU STATUT ---
+    // ----------------------------------------------------------------------
 
     @Transactional
-    public Enseignant updateEnseignant(Long id, EnseignantUpdateDTO updateDTO) {
-        // Vérifier que l'enseignant existe
-        Enseignant enseignant = enseignantRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Enseignant non trouvé avec l'id: " + id));
-
-        // Valider les données modifiées
-        validateUpdateData(updateDTO);
-
-        // Mettre à jour uniquement les champs autorisés
-        if (updateDTO.getGrade() != null && !updateDTO.getGrade().trim().isEmpty()) {
-            enseignant.setGrade(updateDTO.getGrade());
-        }
-
-        if (updateDTO.getStatut() != null) {
-            enseignant.setStatut(updateDTO.getStatut());
-        }
-
-        if (updateDTO.getEmail() != null && !updateDTO.getEmail().trim().isEmpty()) {
-            List<Enseignant> existingEnseignants = enseignantRepository.findByEmailAndIdIsNot(updateDTO.getEmail(), id);
-
-            // Si la liste contient AU MOINS un enseignant, l'email est déjà pris.
-            if (!existingEnseignants.isEmpty()) {
-                throw new IllegalArgumentException("Cet email est déjà utilisé par un autre enseignant.");
-            }
-            enseignant.setEmail(updateDTO.getEmail());
-        }
-
-        if (updateDTO.getTelephone() != null && !updateDTO.getTelephone().trim().isEmpty()) {
-            enseignant.setTelephone(updateDTO.getTelephone());
-        }
-
-        if (updateDTO.getAdresse() != null && !updateDTO.getAdresse().trim().isEmpty()) {
-            enseignant.setAdresse(updateDTO.getAdresse());
-        }
-
-        // Enregistrer la date de modification
+    public Enseignant archiverEnseignant(Long id) {
+        Enseignant enseignant = getEnseignantById(id);
+        enseignant.setStatutEnseignant(StatutEnseignant.ARCHIVE);
+        enseignant.setEstActif(false);
         enseignant.setDateModification(LocalDateTime.now());
-
-        // Sauvegarder les modifications
         return enseignantRepository.save(enseignant);
     }
 
-    private void validateUpdateData(EnseignantUpdateDTO updateDTO) {
-        // Validation des champs
-        if (updateDTO.getEmail() != null && !updateDTO.getEmail().trim().isEmpty()) {
-            if (!isValidEmail(updateDTO.getEmail())) {
-                throw new IllegalArgumentException("Format d'email invalide");
-            }
-        }
-
-        if (updateDTO.getTelephone() != null && !updateDTO.getTelephone().trim().isEmpty()) {
-            if (!isValidTelephone(updateDTO.getTelephone())) {
-                throw new IllegalArgumentException("Format de téléphone invalide");
-            }
-        }
-    }
-
-    private boolean isValidEmail(String email) {
-        return email != null && email.matches("^[A-Za-z0-9+_.-]+@(.+)$");
-    }
-
-    private boolean isValidTelephone(String telephone) {
-        return telephone != null && telephone.matches("^[+]?[0-9\\s\\-\\(\\)]{7,20}$");
-    }
-
-
-    // NOUVELLES MÉTHODES POUR L'ACTIVATION/DÉSACTIVATION
-
-    /**
-     * Active l'enseignant (estActif = true).
-     * @param id L'identifiant de l'enseignant.
-     * @return L'enseignant mis à jour.
-     */
     @Transactional
-    public Enseignant activerEnseignant(Long id) {
-        Enseignant enseignant = enseignantRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Enseignant non trouvé avec l'id: " + id));
-
+    public Enseignant desarchiverEnseignant(Long id) {
+        Enseignant enseignant = getEnseignantById(id);
+        enseignant.setStatutEnseignant(StatutEnseignant.ACTIF);
         enseignant.setEstActif(true);
         enseignant.setDateModification(LocalDateTime.now());
         return enseignantRepository.save(enseignant);
     }
 
-    /**
-     * Désactive l'enseignant (estActif = false).
-     * @param id L'identifiant de l'enseignant.
-     * @return L'enseignant mis à jour.
-     */
+    @Transactional
+    public Enseignant activerEnseignant(Long id) {
+        Enseignant enseignant = getEnseignantById(id);
+        if (enseignant.getStatutEnseignant() == StatutEnseignant.ARCHIVE) {
+            throw new RuntimeException("Impossible d'activer un enseignant archivé.");
+        }
+        enseignant.setEstActif(true);
+        enseignant.setDateModification(LocalDateTime.now());
+        return enseignantRepository.save(enseignant);
+    }
+
     @Transactional
     public Enseignant desactiverEnseignant(Long id) {
-        Enseignant enseignant = enseignantRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Enseignant non trouvé avec l'id: " + id));
-
+        Enseignant enseignant = getEnseignantById(id);
+        if (enseignant.getStatutEnseignant() == StatutEnseignant.ARCHIVE) {
+            throw new RuntimeException("Impossible de désactiver un enseignant archivé.");
+        }
         enseignant.setEstActif(false);
         enseignant.setDateModification(LocalDateTime.now());
         return enseignantRepository.save(enseignant);
