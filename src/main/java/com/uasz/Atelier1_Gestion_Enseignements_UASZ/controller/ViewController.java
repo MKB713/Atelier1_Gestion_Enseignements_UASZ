@@ -42,7 +42,7 @@ public class ViewController {
     // --- Home Page (redirect to Seances list) ---
     @GetMapping("/")
     public String home() {
-        return "redirect:/seances";
+        return "";
     }
 
     // --- Gestion des Emplois du Temps (List all Seances) ---

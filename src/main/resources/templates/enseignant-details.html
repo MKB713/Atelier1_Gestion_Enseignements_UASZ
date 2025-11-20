@@ -37,33 +37,39 @@
                 </div>
                 <ul class="nav flex-column px-2">
                     <li class="nav-item">
-                        <a class="nav-link rounded mb-1" th:href="@{/}">
+                        <a class="nav-link rounded mb-1" href="/" th:href="@{/}">
                             <i class="bi bi-house-door me-2"></i> Accueil
                         </a>
+
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link rounded mb-1" th:href="@{/lst-filieres}">
+                        <a class="nav-link rounded mb-1" href="/lst-filieres" th:href="@{/lst-filieres}">
                             <i class="bi bi-diagram-3 me-2"></i> Filières
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link rounded mb-1 active" th:href="@{/lst-enseignants}">
+                        <a class="nav-link rounded mb-1 active" href="/lst-enseignants" th:href="@{/lst-enseignants}">
                             <i class="bi bi-person-badge me-2"></i> Enseignants
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link rounded mb-1" th:href="@{/lst-formations}">
+                        <a class="nav-link rounded mb-1" href="/lst-formations" th:href="@{/lst-formations}">
                             <i class="bi bi-book me-2"></i> Formations
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link rounded mb-1" th:href="@{/lst-modules}">
+                        <a class="nav-link rounded mb-1" href="/lst-modules" th:href="@{/lst-modules}">
                             <i class="bi bi-journal-code me-2"></i> Modules
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link rounded mb-1" th:href="@{/lst-ues}">
+                        <a class="nav-link rounded mb-1" href="/lst-ues" th:href="@{/lst-ues}">
                             <i class="bi bi-layers me-2"></i> Unités d'Enseignement
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link rounded mb-1" href="/seances" th:href="@{/seances}">
+                            <i class="bi bi-calendar-event me-2"></i> Gestion des Emplois du Temps
                         </a>
                     </li>
                 </ul>

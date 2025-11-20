@@ -36,28 +36,39 @@
                 </div>
                 <ul class="nav flex-column px-2">
                     <li class="nav-item">
-                        <a class="nav-link rounded mb-1 active" href="/seances" th:href="@{/seances}">
+                        <a class="nav-link rounded mb-1" href="/" th:href="@{/}">
+                            <i class="bi bi-house-door me-2"></i> Accueil
+                        </a>
+
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link rounded mb-1" href="/lst-filieres" th:href="@{/lst-filieres}">
+                            <i class="bi bi-diagram-3 me-2"></i> Filières
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link rounded mb-1 active" href="/lst-enseignants" th:href="@{/lst-enseignants}">
+                            <i class="bi bi-person-badge me-2"></i> Enseignants
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link rounded mb-1" href="/lst-formations" th:href="@{/lst-formations}">
+                            <i class="bi bi-book me-2"></i> Formations
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link rounded mb-1" href="/lst-modules" th:href="@{/lst-modules}">
+                            <i class="bi bi-journal-code me-2"></i> Modules
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link rounded mb-1" href="/lst-ues" th:href="@{/lst-ues}">
+                            <i class="bi bi-layers me-2"></i> Unités d'Enseignement
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link rounded mb-1" href="/seances" th:href="@{/seances}">
                             <i class="bi bi-calendar-event me-2"></i> Gestion des Emplois du Temps
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link rounded mb-1" href="/planning/salle" th:href="@{/planning/salle}">
-                            <i class="bi bi-calendar-week me-2"></i> Planning par Salle
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link rounded mb-1" href="/seances/add" th:href="@{/seances/add}">
-                            <i class="bi bi-plus-circle me-2"></i> Ajouter Séance
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link rounded mb-1" href="/seances/enseignant/search" th:href="@{/seances/enseignant/search}">
-                            <i class="bi bi-person-lines-fill me-2"></i> Séances Enseignant
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link rounded mb-1" href="/planning/pdf/download" th:href="@{/planning/pdf/download}">
-                            <i class="bi bi-file-earmark-pdf me-2"></i> Télécharger Planning PDF
                         </a>
                     </li>
                 </ul>
