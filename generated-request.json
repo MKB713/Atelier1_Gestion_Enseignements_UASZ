@@ -1,0 +1,57 @@
+{
+  "collection" : {
+    "info" : {
+      "name" : "Generated Requests",
+      "schema" : "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item" : [ {
+      "name" : "add-filiere",
+      "request" : {
+        "method" : "GET",
+        "header" : [ ],
+        "url" : {
+          "raw" : "http://localhost:8080/api/add-filiere",
+          "host" : [ "http://localhost:8080" ],
+          "path" : [ "/api", "add-filiere" ],
+          "query" : [ {
+            "key" : "model",
+            "value" : ""
+          } ]
+        }
+      },
+      "response" : [ ]
+    }, {
+      "name" : "add-filiere",
+      "request" : {
+        "method" : "GET",
+        "header" : [ ],
+        "url" : {
+          "raw" : "http://localhost:8080/api/add-filiere",
+          "host" : [ "http://localhost:8080" ],
+          "path" : [ "/api", "add-filiere" ],
+          "query" : [ {
+            "key" : "model",
+            "value" : ""
+          } ]
+        }
+      },
+      "response" : [ ]
+    }, {
+      "name" : "add-filiere",
+      "request" : {
+        "method" : "GET",
+        "header" : [ ],
+        "url" : {
+          "raw" : "http://localhost:8080/api/add-filiere",
+          "host" : [ "http://localhost:8080" ],
+          "path" : [ "/api", "add-filiere" ],
+          "query" : [ {
+            "key" : "model",
+            "value" : ""
+          } ]
+        }
+      },
+      "response" : [ ]
+    } ]
+  }
+}

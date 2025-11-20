@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name="Enseignants")
@@ -33,6 +34,9 @@ public class Enseignant {
     private StatutEnseignant statutEnseignant;
     private boolean estActif;
     private String specialite;
+
+    @OneToMany(mappedBy = "enseignant", cascade = CascadeType.ALL)
+    private List<Seance> seances;
 
     public Enseignant() {
     }

@@ -1,5 +1,6 @@
 package com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities;
 import jakarta.persistence.*;
+import java.util.List;
 
 
 @Entity
@@ -12,6 +13,9 @@ public class Ec {
     private String code;
     @ManyToOne
     private Ue ue;
+
+    @OneToMany(mappedBy = "ec", cascade = CascadeType.ALL)
+    private List<Seance> seances;
 
     public Ec() {
     }
