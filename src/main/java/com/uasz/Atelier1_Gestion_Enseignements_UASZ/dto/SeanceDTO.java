@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class SeanceDTO {
+    private Long id;
     private LocalDate dateSeance;
     private LocalTime heureDebut;
     private LocalTime heureFin;
@@ -85,5 +86,13 @@ public class SeanceDTO {
 
     public void setEcNom(String ecNom) {
         this.ecNom = ecNom;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
