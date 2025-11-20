@@ -1,25 +1,37 @@
 package com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities;
 
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.enums.StatutFormation;
 import jakarta.persistence.*;
 
 import java.util.Date;
 
 @Entity
-@Table(name = "Formations")
+@Table(name = "formations")
 public class Formation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true)
     private String code;
+    @Column(unique = true)
     private String libelle;
     private String description;
     private Date dateCreation;
+
     @ManyToOne
+    @JoinColumn(name = "filiere_id")
     private Filiere filiere;
+
+
     @ManyToOne
+    @JoinColumn(name = "niveau_id")
     private Niveau niveau;
+
     @OneToOne(mappedBy = "formation")
     private Maquette maquette;
+
+    @Enumerated(EnumType.STRING)
+    private StatutFormation statutFormation = StatutFormation.ACTIVE;
 
     public Formation() {
     }
@@ -33,6 +45,8 @@ public class Formation {
         this.filiere = filiere;
         this.niveau = niveau;
     }
+
+    // getters / setters (y compris pour statutFormation)
 
     public Long getId() {
         return id;
@@ -89,6 +103,20 @@ public class Formation {
     public void setNiveau(Niveau niveau) {
         this.niveau = niveau;
     }
+
+    public Maquette getMaquette() {
+        return maquette;
+    }
+
+    public void setMaquette(Maquette maquette) {
+        this.maquette = maquette;
+    }
+
+    public StatutFormation getStatutFormation() {
+        return statutFormation;
+    }
+
+    public void setStatutFormation(StatutFormation statutFormation) {
+        this.statutFormation = statutFormation;
+    }
 }
-
-
