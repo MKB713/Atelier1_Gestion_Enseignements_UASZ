@@ -36,12 +36,6 @@
                 </div>
                 <ul class="nav flex-column px-2">
                     <li class="nav-item">
-                        <a class="nav-link rounded mb-1" href="/" th:href="@{/}">
-                            <i class="bi bi-house-door me-2"></i> Accueil
-                        </a>
-
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link rounded mb-1" href="/lst-filieres" th:href="@{/lst-filieres}">
                             <i class="bi bi-diagram-3 me-2"></i> Filières
                         </a>
@@ -67,8 +61,13 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link rounded mb-1" href="/seances" th:href="@{/seances}">
+                        <a class="nav-link rounded mb-1 active" href="/seances" th:href="@{/seances}">
                             <i class="bi bi-calendar-event me-2"></i> Gestion des Emplois du Temps
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link rounded mb-1" href="/planning/salle/search" th:href="@{/planning/salle/search}">
+                            <i class="bi bi-calendar-week me-2"></i> Planning par Salle
                         </a>
                     </li>
                 </ul>
@@ -89,7 +88,7 @@
                         <div class="card-body">
                             <h5 class="card-title"><i class="bi bi-calendar-week me-2"></i>Planning par Salle</h5>
                             <p class="card-text">Consulter les emplois du temps par salle.</p>
-                            <a th:href="@{/planning/salle}" class="btn btn-outline-primary">Accéder</a>
+                            <a th:href="@{/planning/salle/search}" class="btn btn-outline-primary">Accéder</a>
                         </div>
                     </div>
                 </div>

@@ -65,6 +65,11 @@ public class ViewController {
     }
 
     // --- US33: Récupérer les plannings des salles ---
+    @GetMapping("/planning/salle/search")
+    public String showPlanningBySalleSearchForm() {
+        return "planning-salle-search";
+    }
+
     @GetMapping("/planning/salle")
     public String getPlanningBySalle(@RequestParam("salleId") Long salleId, Model model, RedirectAttributes redirectAttributes) {
         try {
@@ -73,7 +78,7 @@ public class ViewController {
             return "planning-salle";
         } catch (EntityNotFoundException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/seances"; // Redirect to seances list
+            return "redirect:/planning/salle/search"; // Redirect to search page with error
         }
     }
 
