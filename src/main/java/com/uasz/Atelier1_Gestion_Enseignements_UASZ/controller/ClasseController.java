@@ -44,7 +44,7 @@ public class ClasseController {
     public String addClasse(Model model) {
         Classe classe = new Classe();
         model.addAttribute("classe", classe);
-        model.addAttribute("filieres", filiereService.getAllFilieres());
+        model.addAttribute("filieres", filiereService.getAllFiliere());
         model.addAttribute("niveaux", niveauService.getAllNiveaux());
         return "classe-add";
     }
@@ -57,7 +57,7 @@ public class ClasseController {
                              BindingResult bindingResult,
                              Model model) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("filieres", filiereService.getAllFilieres());
+            model.addAttribute("filieres", filiereService.getAllFiliere());
             model.addAttribute("niveaux", niveauService.getAllNiveaux());
             return "classe-add";
         }
@@ -81,12 +81,12 @@ public class ClasseController {
             return "redirect:/lst-classes";
         } catch (IllegalArgumentException e) {
             model.addAttribute("codeError", e.getMessage());
-            model.addAttribute("filieres", filiereService.getAllFilieres());
+            model.addAttribute("filieres", filiereService.getAllFiliere());
             model.addAttribute("niveaux", niveauService.getAllNiveaux());
             return "classe-add";
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
             model.addAttribute("error", "Erreur lors de l'enregistrement : violation de contrainte d'intégrité.");
-            model.addAttribute("filieres", filiereService.getAllFilieres());
+            model.addAttribute("filieres", filiereService.getAllFiliere());
             model.addAttribute("niveaux", niveauService.getAllNiveaux());
             return "classe-add";
         }
@@ -100,7 +100,7 @@ public class ClasseController {
                              @RequestParam(required = false) String error) {
         Classe classe = classeService.getClasseById(id);
         model.addAttribute("classe", classe);
-        model.addAttribute("filieres", filiereService.getAllFilieres());
+        model.addAttribute("filieres", filiereService.getAllFiliere());
         model.addAttribute("niveaux", niveauService.getAllNiveaux());
         if (error != null) {
             model.addAttribute("error", error);
