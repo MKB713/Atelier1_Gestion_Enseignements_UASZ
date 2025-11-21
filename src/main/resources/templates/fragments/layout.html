@@ -41,50 +41,32 @@
         </li>
 
         <li class="nav-item mb-1">
-            <a class="nav-link" th:classappend="${activePage == 'filieres'} ? 'active'" th:href="@{/lst-filieres}">
-                <i class="bi bi-diagram-3"></i> Filières
+            <a class="nav-link" th:classappend="${activePage == 'classes'} ? 'active'" th:href="@{/lst-classes}">
+                <i class="bi bi-people-fill"></i> Classes
             </a>
         </li>
-
-        <li class="nav-item mb-1">
-            <a class="nav-link" th:classappend="${activePage == 'modules'} ? 'active'" th:href="@{/lst-modules}">
-                <i class="bi bi-journal-bookmark"></i> Modules
-            </a>
-        </li>
-
-        <li class="nav-item mb-1">
-            <a class="nav-link" th:classappend="${activePage == 'ues'} ? 'active'" th:href="@{/lst-ues}">
-                <i class="bi bi-layers"></i> Unités d'Ens.
-            </a>
-        </li>
-
-        <li class="nav-item mb-1">
-            <a class="nav-link" th:classappend="${activePage == 'formations'} ? 'active'" th:href="@{/lst-formations}">
-                <i class="bi bi-book"></i> Formations
-            </a>
-        </li>
-
-        <li class="nav-item mt-5 pt-3 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
-            <a class="nav-link text-warning" th:href="@{/logout}">
-                <i class="bi bi-box-arrow-left"></i> Déconnexion
-            </a>
-        </li>
-
-
 
         <li class="nav-item mb-1">
             <a class="nav-link" th:classappend="${activePage == 'formations'} ? 'active'" th:href="@{/lst-formations}">
                 <i class="bi bi-mortarboard"></i> Formations
             </a>
         </li>
+
         <li class="nav-item mb-1">
-            <a class="nav-link" th:classappend="${activePage == 'classes'} ? 'active'" th:href="@{/lst-classes}">
-                <i class="bi bi-people-fill"></i> Classes
+            <a class="nav-link" th:classappend="${activePage == 'filieres'} ? 'active'" th:href="@{/lst-filieres}">
+                <i class="bi bi-diagram-3"></i> Filières
             </a>
         </li>
+
         <li class="nav-item mb-1">
             <a class="nav-link" th:classappend="${activePage == 'maquettes'} ? 'active'" th:href="@{/lst-maquettes}">
                 <i class="bi bi-diagram-2"></i> Maquettes
+            </a>
+        </li>
+
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'modules'} ? 'active'" th:href="@{/lst-modules}">
+                <i class="bi bi-journal-bookmark"></i> Modules
             </a>
         </li>
 
@@ -106,12 +88,18 @@
             </a>
         </li>
 
-        <li class="nav-item mb-1 mt-3">
+        <li class="nav-item mb-1 mt-3 pt-3 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
             <small class="text-white-50 text-uppercase px-3" style="font-size: 0.7rem;">Administration</small>
         </li>
         <li class="nav-item mb-1">
             <a class="nav-link" th:classappend="${activePage == 'utilisateurs'} ? 'active'" th:href="@{/lst-utilisateurs}">
                 <i class="bi bi-shield-lock"></i> Utilisateurs
+            </a>
+        </li>
+
+        <li class="nav-item mt-4 pt-3 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
+            <a class="nav-link text-warning" th:href="@{/logout}">
+                <i class="bi bi-box-arrow-left"></i> Déconnexion
             </a>
         </li>
     </ul>
