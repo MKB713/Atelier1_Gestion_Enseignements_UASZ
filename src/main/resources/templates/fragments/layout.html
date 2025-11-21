@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="headerParams(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">UASZ - Portail Académique</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+    <link rel="stylesheet" th:href="@{/css/academic.css}">
+</head>
+
+<body>
+
+<nav class="sidebar d-flex flex-column" th:fragment="sidebar(activePage)">
+
+    <div class="sidebar-brand">
+        <img th:src="@{/images/logo-uasz.jpg}"
+             alt="Logo UASZ"
+             class="university-logo"
+             onerror="this.src='https://via.placeholder.com/80/1a5e34/FFFFFF?text=UASZ'"/>
+
+        <h5 class="fw-bold mt-2 text-white">UASZ</h5>
+        <small class="text-white-50">Ziguinchor</small>
+    </div>
+
+    <ul class="nav flex-column px-2 mt-3">
+
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'accueil'} ? 'active'" th:href="@{/}">
+                <i class="bi bi-speedometer2"></i> Tableau de bord
+            </a>
+        </li>
+
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'enseignants'} ? 'active'" th:href="@{/lst-enseignants}">
+                <i class="bi bi-person-video3"></i> Enseignants
+            </a>
+        </li>
+
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'filieres'} ? 'active'" th:href="@{/lst-filieres}">
+                <i class="bi bi-diagram-3"></i> Filières
+            </a>
+        </li>
+
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'modules'} ? 'active'" th:href="@{/lst-modules}">
+                <i class="bi bi-journal-bookmark"></i> Modules
+            </a>
+        </li>
+
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'ues'} ? 'active'" th:href="@{/lst-ues}">
+                <i class="bi bi-layers"></i> Unités d'Ens.
+            </a>
+        </li>
+
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'formations'} ? 'active'" th:href="@{/lst-formations}">
+                <i class="bi bi-book"></i> Formations
+            </a>
+        </li>
+
+        <li class="nav-item mt-5 pt-3 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
+            <a class="nav-link text-warning" th:href="@{/logout}">
+                <i class="bi bi-box-arrow-left"></i> Déconnexion
+            </a>
+        </li>
+
+
+
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'formations'} ? 'active'" th:href="@{/lst-formations}">
+                <i class="bi bi-mortarboard"></i> Formations
+            </a>
+        </li>
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'classes'} ? 'active'" th:href="@{/lst-classes}">
+                <i class="bi bi-people-fill"></i> Classes
+            </a>
+        </li>
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'maquettes'} ? 'active'" th:href="@{/lst-maquettes}">
+                <i class="bi bi-diagram-2"></i> Maquettes
+            </a>
+        </li>
+
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'ues'} ? 'active'" th:href="@{/lst-ues}">
+                <i class="bi bi-layers"></i> UEs & ECs
+            </a>
+        </li>
+
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'emploi-temps'} ? 'active'" th:href="@{/emploi-du-temps}">
+                <i class="bi bi-calendar-week"></i> Emploi du Temps
+            </a>
+        </li>
+
+        <li class="nav-item mb-1 mt-3">
+            <small class="text-white-50 text-uppercase px-3" style="font-size: 0.7rem;">Administration</small>
+        </li>
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'utilisateurs'} ? 'active'" th:href="@{/lst-utilisateurs}">
+                <i class="bi bi-shield-lock"></i> Utilisateurs
+            </a>
+        </li>
+    </ul>
+</nav>
+
+</body>
+</html>

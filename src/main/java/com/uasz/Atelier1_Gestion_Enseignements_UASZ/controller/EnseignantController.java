@@ -2,247 +2,164 @@ package com.uasz.Atelier1_Gestion_Enseignements_UASZ.controller;
 
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.dto.EnseignantUpdateDTO;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Enseignant;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.exceptions.MatriculeAlreadyExistsException;
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.enums.Statut;
+//import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.EnseignantPDFExporter;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.EnseignantService;
-import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.*;
-import java.util.ArrayList;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-import org.springframework.http.HttpStatus;
 
 @Controller
-
 public class EnseignantController {
 
     @Autowired
     private EnseignantService enseignantService;
 
-    @RequestMapping("/lst-enseignants")
-    public String index(Model model) {
-        model.addAttribute("enseignants", enseignantService.getAllEnseignants());
+    // ----------------------------------------------------------------------
+    // --- LISTES & VUES PRINCIPALES ---
+    // ----------------------------------------------------------------------
+    @GetMapping("/lst-enseignants")
+    public String listEnseignants(Model model) {
+        List<Enseignant> enseignants = enseignantService.getAllEnseignants();
+        model.addAttribute("enseignants", enseignants);
         return "enseignant-list";
     }
 
-    @RequestMapping("/add-enseignant")
-    public String addEnseignant(Model model) {
-        Enseignant enseignant = new Enseignant();
-        model.addAttribute("enseignant", enseignant);
-        return "enseignant-add";
-    }
-
-    @RequestMapping("/save-enseignant")
-    public String save(@Valid Enseignant enseignant, BindingResult bindingResult, Model model) {
-        if (bindingResult.hasErrors()) {
-            bindingResult.getAllErrors().forEach(error -> {
-                System.out.println("Erreur de validation: " + error.getDefaultMessage());
-            });
-            return "enseignant-add";
-        }
-
-        try {
-            enseignantService.saveEnseignant(enseignant);
-            return "redirect:/lst-enseignants";
-        } catch (MatriculeAlreadyExistsException e) {
-            model.addAttribute("matriculeError", e.getMessage());
-            return "enseignant-add";
-        } catch (org.springframework.dao.DataIntegrityViolationException e) {
-            // Capture l'erreur de contrainte d'unicité de la base de données (Email ou Matricule)
-            String errorMessage = "Le Matricule ou l'Email est déjà utilisé.";
-
-            //  message d'erreur si l'exception contient les détails MySQL/Hibernate
-            if (e.getMessage() != null) {
-                if (e.getMessage().contains("Duplicate entry") && e.getMessage().contains("'email'")) {
-                    errorMessage = "Erreur de sauvegarde : Cet email est déjà utilisé par un autre enseignant.";
-                } else if (e.getMessage().contains("Duplicate entry") && e.getMessage().contains("'matricule'")) {
-                    errorMessage = "Erreur de sauvegarde : Ce matricule est déjà utilisé.";
-                }
-            }
-
-            model.addAttribute("error", errorMessage);
-            return "enseignant-add";
-        } catch (Exception e) {
-            System.err.println("Erreur lors de la sauvegarde: " + e.getMessage());
-            e.printStackTrace();
-            model.addAttribute("error", "Erreur lors de la sauvegarde: " + e.getMessage());
-            return "enseignant-add";
-        }
-    }
-
-    @PatchMapping("/{id}/archiver")
-    @ResponseBody
-    public ResponseEntity<String> archiverEnseignant(@PathVariable Long id) {
-        enseignantService.archiverEnseignant(id);
-        return ResponseEntity.ok("L'enseignant avec l'id " + id + " a été archivé avec succès.");
-    }
-
-    @GetMapping("/lst-archives")
-    public String listeArchives(Model model) {
+    @GetMapping("/lst-enseignants-archives")
+    public String listEnseignantsArchives(Model model) {
         model.addAttribute("enseignants", enseignantService.getAllEnseignantsArchives());
+        model.addAttribute("isArchiveView", true);
         return "enseignant-archive-list";
     }
 
-    @GetMapping("/recherche")
-    public String rechercherEnseignant(@RequestParam(required = false) Long matricule,
-                                       Model model) {
-        List<Enseignant> enseignants = new ArrayList<>();
-
-        // Si pas de matricule, retourner la vue vide
-        if (matricule == null) {
-            model.addAttribute("enseignants", enseignants);
-            return "redirect:/lst-enseignants";
+    @GetMapping("/view-enseignant/{id}")
+    public String viewEnseignantDetails(@PathVariable Long id, Model model) {
+        try {
+            Enseignant enseignant = enseignantService.getEnseignantById(id);
+            model.addAttribute("enseignant", enseignant);
+        } catch (RuntimeException e) {
+            model.addAttribute("enseignant", null);
+            model.addAttribute("error", e.getMessage());
         }
-        // Rechercher l'enseignant
-        Optional<Enseignant> enseignantOpt = enseignantService.rechercherEnseignant(matricule);
-
-        if (enseignantOpt.isPresent()) {
-            // Enseignant trouvé
-            enseignants.add(enseignantOpt.get());
-            model.addAttribute("message", "Enseignant trouvé ✓");
-        } else {
-            // Enseignant non trouvé
-            model.addAttribute("message", "Aucun enseignant avec le matricule : " + matricule);
-        }
-
-        model.addAttribute("enseignants", enseignants);
-        model.addAttribute("matricule", matricule);
-
-        return "resultatRecherche";
+        return "enseignant-details";
     }
+
+    // ----------------------------------------------------------------------
+    // --- CREATION (GET & POST) ---
+    // ----------------------------------------------------------------------
+    @GetMapping("/add-enseignant")
+    public String addEnseignant(Model model) {
+        model.addAttribute("enseignant", new Enseignant());
+        model.addAttribute("grades", List.of("Assistant", "Maître-Assistant", "Maître de Conférences", "Professeur Titulaire", "Professeur Assimilé"));
+        model.addAttribute("statuts", Statut.values());
+        return "enseignant-add";
+    }
+
+    @PostMapping("/save-enseignant")
+    public String saveEnseignant(@ModelAttribute("enseignant") Enseignant enseignant,
+                                 RedirectAttributes redirectAttributes) {
+        try {
+            enseignantService.saveEnseignant(enseignant);
+            redirectAttributes.addFlashAttribute("success", "Enseignant ajouté avec succès! Matricule: " + enseignant.getMatricule());
+            return "redirect:/lst-enseignants";
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/add-enseignant";
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", "Erreur: " + e.getMessage());
+            return "redirect:/add-enseignant";
+        }
+    }
+
+    // ----------------------------------------------------------------------
+    // --- MODIFICATION (GET & POST) ---
+    // ----------------------------------------------------------------------
 
     @GetMapping("/edit-enseignant/{id}")
-    public String editEnseignant(@PathVariable Long id,
-                                 Model model,
-                                 @RequestParam(required = false) String error) {
-        try {
-            Enseignant enseignant = enseignantService.getEnseignantById(id);
-            if (enseignant == null) {
-                return "redirect:/lst-enseignants?error=Enseignant non trouvé";
-            }
-            model.addAttribute("enseignant", enseignant);
+    public String editEnseignant(@PathVariable Long id, Model model) {
+        Enseignant enseignant = enseignantService.getEnseignantById(id);
 
-            // affiche l'erreur de l'update
-            if (error != null) {
-                model.addAttribute("emailError", error);
-            }
+        model.addAttribute("enseignant", enseignant);
+        model.addAttribute("grades", List.of("Assistant", "Maître-Assistant", "Maître de Conférences", "Professeur Titulaire", "Professeur Assimilé"));
+        model.addAttribute("statuts", Statut.values()); // Assurez-vous d'envoyer l'enum Statut
 
-            return "enseignant-edit";
-        } catch (RuntimeException e) {
-            return "redirect:/lst-enseignants?error=" + e.getMessage();
-        }
+        return "enseignant-edit";
     }
 
-    @PostMapping("/update-enseignant")
-    public String updateEnseignant(@RequestParam Long id,
-                                   @RequestParam(required = false) String grade,
-                                   @RequestParam(required = false) String statut,
-                                   @RequestParam(required = false) String email,
-                                   @RequestParam(required = false) String telephone,
-                                   @RequestParam(required = false) String adresse) {
-
-        EnseignantUpdateDTO updateDTO = new EnseignantUpdateDTO();
-        updateDTO.setGrade(grade);
-
-        // Gestion du statut (inchangée)
-        if (statut != null && !statut.isEmpty()) {
-            try {
-                updateDTO.setStatut(com.uasz.Atelier1_Gestion_Enseignements_UASZ.enums.Statut.valueOf(statut));
-            } catch (IllegalArgumentException e) {
-                // Gére l'erreur si le statut n'est pas valide
-            }
-        }
-
-        updateDTO.setEmail(email);
-        updateDTO.setTelephone(telephone);
-        updateDTO.setAdresse(adresse);
-
+    /**
+     * Traite la soumission du formulaire d'édition. Utilise l'entité Enseignant pour la liaison.
+     */
+    @PostMapping("/update-enseignant/{id}")
+    public String updateEnseignant(@PathVariable Long id,
+                                   @ModelAttribute Enseignant enseignantForm, // Utilisation de l'entité
+                                   RedirectAttributes redirectAttributes) {
         try {
-            enseignantService.updateEnseignant(id, updateDTO);
+            Enseignant updatedEnseignant = enseignantService.updateEnseignant(id, enseignantForm);
+            redirectAttributes.addFlashAttribute("success", "Enseignant " + updatedEnseignant.getMatricule() + " mis à jour avec succès.");
             return "redirect:/lst-enseignants";
         } catch (IllegalArgumentException e) {
-            // les exceptions sont levées par le service
-            String errorMessage = e.getMessage();
-            return "redirect:/edit-enseignant/" + id + "?error=" + errorMessage;
-        }
-    }
-    // Endpoint REST pour la mise à jour via API
-    @PutMapping("/api/enseignants/{id}")
-    @ResponseBody
-    public ResponseEntity<?> updateEnseignantRest(@PathVariable Long id,
-                                                  @Valid @RequestBody EnseignantUpdateDTO updateDTO) {
-        try {
-            Enseignant updatedEnseignant = enseignantService.updateEnseignant(id, updateDTO);
-            return ResponseEntity.ok(updatedEnseignant);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Erreur de validation: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/edit-enseignant/" + id;
         } catch (RuntimeException e) {
-            if (e.getMessage().contains("non trouvé")) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body("Enseignant non trouvé avec l'id: " + id);
-            }
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Erreur lors de la modification: " + e.getMessage());
+            return "redirect:/edit-enseignant/" + id;
         }
     }
-    @GetMapping("/view-enseignant/{id}")
-    public String viewEnseignant(@PathVariable Long id, Model model) {
+
+    // ----------------------------------------------------------------------
+    // --- GESTION DU STATUT (POST) ---
+    // ----------------------------------------------------------------------
+
+    @PostMapping("/archive-enseignant/{id}")
+    public String archiverEnseignant(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
-            // 1. Récupérer l'enseignant par son ID
-            Enseignant enseignant = enseignantService.getEnseignantById(id);
-
-            // 2. Vérifier si l'enseignant existe
-            if (enseignant == null) {
-                // Redirige ou affiche un message d'erreur si l'ID n'existe pas
-                model.addAttribute("enseignant", null);
-            } else {
-                model.addAttribute("enseignant", enseignant);
-            }
-            return "enseignant-details";
-
-        } catch (Exception e) {
-            // Gestion des erreurs (par exemple si l'ID n'est pas un Long)
-            model.addAttribute("error", "Erreur lors de la récupération des détails : " + e.getMessage());
-            return "enseignant-details";
+            enseignantService.archiverEnseignant(id);
+            redirectAttributes.addFlashAttribute("success", "Enseignant archivé avec succès.");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", "Erreur lors de l'archivage: " + e.getMessage());
         }
+        return "redirect:/lst-enseignants";
     }
-    // ENDPOINTS POUR L'ACTIVATION/DÉSACTIVATION (Optimisés pour AJAX)
 
-    /**
-     * Gère l'activation d'un enseignant via une requête POST/API.
-     * @param id L'identifiant de l'enseignant.
-     * @return Réponse HTTP (OK ou Erreur).
-     */
+    @PostMapping("/unarchive-enseignant/{id}") // <--- C'EST CETTE URL QUI COMPTE
+    public String desarchiverEnseignant(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            enseignantService.desarchiverEnseignant(id);
+            redirectAttributes.addFlashAttribute("success", "Enseignant désarchivé et activé avec succès.");
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", "Erreur lors du désarchivage: " + e.getMessage());
+        }
+        return "redirect:/lst-enseignants-archives";
+    }
+
     @PostMapping("/activer-enseignant/{id}")
-    @ResponseBody
-    public ResponseEntity<String> activerEnseignant(@PathVariable Long id) {
+    public String activerEnseignant(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             enseignantService.activerEnseignant(id);
-            return ResponseEntity.ok("Enseignant activé avec succès.");
+            redirectAttributes.addFlashAttribute("success", "Enseignant activé avec succès.");
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Erreur lors de l'activation: " + e.getMessage());
         }
+        return "redirect:/lst-enseignants";
     }
 
-    /**
-     * Gère la désactivation d'un enseignant via une requête POST/API.
-     * @param id L'identifiant de l'enseignant.
-     * @return Réponse HTTP (OK ou Erreur).
-     */
     @PostMapping("/desactiver-enseignant/{id}")
-    @ResponseBody
-    public ResponseEntity<String> desactiverEnseignant(@PathVariable Long id) {
+    public String desactiverEnseignant(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             enseignantService.desactiverEnseignant(id);
-            return ResponseEntity.ok("Enseignant désactivé avec succès.");
+            redirectAttributes.addFlashAttribute("success", "Enseignant désactivé avec succès.");
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Erreur lors de la désactivation: " + e.getMessage());
         }
+        return "redirect:/lst-enseignants";
     }
 }
