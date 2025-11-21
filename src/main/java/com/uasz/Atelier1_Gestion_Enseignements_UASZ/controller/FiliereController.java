@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class FiliereController {
@@ -13,67 +14,57 @@ public class FiliereController {
     @Autowired
     private FiliereService filiereService;
 
+    // --- LISTE ---
     @GetMapping("/lst-filieres")
-    public String listFilieres(
-            @RequestParam(required = false) String mode,
-            @RequestParam(required = false) Long id,
-            Model model) {
+    public String listFilieres(Model model) {
+        model.addAttribute("filieres", filiereService.getAllFiliere());
+        return "lst-filieres"; // Pointe vers la nouvelle liste
+    }
 
-        if ("ajout".equals(mode)) {
-            model.addAttribute("filiere", new Filiere());
-            model.addAttribute("mode", "ajout");
-        }
-        else if ("modification".equals(mode) && id != null) {
+    // --- FORMULAIRE AJOUT ---
+    @GetMapping("/filieres/ajouter")
+    public String showAddForm(Model model) {
+        model.addAttribute("filiere", new Filiere());
+        model.addAttribute("titrePage", "Nouvelle Filière");
+        return "form-filiere"; // Pointe vers le formulaire unique
+    }
+
+    // --- FORMULAIRE MODIFICATION ---
+    @GetMapping("/filieres/modifier/{id}")
+    public String showEditForm(@PathVariable Long id, Model model) {
+        try {
             Filiere filiere = filiereService.getFiliereById(id);
             model.addAttribute("filiere", filiere);
-            model.addAttribute("mode", "modification");
+            model.addAttribute("titrePage", "Modifier la Filière");
+            return "form-filiere";
+        } catch (Exception e) {
+            return "redirect:/lst-filieres";
         }
-        else {
-            model.addAttribute("filieres", filiereService.getAllFiliere());
-            model.addAttribute("mode", "liste");
-        }
-
-        return "filiere";
     }
 
+    // --- SAUVEGARDE (Create & Update) ---
     @PostMapping("/save-filiere")
-    public String saveFiliere(@ModelAttribute Filiere filiere, Model model) {
+    public String saveFiliere(@ModelAttribute Filiere filiere, RedirectAttributes ra) {
         try {
             filiereService.save(filiere);
+            ra.addFlashAttribute("success", "Filière enregistrée avec succès !");
             return "redirect:/lst-filieres";
         } catch (IllegalArgumentException e) {
-            model.addAttribute("error", e.getMessage());
-            model.addAttribute("filiere", filiere);
-            model.addAttribute("mode", "ajout");
-            model.addAttribute("filieres", filiereService.getAllFiliere());
-            return "filiere";
+            ra.addFlashAttribute("error", e.getMessage());
+            // Redirection intelligente en cas d'erreur
+            return "redirect:/filieres/" + (filiere.getId() == null ? "ajouter" : "modifier/" + filiere.getId());
         }
     }
 
-    @PostMapping("/update-filiere")
-    public String updateFiliere(@ModelAttribute Filiere filiere, Model model) {
-        try {
-            filiereService.save(filiere);
-            return "redirect:/lst-filieres";
-        } catch (IllegalArgumentException e) {
-            model.addAttribute("error", e.getMessage());
-            model.addAttribute("filiere", filiere);
-            model.addAttribute("mode", "modification");
-            model.addAttribute("filieres", filiereService.getAllFiliere());
-            return "filiere";
-        }
-    }
-
+    // --- SUPPRESSION ---
     @GetMapping("/delete-filiere/{id}")
-    public String deleteFiliere(@PathVariable Long id, Model model) {
+    public String deleteFiliere(@PathVariable Long id, RedirectAttributes ra) {
         try {
             filiereService.delete(id);
-            return "redirect:/lst-filieres";
+            ra.addFlashAttribute("success", "Filière supprimée.");
         } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
-            model.addAttribute("filieres", filiereService.getAllFiliere());
-            model.addAttribute("mode", "liste");
-            return "filiere";
+            ra.addFlashAttribute("error", "Impossible de supprimer : " + e.getMessage());
         }
+        return "redirect:/lst-filieres";
     }
 }
