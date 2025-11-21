@@ -100,6 +100,12 @@
             </a>
         </li>
 
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'cahier'} ? 'active'" th:href="@{/lst-notes-cahier}">
+                <i class="bi bi-journal-text"></i> Cahier de Texte
+            </a>
+        </li>
+
         <li class="nav-item mb-1 mt-3">
             <small class="text-white-50 text-uppercase px-3" style="font-size: 0.7rem;">Administration</small>
         </li>
