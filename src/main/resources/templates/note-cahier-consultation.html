@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consultation Cahier de Texte - UASZ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .nav-link {
+            color: rgba(255,255,255,0.8);
+            transition: all 0.3s;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #fff;
+            background-color: rgba(255,255,255,0.1);
+        }
+        .filter-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: none;
+        }
+        .badge-valide { background-color: #28a745; }
+        .badge-non-valide { background-color: #ffc107; color: #000; }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-0">
+            <div class="position-sticky pt-3">
+                <div class="text-center mb-4">
+                    <h4 class="text-white fw-bold">UASZ</h4>
+                    <p class="text-white-50 small">Gestion des Enseignements</p>
+                </div>
+                <ul class="nav flex-column px-2">
+                    <li class="nav-item">
+                        <a class="nav-link rounded mb-1" href="/" th:href="@{/}">
+                            <i class="bi bi-house-door me-2"></i> Accueil
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link rounded mb-1" href="/lst-enseignants" th:href="@{/lst-enseignants}">
+                            <i class="bi bi-person-badge me-2"></i> Enseignants
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link rounded mb-1" href="/lst-classes" th:href="@{/lst-classes}">
+                            <i class="bi bi-building me-2"></i> Classes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link rounded mb-1 active" href="/consulter-cahier-texte" th:href="@{/consulter-cahier-texte}">
+                            <i class="bi bi-journal-text me-2"></i> Cahier de Texte
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2"><i class="bi bi-search me-2"></i>Consultation du Cahier de Texte</h1>
+                <p class="text-muted">Suivi du déroulement des cours par enseignant</p>
+            </div>
+
+            <!-- Filtres -->
+            <div class="card filter-card shadow-sm mb-4">
+                <div class="card-body">
+                    <form method="get" th:action="@{/consulter-cahier-texte}" class="row g-3 align-items-end">
+                        <div class="col-md-3">
+                            <label for="enseignantId" class="form-label">
+                                <i class="bi bi-person me-1"></i>Enseignant
+                            </label>
+                            <select class="form-select" id="enseignantId" name="enseignantId">
+                                <option value="">Tous les enseignants</option>
+                                <option th:each="ens : ${enseignants}"
+                                        th:value="${ens.id}"
+                                        th:text="${ens.nom + ' ' + ens.prenom}"
+                                        th:selected="${selectedEnseignantId != null && selectedEnseignantId == ens.id}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="moduleId" class="form-label">
+                                <i class="bi bi-book me-1"></i>EC (Module)
+                            </label>
+                            <select class="form-select" id="moduleId" name="moduleId">
+                                <option value="">Tous les EC</option>
+                                <option th:each="mod : ${modules}"
+                                        th:value="${mod.id}"
+                                        th:text="${mod.libelle}"
+                                        th:selected="${selectedModuleId != null && selectedModuleId == mod.id}">
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="semestre" class="form-label">
+                                <i class="bi bi-calendar3 me-1"></i>Semestre
+                            </label>
+                            <select class="form-select" id="semestre" name="semestre">
+                                <option value="">Tous les semestres</option>
+                                <option value="1" th:selected="${selectedSemestre != null && selectedSemestre == 1}">Semestre 1</option>
+                                <option value="2" th:selected="${selectedSemestre != null && selectedSemestre == 2}">Semestre 2</option>
+                                <option value="3" th:selected="${selectedSemestre != null && selectedSemestre == 3}">Semestre 3</option>
+                                <option value="4" th:selected="${selectedSemestre != null && selectedSemestre == 4}">Semestre 4</option>
+                                <option value="5" th:selected="${selectedSemestre != null && selectedSemestre == 5}">Semestre 5</option>
+                                <option value="6" th:selected="${selectedSemestre != null && selectedSemestre == 6}">Semestre 6</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-funnel me-2"></i>Filtrer
+                            </button>
+                        </div>
+                    </form>
+                    <div class="mt-2">
+                        <a th:href="@{/consulter-cahier-texte}" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-x-circle me-1"></i>Réinitialiser les filtres
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tableau des notes -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-list-ul me-2"></i>Notes du cahier de texte
+                        <span class="badge bg-light text-primary ms-2" th:text="${notes != null ? notes.size() : 0}">0</span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                            <tr>
+                                <th>Date</th>
+                                <th>EC (Module)</th>
+                                <th>Titre</th>
+                                <th>Enseignant</th>
+                                <th>Classe</th>
+                                <th>Statut</th>
+                                <th class="text-end">Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:if="${notes == null or notes.isEmpty()}">
+                                <td colspan="7" class="text-center text-muted py-4">
+                                    <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+                                    <p class="mt-2">Aucune note trouvée avec les filtres sélectionnés</p>
+                                </td>
+                            </tr>
+                            <tr th:each="note : ${notes}">
+                                <td>
+                                    <span th:if="${note.seance != null && note.seance.dateSeance != null}">
+                                        <i class="bi bi-calendar3 me-1 text-primary"></i>
+                                        <span th:text="${#temporals.format(note.seance.dateSeance, 'dd/MM/yyyy')}">01/01/2024</span>
+                                    </span>
+                                    <span th:unless="${note.seance != null && note.seance.dateSeance != null}" class="text-muted">-</span>
+                                </td>
+                                <td>
+                                    <span th:if="${note.seance != null && note.seance.module != null}"
+                                          class="badge bg-info" th:text="${note.seance.module.libelle}">Module</span>
+                                    <span th:unless="${note.seance != null && note.seance.module != null}" class="text-muted">-</span>
+                                </td>
+                                <td>
+                                    <strong th:text="${note.titre}">Titre</strong>
+                                </td>
+                                <td>
+                                    <span th:if="${note.enseignant != null}">
+                                        <i class="bi bi-person-circle me-1"></i>
+                                        <span th:text="${note.enseignant.nom + ' ' + note.enseignant.prenom}">Enseignant</span>
+                                    </span>
+                                    <span th:unless="${note.enseignant != null}" class="text-muted">-</span>
+                                </td>
+                                <td>
+                                    <span th:if="${note.seance != null && note.seance.classe != null}"
+                                          th:text="${note.seance.classe.libelle}">Classe</span>
+                                    <span th:unless="${note.seance != null && note.seance.classe != null}" class="text-muted">-</span>
+                                </td>
+                                <td>
+                                    <span th:if="${note.estValide}" class="badge badge-valide">Validée</span>
+                                    <span th:unless="${note.estValide}" class="badge badge-non-valide">En attente</span>
+                                </td>
+                                <td class="text-end">
+                                    <a th:href="@{/view-note-cahier/{id}(id=${note.id})}"
+                                       class="btn btn-sm btn-outline-info" title="Voir détails">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a th:href="@{/historique-note/{id}(id=${note.id})}"
+                                       class="btn btn-sm btn-outline-secondary" title="Historique">
+                                        <i class="bi bi-clock-history"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
