@@ -1,256 +1,188 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modifier un Enseignant - UASZ</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <style>
-        .sidebar {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        .nav-link {
-            color: rgba(255,255,255,0.8);
-            transition: all 0.3s;
-        }
-        .nav-link:hover, .nav-link.active {
-            color: #fff;
-            background-color: rgba(255,255,255,0.1);
-        }
-        .section-header {
-            background-color: #f8f9fa;
-            padding: 10px 15px;
-            border-left: 4px solid #667eea;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-        .readonly-field {
-            background-color: #e9ecef;
-            cursor: not-allowed;
-        }
-    </style>
-</head>
+
+<head th:replace="~{fragments/layout :: headerParams('Modifier un Enseignant')}"></head>
+
 <body>
-<div class="container-fluid">
-    <div class="row">
-        <!-- Sidebar -->
-        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-0">
-            <div class="position-sticky pt-3">
-                <div class="text-center mb-4">
-                    <h4 class="text-white fw-bold">UASZ</h4>
-                    <p class="text-white-50 small">Gestion des Enseignements</p>
-                </div>
-                <ul class="nav flex-column px-2">
-                    <li class="nav-item">
-                        <a class="nav-link rounded mb-1" href="/" th:href="@{/}">
-                            <i class="bi bi-house-door me-2"></i> Accueil
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link rounded mb-1" href="/lst-filieres" th:href="@{/lst-filieres}">
-                            <i class="bi bi-diagram-3 me-2"></i> Filières
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link rounded mb-1 active" href="/lst-enseignants" th:href="@{/lst-enseignants}">
-                            <i class="bi bi-person-badge me-2"></i> Enseignants
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link rounded mb-1" href="/lst-formations" th:href="@{/lst-formations}">
-                            <i class="bi bi-book me-2"></i> Formations
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link rounded mb-1" href="/lst-modules" th:href="@{/lst-modules}">
-                            <i class="bi bi-journal-code me-2"></i> Modules
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link rounded mb-1" href="/lst-ues" th:href="@{/lst-ues}">
-                            <i class="bi bi-layers me-2"></i> Unités d'Enseignement
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
 
-        <!-- Main content -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <div class="pt-3 pb-2 mb-3 border-bottom d-flex justify-content-between align-items-center">
-                <h1 class="h2">
-                    <i class="bi bi-pencil-square me-2"></i>Modifier l'Enseignant
-                </h1>
-                <a href="/lst-enseignants" th:href="@{/lst-enseignants}" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-left me-2"></i>Retour à la liste
-                </a>
-            </div>
+<nav th:replace="~{fragments/layout :: sidebar(activePage='enseignants')}"></nav>
 
-            <!-- Info Alert -->
-            <div class="alert alert-info d-flex align-items-center" role="alert">
-                <i class="bi bi-info-circle me-2"></i>
-                <div>
-                    <strong>Note :</strong> Seuls les champs <strong>Grade</strong>, <strong>Statut</strong>, <strong>Email</strong>, <strong>Téléphone</strong> et <strong>Adresse</strong> peuvent être modifiés.
-                </div>
-            </div>
+<main class="main-content">
 
-            <!-- Form Card -->
-            <div class="row">
-                <div class="col-12">
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-primary text-white">
-                            <h5 class="mb-0">
-                                <i class="bi bi-person-badge me-2"></i>Informations de l'enseignant
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <form method="post" th:action="@{/update-enseignant}" th:object="${enseignant}">
-                                <input type="hidden" name="id" th:value="${enseignant.id}" />
-
-                                <!-- Informations non modifiables (en lecture seule) -->
-                                <div class="section-header">
-                                    <i class="bi bi-card-checklist me-2"></i>Informations d'identification
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="matricule" class="form-label">Matricule</label>
-                                        <input type="text" class="form-control readonly-field"
-                                               id="matricule" th:value="${enseignant.matricule}"
-                                               readonly disabled>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="nom" class="form-label">Nom complet</label>
-                                        <input type="text" class="form-control readonly-field"
-                                               id="nom" th:value="${enseignant.nom + ' ' + enseignant.prenom}"
-                                               readonly disabled>
-                                    </div>
-                                </div>
-
-                                <!-- Champs modifiables -->
-                                <div class="section-header">
-                                    <i class="bi bi-pencil me-2"></i>Champs modifiables
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="grade" class="form-label">
-                                            Grade <span class="text-danger">*</span>
-                                        </label>
-                                        <select class="form-select" id="grade" name="grade" required>
-                                            <option value="">Sélectionner un grade</option>
-                                            <option value="Assistant" th:selected="${enseignant.grade == 'Assistant'}">Assistant</option>
-                                            <option value="Maître-Assistant" th:selected="${enseignant.grade == 'Maître-Assistant'}">Maître-Assistant</option>
-                                            <option value="Maître de Conférences" th:selected="${enseignant.grade == 'Maître de Conférences'}">Maître de Conférences</option>
-                                            <option value="Professeur Titulaire" th:selected="${enseignant.grade == 'Professeur Titulaire'}">Professeur Titulaire</option>
-                                            <option value="Professeur Assimilé" th:selected="${enseignant.grade == 'Professeur Assimilé'}">Professeur Assimilé</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="statut" class="form-label">
-                                            Statut <span class="text-danger">*</span>
-                                        </label>
-                                        <select class="form-select" id="statut" name="statut" required>
-                                            <option value="">Sélectionner un statut</option>
-                                            <option value="PERMANENT" th:selected="${enseignant.statut == T(com.uasz.Atelier1_Gestion_Enseignements_UASZ.enums.Statut).PERMANENT}">Permanent</option>
-                                            <option value="VACATAIRE" th:selected="${enseignant.statut == T(com.uasz.Atelier1_Gestion_Enseignements_UASZ.enums.Statut).VACATAIRE}">Vacataire</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="email" class="form-label">
-                                            Email <span class="text-danger">*</span>
-                                        </label>
-                                        <input type="email" class="form-control" id="email"
-                                               name="email" th:value="${enseignant.email}"
-                                               placeholder="email@uasz.sn" required>
-                                        <div class="form-text">Format valide requis (ex: nom@uasz.sn)</div>
-                                    </div>
-                                    <div class="col-md-6 mb-3">
-                                        <label for="telephone" class="form-label">
-                                            Téléphone <span class="text-danger">*</span>
-                                        </label>
-                                        <input type="tel" class="form-control" id="telephone"
-                                               name="telephone" th:value="${enseignant.telephone}"
-                                               placeholder="+221 77 123 45 67" required>
-                                        <div class="form-text">Format valide requis (ex: +221771234567)</div>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-md-12 mb-3">
-                                        <label for="adresse" class="form-label">
-                                            Adresse <span class="text-danger">*</span>
-                                        </label>
-                                        <input type="text" class="form-control" id="adresse"
-                                               name="adresse" th:value="${enseignant.adresse}"
-                                               placeholder="Adresse complète" required>
-                                    </div>
-                                </div>
-
-                                <!-- Informations supplémentaires (en lecture seule) -->
-                                <div class="section-header">
-                                    <i class="bi bi-info-circle me-2"></i>Autres informations (non modifiables)
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-4 mb-3">
-                                        <label for="specialite" class="form-label">Spécialité</label>
-                                        <input type="text" class="form-control readonly-field"
-                                               id="specialite" th:value="${enseignant.specialite}"
-                                               readonly disabled>
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <label for="dateEmbauche" class="form-label">Date d'embauche</label>
-                                        <input type="text" class="form-control readonly-field"
-                                               id="dateEmbauche"
-                                               th:value="${#temporals.format(enseignant.dateEmbauche, 'dd/MM/yyyy')}"
-                                               readonly disabled>
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <label class="form-label">État</label>
-                                        <div class="form-control readonly-field">
-                                            <span th:if="${enseignant.estActif}" class="badge bg-success">Actif</span>
-                                            <span th:if="${!enseignant.estActif}" class="badge bg-secondary">Inactif</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Buttons -->
-                                <div class="d-flex gap-2 justify-content-end mt-4">
-                                    <a href="/lst-enseignants" th:href="@{/lst-enseignants}"
-                                       class="btn btn-secondary">
-                                        <i class="bi bi-x-circle me-2"></i>Annuler
-                                    </a>
-                                    <button type="submit" class="btn btn-primary">
-                                        <i class="bi bi-check-circle me-2"></i>Enregistrer les modifications
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark">Modifier l'Enseignant</h2>
+            <p class="text-muted mb-0">Mise à jour du dossier personnel et administratif.</p>
+        </div>
+        <a th:href="@{/lst-enseignants}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Retour à la liste
+        </a>
     </div>
-</div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white border-bottom">
+                    <h5 class="mb-0 text-success">
+                        <i class="bi bi-pencil-square me-2"></i>Édition du dossier
+                    </h5>
+                </div>
+
+                <div class="card-body p-4">
+
+                    <div class="alert alert-danger" th:if="${error}">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${error}"></span>
+                    </div>
+
+                    <form method="post" th:action="@{/update-enseignant/{id}(id=*{id})}" th:object="${enseignant}">
+                        <input type="hidden" th:field="*{id}" />
+
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <label for="matricule" class="form-label text-muted small text-uppercase fw-bold">Matricule</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-hash"></i></span>
+                                    <input type="text" class="form-control bg-light fw-bold text-dark"
+                                           id="matricule" th:value="*{matricule}" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-8 d-flex align-items-end">
+                                <div class="alert alert-light border w-100 mb-0 py-2 text-muted small">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Le matricule ne peut pas être modifié car il sert d'identifiant unique.
+                                </div>
+                            </div>
+                        </div>
+
+                        <h6 class="text-success fw-bold mb-3 border-bottom pb-2 mt-4">
+                            <i class="bi bi-person-vcard me-2"></i>État Civil
+                        </h6>
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3">
+                                <label for="nom" class="form-label">Nom <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" th:field="*{nom}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="prenom" class="form-label">Prénom <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" th:field="*{prenom}" required>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3">
+                                <label for="dateNaissance" class="form-label">Date de Naissance <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="dateNaissance"
+                                       th:field="*{dateNaissance}"
+                                       th:max="${#temporals.format(#temporals.createNow().minusYears(25), 'yyyy-MM-dd')}"
+                                       required>
+                                <div class="form-text text-muted">L'enseignant doit avoir au moins 25 ans.</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="lieuNaissance" class="form-label">Lieu de Naissance <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="lieuNaissance" th:field="*{lieuNaissance}" required>
+                            </div>
+                        </div>
+
+                        <h6 class="text-success fw-bold mb-3 border-bottom pb-2 mt-4">
+                            <i class="bi bi-briefcase me-2"></i>Situation Professionnelle
+                        </h6>
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3">
+                                <label for="grade" class="form-label">Grade <span class="text-danger">*</span></label>
+                                <select class="form-select" th:field="*{grade}" required>
+                                    <option value="">Sélectionner un grade</option>
+                                    <option th:if="${grades}" th:each="g : ${grades}" th:value="${g}" th:text="${g}"></option>
+                                    <option th:unless="${grades}" value="Assistant">Assistant</option>
+                                    <option th:unless="${grades}" value="Maître-Assistant">Maître-Assistant</option>
+                                    <option th:unless="${grades}" value="Maître de Conférences">Maître de Conférences</option>
+                                    <option th:unless="${grades}" value="Professeur Titulaire">Professeur Titulaire</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="specialite" class="form-label">Spécialité <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" th:field="*{specialite}" required>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3">
+                                <label for="dateEmbauche" class="form-label">Date d'embauche <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="dateEmbauche"
+                                       th:field="*{dateEmbauche}"
+                                       th:max="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"
+                                       required>
+                                <div class="form-text text-muted">Pas de date future autorisée.</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="statut" class="form-label">Statut du Contrat <span class="text-danger">*</span></label>
+                                <select class="form-select" th:field="*{statut}" required>
+                                    <option value="">Sélectionner un statut</option>
+                                    <option th:if="${statuts}" th:each="st : ${statuts}" th:value="${st}" th:text="${st.displayValue}"></option>
+                                    <option th:unless="${statuts}" value="PERMANENT">Permanent</option>
+                                    <option th:unless="${statuts}" value="VACATAIRE">Vacataire</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <h6 class="text-success fw-bold mb-3 border-bottom pb-2 mt-4">
+                            <i class="bi bi-envelope-at me-2"></i>Contact & Adresse
+                        </h6>
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Email Institutionnel</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-envelope"></i></span>
+                                    <input type="email" class="form-control" th:field="*{email}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="telephone" class="form-label">Téléphone <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-telephone"></i></span>
+                                    <input type="tel" class="form-control" th:field="*{telephone}" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label for="adresse" class="form-label">Adresse complète <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" th:field="*{adresse}" required>
+                            </div>
+                        </div>
+
+                        <div class="bg-light rounded p-3 mt-4 border">
+                            <h6 class="small text-uppercase text-muted fw-bold mb-3">
+                                <i class="bi bi-server me-2"></i>Informations Système
+                            </h6>
+                            <div class="row small text-muted">
+                                <div class="col-md-6">
+                                    <strong>Date de création :</strong>
+                                    <span th:text="*{dateCreation != null ? #temporals.format(dateCreation, 'dd-MM-yyyy à HH:mm') : 'N/A'}"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Dernière modification :</strong>
+                                    <span th:text="*{dateModification != null ? #temporals.format(dateModification, 'dd-MM-yyyy à HH:mm') : 'N/A'}"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 justify-content-end mt-4 pt-3 border-top">
+                            <a th:href="@{/lst-enseignants}" class="btn btn-light border">
+                                <i class="bi bi-x text-secondary"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="bi bi-check-lg me-2"></i>Enregistrer les modifications
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script th:if="${param.error}">
-    // Récupère le message d'erreur du paramètre d'URL
-    var errorMessage = new URLSearchParams(window.location.search).get('error');
 
-    // Remplace les %20 par des espaces si la redirection les a encodés
-    if (errorMessage) {
-        errorMessage = decodeURIComponent(errorMessage.replace(/\+/g, ' '));
-        // Affiche une boîte d'alerte JavaScript
-        alert("Erreur de modification : " + errorMessage);
-
-        // Optionnel : Nettoie l'URL pour retirer le message d'erreur
-        window.history.replaceState(null, null, window.location.pathname);
-    }
-</script>
 </body>
 </html>
-
