@@ -40,6 +40,7 @@ public class ECService {
             ec.setHeureTp(ecDetails.getHeureTp());
             ec.setCoefficient(ecDetails.getCoefficient());
             ec.setTpe(ecDetails.getTpe());
+            ec.setModule(ecDetails.getModule());
             return ecRepository.save(ec);
         }
         return null;

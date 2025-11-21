@@ -57,6 +57,17 @@ public class EnseignantService {
         return enseignant;
     }
 
+    public Enseignant desarchiverEnseignant(Long id) {
+        Enseignant enseignant = enseignantRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Enseignant non trouvé avec l'id : " + id));
+
+        enseignant.setStatutEnseignant(StatutEnseignant.ACTIF);
+        enseignant.setDateModification(LocalDateTime.now());
+        enseignantRepository.save(enseignant);
+
+        return enseignant;
+    }
+
     public List<Enseignant> getAllEnseignants() {
         return enseignantRepository.findByStatutEnseignantNot(StatutEnseignant.ARCHIVE);
     }
