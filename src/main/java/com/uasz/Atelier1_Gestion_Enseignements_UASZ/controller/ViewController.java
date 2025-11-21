@@ -208,4 +208,64 @@ public class ViewController {
             return "redirect:/seances/delete/" + id;
         }
     }
+
+    // --- Gestion des Salles ---
+    @GetMapping("/salles")
+    public String listAllSalles(Model model) {
+        model.addAttribute("salles", salleService.getAllSalles());
+        return "salle-list";
+    }
+
+    @GetMapping("/salles/add")
+    public String showAddSalleForm(Model model) {
+        model.addAttribute("salle", new com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Salle());
+        return "salle-add-edit";
+    }
+
+    @GetMapping("/salles/edit/{id}")
+    public String showEditSalleForm(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Salle salle = salleService.getSalleById(id);
+            if (salle == null) {
+                throw new EntityNotFoundException("Salle non trouvée avec l'id: " + id);
+            }
+            model.addAttribute("salle", salle);
+            return "salle-add-edit";
+        } catch (EntityNotFoundException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/salles";
+        }
+    }
+
+    @PostMapping("/salles/save")
+    public String saveSalle(@ModelAttribute com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Salle salle, RedirectAttributes redirectAttributes) {
+        try {
+            if (salle.getId() == null) {
+                salleService.createSalle(salle);
+                redirectAttributes.addFlashAttribute("message", "Salle ajoutée avec succès !");
+            } else {
+                salleService.updateSalle(salle.getId(), salle);
+                redirectAttributes.addFlashAttribute("message", "Salle modifiée avec succès !");
+            }
+            return "redirect:/salles";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Erreur lors de l'enregistrement de la salle : " + e.getMessage());
+            return "redirect:/salles/add"; // Or redirect to edit page if it was an update
+        }
+    }
+
+    @GetMapping("/salles/delete/{id}")
+    public String deleteSalle(@PathVariable("id") Long id, RedirectAttributes redirectAttributes) {
+        try {
+            salleService.deleteSalle(id);
+            redirectAttributes.addFlashAttribute("message", "Salle supprimée avec succès !");
+            return "redirect:/salles";
+        } catch (EntityNotFoundException e) {
+            redirectAttributes.addFlashAttribute("error", "Erreur lors de la suppression : " + e.getMessage());
+            return "redirect:/salles";
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Erreur inattendue lors de la suppression : " + e.getMessage());
+            return "redirect:/salles";
+        }
+    }
 }
