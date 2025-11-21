@@ -1,221 +1,148 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajouter une Classe - UASZ</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <style>
-        .sidebar {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        .nav-link {
-            color: rgba(255,255,255,0.8);
-            transition: all 0.3s;
-        }
-        .nav-link:hover, .nav-link.active {
-            color: #fff;
-            background-color: rgba(255,255,255,0.1);
-        }
-        .section-header {
-            background-color: #f8f9fa;
-            padding: 10px 15px;
-            border-left: 4px solid #667eea;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-    </style>
-</head>
+
+<head th:replace="~{fragments/layout :: headerParams('Ajouter une Classe - UASZ')}"></head>
+
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-0">
-                <div class="position-sticky pt-3">
-                    <div class="text-center mb-4">
-                        <h4 class="text-white fw-bold">UASZ</h4>
-                        <p class="text-white-50 small">Gestion des Enseignements</p>
-                    </div>
-                    <ul class="nav flex-column px-2">
-                        <li class="nav-item">
-                            <a class="nav-link rounded mb-1" href="/" th:href="@{/}">
-                                <i class="bi bi-house-door me-2"></i> Accueil
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link rounded mb-1" href="/lst-filieres" th:href="@{/lst-filieres}">
-                                <i class="bi bi-diagram-3 me-2"></i> Filières
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link rounded mb-1" href="/lst-enseignants" th:href="@{/lst-enseignants}">
-                                <i class="bi bi-person-badge me-2"></i> Enseignants
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link rounded mb-1 active" href="/lst-classes" th:href="@{/lst-classes}">
-                                <i class="bi bi-building me-2"></i> Classes
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link rounded mb-1" href="/lst-formations" th:href="@{/lst-formations}">
-                                <i class="bi bi-book me-2"></i> Formations
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link rounded mb-1" href="/lst-modules" th:href="@{/lst-modules}">
-                                <i class="bi bi-journal-code me-2"></i> Modules
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link rounded mb-1" href="/lst-ues" th:href="@{/lst-ues}">
-                                <i class="bi bi-layers me-2"></i> Unités d'Enseignement
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
 
-            <!-- Main content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="pt-3 pb-2 mb-3 border-bottom d-flex justify-content-between align-items-center">
-                    <h1 class="h2">
-                        <i class="bi bi-building me-2"></i>Nouvelle Classe
-                    </h1>
-                    <a href="/lst-classes" th:href="@{/lst-classes}" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left me-2"></i>Retour à la liste
-                    </a>
-                </div>
+<nav th:replace="~{fragments/layout :: sidebar(activePage='classes')}"></nav>
 
-                <!-- Form Card -->
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card shadow-sm">
-                            <div class="card-header bg-success text-white">
-                                <h5 class="mb-0">
-                                    <i class="bi bi-building me-2"></i>Informations de la classe
-                                </h5>
-                            </div>
-                            <div class="card-body">
-                                <!-- Alerte en cas d'erreur de code -->
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${codeError != null}">
-                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                                    <strong>Erreur!</strong> <span th:text="${codeError}"></span>
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>
-
-                                <!-- Alerte en cas d'erreur générale -->
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${error != null}">
-                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                                    <strong>Erreur!</strong> <span th:text="${error}"></span>
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>
-
-                                <form method="post" th:action="@{/save-classe}" th:object="${classe}">
-                                    <input type="hidden" th:field="*{id}" />
-
-                                    <!-- Informations de base -->
-                                    <div class="section-header">
-                                        <i class="bi bi-card-checklist me-2"></i>Informations de base
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="code" class="form-label">
-                                                Code <span class="text-danger">*</span>
-                                            </label>
-                                            <input type="text" class="form-control" id="code"
-                                                   th:field="*{code}"
-                                                   th:classappend="${codeError != null} ? 'is-invalid' : ''"
-                                                   placeholder="Ex: L1-INFO-A" required>
-                                            <div class="invalid-feedback" th:if="${codeError != null}" th:text="${codeError}">
-                                                Erreur de code
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="libelle" class="form-label">
-                                                Libellé <span class="text-danger">*</span>
-                                            </label>
-                                            <input type="text" class="form-control" id="libelle"
-                                                   th:field="*{libelle}"
-                                                   placeholder="Ex: Licence 1 Informatique Groupe A" required>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-12 mb-3">
-                                            <label for="description" class="form-label">Description</label>
-                                            <textarea class="form-control" id="description" rows="3"
-                                                      th:field="*{description}"
-                                                      placeholder="Description de la classe"></textarea>
-                                        </div>
-                                    </div>
-
-                                    <!-- Rattachement -->
-                                    <div class="section-header">
-                                        <i class="bi bi-diagram-3 me-2"></i>Rattachement
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="filiere" class="form-label">Filière</label>
-                                            <select class="form-select" id="filiere" th:field="*{filiere}">
-                                                <option value="">Sélectionner une filière</option>
-                                                <option th:each="filiere : ${filieres}"
-                                                        th:value="${filiere.id}"
-                                                        th:text="${filiere.libelle}">
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="niveau" class="form-label">Niveau</label>
-                                            <select class="form-select" id="niveau" th:field="*{niveau}">
-                                                <option value="">Sélectionner un niveau</option>
-                                                <option th:each="niveau : ${niveaux}"
-                                                        th:value="${niveau.id}"
-                                                        th:text="${niveau.numero + ' - ' + niveau.cycle}">
-                                                </option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <!-- Détails complémentaires -->
-                                    <div class="section-header">
-                                        <i class="bi bi-info-circle me-2"></i>Détails complémentaires
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="anneeAcademique" class="form-label">Année Académique</label>
-                                            <input type="text" class="form-control" id="anneeAcademique"
-                                                   th:field="*{anneeAcademique}"
-                                                   placeholder="Ex: 2024-2025">
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="effectifMax" class="form-label">Effectif Maximum</label>
-                                            <input type="number" class="form-control" id="effectifMax"
-                                                   th:field="*{effectifMax}"
-                                                   placeholder="Ex: 50" min="1">
-                                        </div>
-                                    </div>
-
-                                    <!-- Buttons -->
-                                    <div class="d-flex justify-content-end gap-2 mt-4">
-                                        <a href="/lst-classes" th:href="@{/lst-classes}" class="btn btn-secondary">
-                                            <i class="bi bi-x-circle me-2"></i>Annuler
-                                        </a>
-                                        <button type="submit" class="btn btn-success">
-                                            <i class="bi bi-check-circle me-2"></i>Enregistrer
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
+<main class="main-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark">Nouvelle Classe</h2>
+            <p class="text-muted mb-0">Ajouter une nouvelle classe au système</p>
         </div>
+        <a href="/lst-classes" th:href="@{/lst-classes}" class="btn btn-outline-secondary shadow-sm">
+            <i class="bi bi-arrow-left me-2"></i>Retour à la liste
+        </a>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Form Card -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-building me-2"></i>Informations de la classe
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Alerte en cas d'erreur de code -->
+                    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert" th:if="${codeError != null}">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>Erreur!</strong> <span th:text="${codeError}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <!-- Alerte en cas d'erreur générale -->
+                    <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert" th:if="${error != null}">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>Erreur!</strong> <span th:text="${error}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <form method="post" th:action="@{/save-classe}" th:object="${classe}">
+                        <input type="hidden" th:field="*{id}" />
+
+                        <!-- Informations de base -->
+                        <div class="section-header">
+                            <i class="bi bi-card-checklist me-2"></i>Informations de base
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="code" class="form-label">
+                                    Code <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="code"
+                                       th:field="*{code}"
+                                       th:classappend="${codeError != null} ? 'is-invalid' : ''"
+                                       placeholder="Ex: L1-INFO-A" required>
+                                <div class="invalid-feedback" th:if="${codeError != null}" th:text="${codeError}">
+                                    Erreur de code
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="libelle" class="form-label">
+                                    Libellé <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" class="form-control" id="libelle"
+                                       th:field="*{libelle}"
+                                       placeholder="Ex: Licence 1 Informatique Groupe A" required>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" rows="3"
+                                          th:field="*{description}"
+                                          placeholder="Description de la classe"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Rattachement -->
+                        <div class="section-header">
+                            <i class="bi bi-diagram-3 me-2"></i>Rattachement
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="filiere" class="form-label">Filière</label>
+                                <select class="form-select" id="filiere" th:field="*{filiere}">
+                                    <option value="">Sélectionner une filière</option>
+                                    <option th:each="filiere : ${filieres}"
+                                            th:value="${filiere.id}"
+                                            th:text="${filiere.libelle}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="niveau" class="form-label">Niveau</label>
+                                <select class="form-select" id="niveau" th:field="*{niveau}">
+                                    <option value="">Sélectionner un niveau</option>
+                                    <option th:each="niveau : ${niveaux}"
+                                            th:value="${niveau.id}"
+                                            th:text="${niveau.numero + ' - ' + niveau.cycle}">
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Détails complémentaires -->
+                        <div class="section-header">
+                            <i class="bi bi-info-circle me-2"></i>Détails complémentaires
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="anneeAcademique" class="form-label">Année Académique</label>
+                                <input type="text" class="form-control" id="anneeAcademique"
+                                       th:field="*{anneeAcademique}"
+                                       placeholder="Ex: 2024-2025">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="effectifMax" class="form-label">Effectif Maximum</label>
+                                <input type="number" class="form-control" id="effectifMax"
+                                       th:field="*{effectifMax}"
+                                       placeholder="Ex: 50" min="1">
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex justify-content-end gap-2 mt-4">
+                            <a href="/lst-classes" th:href="@{/lst-classes}" class="btn btn-secondary">
+                                <i class="bi bi-x-circle me-2"></i>Annuler
+                            </a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="bi bi-check-circle me-2"></i>Enregistrer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

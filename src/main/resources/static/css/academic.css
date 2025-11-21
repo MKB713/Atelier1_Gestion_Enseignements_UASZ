@@ -120,3 +120,121 @@ body {
 
 .badge-actif { background-color: #198754; color: white; padding: 5px 10px; border-radius: 15px; }
 .badge-inactif { background-color: #dc3545; color: white; padding: 5px 10px; border-radius: 15px; }
+
+/* --- BADGES CAHIER DE TEXTE --- */
+.badge-valide { background-color: #28a745; color: white; padding: 5px 10px; border-radius: 15px; }
+.badge-non-valide { background-color: #ffc107; color: #000; padding: 5px 10px; border-radius: 15px; }
+
+/* --- SECTION HEADERS --- */
+.section-header {
+    background-color: #f8f9fa;
+    padding: 10px 15px;
+    border-left: 4px solid var(--primary-color);
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* --- REQUIRED FIELD INDICATOR --- */
+.required-field::after {
+    content: " *";
+    color: red;
+}
+
+/* --- SEARCH CONTAINER --- */
+.search-container {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.search-input {
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    padding: 0.6rem 1rem;
+    background: rgba(255,255,255,0.95);
+    transition: all 0.3s;
+}
+
+.search-input:focus {
+    border-color: #fff;
+    box-shadow: 0 0 0 0.2rem rgba(255,255,255,0.25);
+    background: #fff;
+}
+
+.btn-search {
+    background: rgba(255,255,255,0.2);
+    border: 2px solid #fff;
+    color: #fff;
+    font-weight: 600;
+    padding: 0.6rem 1.5rem;
+    transition: all 0.3s;
+}
+
+.btn-search:hover {
+    background: #fff;
+    color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* --- FILTER CARD --- */
+.filter-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: none;
+}
+
+/* --- HISTORIQUE STYLES --- */
+.historique-item {
+    border-left: 3px solid var(--primary-color);
+    padding-left: 15px;
+    margin-bottom: 15px;
+}
+
+.historique-type {
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+/* --- TIMELINE STYLES --- */
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--primary-color);
+}
+
+.timeline-item {
+    position: relative;
+    padding-bottom: 30px;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -26px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px var(--primary-color);
+}
+
+.timeline-marker.creation {
+    background: #28a745;
+    box-shadow: 0 0 0 2px #28a745;
+}
+
+.timeline-marker.validation {
+    background: #ffc107;
+    box-shadow: 0 0 0 2px #ffc107;
+}
