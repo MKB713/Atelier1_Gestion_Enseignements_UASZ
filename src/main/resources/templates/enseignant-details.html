@@ -110,9 +110,18 @@
                         <div class="col-md-6">
                             <p><strong>Grade:</strong> <span class="badge bg-info" th:text="${enseignant.grade ?: 'Non défini'}"></span></p>
                             <p><strong>Spécialité:</strong> <span th:text="${enseignant.specialite ?: 'Non défini'}"></span></p>
-                            <p><strong>Statut:</strong>
+                            <p><strong>Etat:</strong>
                                 <span th:if="${enseignant.estActif}" class="badge bg-success">Actif</span>
                                 <span th:unless="${enseignant.estActif}" class="badge bg-danger">Inactif</span>
+                            </p>
+                            <p><strong>Statut:</strong>
+                                <span th:if="${enseignant.statut != null}"
+                                      class="badge"
+                                      th:classappend="${enseignant.statut == 'PERMANENT'} ? 'bg-primary' : 'bg-warning'"
+                                      th:text="${enseignant.statut.displayValue}">
+                                       Statut
+                                </span>
+                                <span th:unless="${enseignant.statut}" class="text-muted">Non défini</span>
                             </p>
                             <p><strong>Date de Création:</strong>
                                 <span th:text="${enseignant.dateCreation != null ? #temporals.format(enseignant.dateCreation, 'dd-MM-yyyy HH:mm') : 'Non défini'}"></span>

@@ -13,14 +13,13 @@ public class Enseignant {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
-
     @Column(unique = true, nullable = false)
     private Long matricule;
-
     private String nom;
     private String prenom;
     private String adresse;
     private String telephone;
+    @Column(unique = true)
     private String email;
     private String grade;
     private LocalDate dateEmbauche;
@@ -28,27 +27,17 @@ public class Enseignant {
     private LocalDateTime dateModification;
     private LocalDate dateNaissance;
     private String lieuNaissance;
-
     @Enumerated(EnumType.STRING)
     private Statut statut;
-
     @Enumerated(EnumType.STRING)
     private StatutEnseignant statutEnseignant;
-
-    private boolean estActif;   // actif ou non
-    private boolean archived;   // <-- ajouté pour l’archivage
-
+    private boolean estActif;
     private String specialite;
 
     public Enseignant() {
     }
 
-    public Enseignant(Long id, Long matricule, String nom, String prenom, String adresse,
-                      String telephone, String email, String grade, LocalDate dateEmbauche,
-                      LocalDateTime dateCreation, LocalDateTime dateModification,
-                      LocalDate dateNaissance, String lieuNaissance, Statut statut,
-                      StatutEnseignant statutEnseignant, boolean estActif,
-                      boolean archived, String specialite) {
+    public Enseignant(Long id, Long matricule, String nom, String prenom, String adresse, String telephone, String email, String grade, LocalDate dateEmbauche, LocalDateTime dateCreation, LocalDateTime dateModification, LocalDate dateNaissance, String lieuNaissance, Statut statut, StatutEnseignant statutEnseignant, boolean estActif, String specialite) {
         this.id = id;
         this.matricule = matricule;
         this.nom = nom;
@@ -65,62 +54,142 @@ public class Enseignant {
         this.statut = statut;
         this.statutEnseignant = statutEnseignant;
         this.estActif = estActif;
-        this.archived = archived;
         this.specialite = specialite;
     }
 
-    // --- Getters & Setters ---
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public Long getMatricule() { return matricule; }
-    public void setMatricule(Long matricule) { this.matricule = matricule; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getNom() { return nom; }
-    public void setNom(String nom) { this.nom = nom; }
+    public Long getMatricule() {
+        return matricule;
+    }
 
-    public String getPrenom() { return prenom; }
-    public void setPrenom(String prenom) { this.prenom = prenom; }
+    public void setMatricule(Long matricule) {
+        this.matricule = matricule;
+    }
 
-    public String getAdresse() { return adresse; }
-    public void setAdresse(String adresse) { this.adresse = adresse; }
+    public String getNom() {
+        return nom;
+    }
 
-    public String getTelephone() { return telephone; }
-    public void setTelephone(String telephone) { this.telephone = telephone; }
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public String getPrenom() {
+        return prenom;
+    }
 
-    public String getGrade() { return grade; }
-    public void setGrade(String grade) { this.grade = grade; }
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
+    }
 
-    public LocalDate getDateEmbauche() { return dateEmbauche; }
-    public void setDateEmbauche(LocalDate dateEmbauche) { this.dateEmbauche = dateEmbauche; }
+    public String getAdresse() {
+        return adresse;
+    }
 
-    public LocalDateTime getDateCreation() { return dateCreation; }
-    public void setDateCreation(LocalDateTime dateCreation) { this.dateCreation = dateCreation; }
+    public void setAdresse(String adresse) {
+        this.adresse = adresse;
+    }
 
-    public LocalDateTime getDateModification() { return dateModification; }
-    public void setDateModification(LocalDateTime dateModification) { this.dateModification = dateModification; }
+    public String getTelephone() {
+        return telephone;
+    }
 
-    public LocalDate getDateNaissance() { return dateNaissance; }
-    public void setDateNaissance(LocalDate dateNaissance) { this.dateNaissance = dateNaissance; }
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
+    }
 
-    public String getLieuNaissance() { return lieuNaissance; }
-    public void setLieuNaissance(String lieuNaissance) { this.lieuNaissance = lieuNaissance; }
+    public String getEmail() {
+        return email;
+    }
 
-    public Statut getStatut() { return statut; }
-    public void setStatut(Statut statut) { this.statut = statut; }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-    public StatutEnseignant getStatutEnseignant() { return statutEnseignant; }
-    public void setStatutEnseignant(StatutEnseignant statutEnseignant) { this.statutEnseignant = statutEnseignant; }
+    public String getGrade() {
+        return grade;
+    }
 
-    public boolean isEstActif() { return estActif; }
-    public void setEstActif(boolean estActif) { this.estActif = estActif; }
+    public void setGrade(String grade) {
+        this.grade = grade;
+    }
 
-    public boolean isArchived() { return archived; }
-    public void setArchived(boolean archived) { this.archived = archived; }
+    public LocalDate getDateEmbauche() {
+        return dateEmbauche;
+    }
 
-    public String getSpecialite() { return specialite; }
-    public void setSpecialite(String specialite) { this.specialite = specialite; }
+    public void setDateEmbauche(LocalDate dateEmbauche) {
+        this.dateEmbauche = dateEmbauche;
+    }
+
+    public LocalDateTime getDateCreation() {
+        return dateCreation;
+    }
+
+    public void setDateCreation(LocalDateTime dateCreation) {
+        this.dateCreation = dateCreation;
+    }
+
+    public LocalDateTime getDateModification() {
+        return dateModification;
+    }
+
+    public void setDateModification(LocalDateTime dateModification) {
+        this.dateModification = dateModification;
+    }
+
+    public LocalDate getDateNaissance() {
+        return dateNaissance;
+    }
+
+    public void setDateNaissance(LocalDate dateNaissance) {
+        this.dateNaissance = dateNaissance;
+    }
+
+    public String getLieuNaissance() {
+        return lieuNaissance;
+    }
+
+    public void setLieuNaissance(String lieuNaissance) {
+        this.lieuNaissance = lieuNaissance;
+    }
+
+    public Statut getStatut() {
+        return statut;
+    }
+
+    public void setStatut(Statut statut) {
+        this.statut = statut;
+    }
+
+    public StatutEnseignant getStatutEnseignant() {
+        return statutEnseignant;
+    }
+
+    public void setStatutEnseignant(StatutEnseignant statutEnseignant) {
+        this.statutEnseignant = statutEnseignant;
+    }
+
+    public boolean isEstActif() {
+        return estActif;
+    }
+
+    public void setEstActif(boolean estActif) {
+        this.estActif = estActif;
+    }
+
+    public String getSpecialite() {
+        return specialite;
+    }
+
+    public void setSpecialite(String specialite) {
+        this.specialite = specialite;
+    }
 }
