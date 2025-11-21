@@ -142,11 +142,11 @@ body {
 
 /* --- SEARCH CONTAINER --- */
 .search-container {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
     padding: 1.5rem;
     border-radius: 10px;
     margin-bottom: 1.5rem;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 15px rgba(26, 94, 52, 0.3);
 }
 
 .search-input {
@@ -174,7 +174,7 @@ body {
 
 .btn-search:hover {
     background: #fff;
-    color: #667eea;
+    color: var(--primary-color);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
