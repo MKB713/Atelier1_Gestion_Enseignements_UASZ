@@ -46,7 +46,6 @@
                         <label for="entityType" class="form-label">Type <span class="text-danger">*</span></label>
                         <select class="form-select" id="entityType" name="entityType" required onchange="handleTypeChange()">
                             <option value="">Sélectionner le type</option>
-                            <option value="RESPONSABLE_LICENCE">Responsable Licence</option>
                             <option value="RESPONSABLE_MASTER">Responsable Master</option>
                             <option value="COORDINATEUR_LICENCE">Coordinateur Licence</option>
                         </select>
@@ -120,10 +119,7 @@ function handleTypeChange() {
     const form = document.getElementById('mainForm');
     const typeField = document.getElementById('type');
 
-    if (entityType === 'RESPONSABLE_LICENCE') {
-        form.action = '/save-responsable';
-        typeField.value = 'LICENCE';
-    } else if (entityType === 'RESPONSABLE_MASTER') {
+    if (entityType === 'RESPONSABLE_MASTER') {
         form.action = '/save-responsable';
         typeField.value = 'MASTER';
     } else if (entityType === 'COORDINATEUR_LICENCE') {
