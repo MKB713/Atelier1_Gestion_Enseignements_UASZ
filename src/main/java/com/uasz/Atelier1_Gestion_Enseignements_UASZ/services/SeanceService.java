@@ -1,12 +1,12 @@
 package com.uasz.Atelier1_Gestion_Enseignements_UASZ.services;
 
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.dto.SeanceDTO;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Ec;
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.EC;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Enseignant;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Salle;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Seance;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.exceptions.ConflictException;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.repositories.EcRepository;
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.repositories.ECRepository;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.repositories.EnseignantRepository;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.repositories.SalleRepository;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.repositories.SeanceRepository;
@@ -29,7 +29,7 @@ public class SeanceService {
     private SalleRepository salleRepository;
 
     @Autowired
-    private EcRepository ecRepository;
+    private ECRepository ecRepository;
 
     public List<Seance> getAllSeances() {
         return seanceRepository.findAll();
@@ -68,7 +68,7 @@ public class SeanceService {
                 .orElseThrow(() -> new EntityNotFoundException("Salle non trouvée avec l'id: " + seanceDTO.getSalleId()));
         seance.setSalle(salle);
 
-        Ec ec = ecRepository.findById(seanceDTO.getEcId())
+        EC ec = ecRepository.findById(seanceDTO.getEcId())
                 .orElseThrow(() -> new EntityNotFoundException("EC non trouvé avec l'id: " + seanceDTO.getEcId()));
         seance.setEc(ec);
 
@@ -106,7 +106,7 @@ public class SeanceService {
                 .orElseThrow(() -> new EntityNotFoundException("Salle non trouvée avec l'id: " + seanceDTO.getSalleId()));
         existingSeance.setSalle(salle);
 
-        Ec ec = ecRepository.findById(seanceDTO.getEcId())
+        EC ec = ecRepository.findById(seanceDTO.getEcId())
                 .orElseThrow(() -> new EntityNotFoundException("EC non trouvé avec l'id: " + seanceDTO.getEcId()));
         existingSeance.setEc(ec);
 

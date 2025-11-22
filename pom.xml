@@ -17,9 +17,9 @@
     <description>Projet de gestion des enseignements pour l'UASZ</description>
 
     <properties>
-        <java.version>17</java.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <java.version>24</java.version>
+        <maven.compiler.source>24</maven.compiler.source>
+        <maven.compiler.target>24</maven.compiler.target>
     </properties>
 
 

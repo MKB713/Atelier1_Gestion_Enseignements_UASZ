@@ -3,7 +3,7 @@ package com.uasz.Atelier1_Gestion_Enseignements_UASZ.controller;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.dto.PlanningDTO;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.dto.SeanceDTO;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Seance;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.EcService;
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.ECService;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.EnseignantService;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.PlanningService;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.SalleService;
@@ -37,7 +37,7 @@ public class ViewController {
     private SalleService salleService;
 
     @Autowired
-    private EcService ecService;
+    private ECService ecService;
 
     // --- Home Page (redirect to Seances list) ---
     @GetMapping("/lst-seances")
@@ -88,7 +88,7 @@ public class ViewController {
         model.addAttribute("seanceDTO", new SeanceDTO());
         model.addAttribute("enseignants", enseignantService.getAllEnseignants()); // Assuming this method exists
         model.addAttribute("salles", salleService.getAllSalles()); // Assuming this method exists
-        model.addAttribute("ecs", ecService.getAllEcs()); // Assuming this method exists
+        model.addAttribute("ecs", ecService.getAllECs()); // Assuming this method exists
         return "seance-add";
     }
 
@@ -113,7 +113,7 @@ public class ViewController {
             model.addAttribute("seanceDTO", seanceDTO);
             model.addAttribute("enseignants", enseignantService.getAllEnseignants());
             model.addAttribute("salles", salleService.getAllSalles());
-            model.addAttribute("ecs", ecService.getAllEcs());
+            model.addAttribute("ecs", ecService.getAllECs());
             return "seance-edit"; // Correctly return the view name here
         } catch (EntityNotFoundException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());

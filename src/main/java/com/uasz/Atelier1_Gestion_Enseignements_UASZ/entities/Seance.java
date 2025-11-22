@@ -25,12 +25,12 @@ public class Seance {
 
     @ManyToOne
     @JoinColumn(name = "ec_id")
-    private Ec ec;
+    private EC ec;
 
     public Seance() {
     }
 
-    public Seance(Long id, LocalDate dateSeance, LocalTime heureDebut, LocalTime heureFin, int duree, Salle salle, Enseignant enseignant, Ec ec) {
+    public Seance(Long id, LocalDate dateSeance, LocalTime heureDebut, LocalTime heureFin, int duree, Salle salle, Enseignant enseignant, EC ec) {
         this.id = id;
         this.dateSeance = dateSeance;
         this.heureDebut = heureDebut;
@@ -97,11 +97,11 @@ public class Seance {
         this.enseignant = enseignant;
     }
 
-    public Ec getEc() {
+    public EC getEc() {
         return ec;
     }
 
-    public void setEc(Ec ec) {
+    public void setEc(EC ec) {
         this.ec = ec;
     }
 }
