@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: headerParams('Ajouter une Inscription - UASZ')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: sidebar(activePage='inscriptions')}"></nav>
+
+<main class="main-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark">Nouvelle Inscription</h2>
+            <p class="text-muted mb-0">Inscrire un étudiant dans une classe</p>
+        </div>
+        <a href="/lst-inscriptions" th:href="@{/lst-inscriptions}" class="btn btn-outline-secondary shadow-sm">
+            <i class="bi bi-arrow-left me-2"></i>Retour
+        </a>
+    </div>
+
+    <!-- Message d'information - Prérequis -->
+    <div class="alert alert-info border-0 shadow-sm mb-3" style="background-color: rgba(13, 202, 240, 0.1);">
+        <div class="d-flex align-items-start">
+            <i class="bi bi-info-circle-fill text-info me-2 fs-5"></i>
+            <div>
+                <strong class="d-block mb-2">Prérequis pour créer une inscription:</strong>
+                <ul class="mb-0 small">
+                    <li>Un <strong>Étudiant</strong> doit exister → <a href="/lst-etudiants" class="text-decoration-none">Gérer les étudiants</a></li>
+                    <li>Une <strong>Classe</strong> doit exister → <a href="/lst-classes" class="text-decoration-none">Gérer les classes</a></li>
+                    <li>Optionnel: Une <strong>Formation</strong> → <a href="/lst-formations" class="text-decoration-none">Gérer les formations</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <strong>Erreur!</strong> <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0"><i class="bi bi-journal-plus me-2"></i>Détails de l'inscription</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" th:action="@{/save-inscription}" th:object="${inscription}">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="etudiant" class="form-label">Étudiant <span class="text-danger">*</span></label>
+                        <select class="form-select" id="etudiant" th:field="*{etudiantId}" required>
+                            <option value="">Sélectionner un étudiant</option>
+                            <option th:each="etudiant : ${etudiants}"
+                                    th:value="${etudiant.id}"
+                                    th:text="${etudiant.matricule + ' - ' + etudiant.prenom + ' ' + etudiant.nom}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="classe" class="form-label">Classe</label>
+                        <select class="form-select" id="classe" th:field="*{classeId}">
+                            <option value="">Sélectionner une classe</option>
+                            <option th:each="classe : ${classes}"
+                                    th:value="${classe.id}"
+                                    th:text="${classe.libelle}"></option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="formation" class="form-label">Formation</label>
+                        <select class="form-select" id="formation" th:field="*{formationId}">
+                            <option value="">Sélectionner une formation</option>
+                            <option th:each="formation : ${formations}"
+                                    th:value="${formation.id}"
+                                    th:text="${formation.libelle}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="anneeAcademique" class="form-label">Année Académique <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="anneeAcademique"
+                               th:field="*{anneeAcademique}"
+                               placeholder="Ex: 2024-2025" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="anneeFormation" class="form-label">Année de formation</label>
+                        <input type="number" class="form-control" id="anneeFormation"
+                               th:field="*{anneeFormation}"
+                               placeholder="1, 2, 3..." min="1" max="5">
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="statut" class="form-label">Statut</label>
+                        <select class="form-select" id="statut" th:field="*{statut}">
+                            <option value="EN_COURS">En cours</option>
+                            <option value="VALIDEE">Validée</option>
+                            <option value="REDOUBLEMENT">Redoublement</option>
+                            <option value="ABANDONNEE">Abandonnée</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="estRedoublant" class="form-label">Redoublant?</label>
+                        <select class="form-select" id="estRedoublant" th:field="*{estRedoublant}">
+                            <option value="false">Non</option>
+                            <option value="true">Oui</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <label for="remarques" class="form-label">Remarques</label>
+                        <textarea class="form-control" id="remarques" th:field="*{remarques}" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end gap-2 mt-3">
+                    <a href="/lst-inscriptions" th:href="@{/lst-inscriptions}" class="btn btn-secondary">
+                        <i class="bi bi-x-circle me-2"></i>Annuler
+                    </a>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-circle me-2"></i>Enregistrer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

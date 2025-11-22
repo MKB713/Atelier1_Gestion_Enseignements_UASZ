@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: headerParams('Liste des Inscriptions - UASZ')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: sidebar(activePage='inscriptions')}"></nav>
+
+<main class="main-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark">Inscriptions</h2>
+            <p class="text-muted mb-0">Gestion des inscriptions des étudiants</p>
+        </div>
+        <a href="/add-inscription" th:href="@{/add-inscription}" class="btn btn-success shadow-sm">
+            <i class="bi bi-plus-circle me-2"></i>Nouvelle Inscription
+        </a>
+    </div>
+
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        <span th:text="${error}">Error message</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0 fw-bold text-success">
+                <i class="bi bi-journal-check me-2"></i>Liste des Inscriptions
+            </h5>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Étudiant</th>
+                            <th>Matricule</th>
+                            <th>Classe</th>
+                            <th>Formation</th>
+                            <th>Année Académique</th>
+                            <th>Statut</th>
+                            <th>Redoublant</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${inscriptions == null or #lists.isEmpty(inscriptions)}">
+                            <td colspan="8" class="text-center py-4 text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                Aucune inscription enregistrée
+                            </td>
+                        </tr>
+                        <tr th:each="inscription : ${inscriptions}">
+                            <td class="fw-bold">
+                                <span th:text="${inscription.etudiant.prenom + ' ' + inscription.etudiant.nom}">Nom</span>
+                            </td>
+                            <td class="text-primary">
+                                <small th:text="${inscription.etudiant.matricule}">Matricule</small>
+                            </td>
+                            <td>
+                                <span th:if="${inscription.classe != null}" th:text="${inscription.classe.libelle}">Classe</span>
+                                <span th:unless="${inscription.classe != null}" class="text-muted">-</span>
+                            </td>
+                            <td>
+                                <span th:if="${inscription.formation != null}" th:text="${inscription.formation.libelle}">Formation</span>
+                                <span th:unless="${inscription.formation != null}" class="text-muted">-</span>
+                            </td>
+                            <td th:text="${inscription.anneeAcademique}">2024-2025</td>
+                            <td>
+                                <span class="badge"
+                                      th:classappend="${inscription.statut.name() == 'EN_COURS'} ? 'bg-primary' :
+                                                      (${inscription.statut.name() == 'VALIDEE'} ? 'bg-success' :
+                                                      (${inscription.statut.name() == 'REDOUBLEMENT'} ? 'bg-warning' : 'bg-danger'))"
+                                      th:text="${inscription.statut}">Statut</span>
+                            </td>
+                            <td class="text-center">
+                                <span th:if="${inscription.estRedoublant}" class="badge bg-warning">
+                                    <i class="bi bi-arrow-repeat"></i> Oui
+                                </span>
+                                <span th:unless="${inscription.estRedoublant}" class="text-muted">Non</span>
+                            </td>
+                            <td class="text-center">
+                                <a th:href="@{/view-inscription/{id}(id=${inscription.id})}"
+                                   class="btn btn-sm btn-outline-info" title="Détails">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a th:href="@{/edit-inscription/{id}(id=${inscription.id})}"
+                                   class="btn btn-sm btn-outline-primary" title="Modifier">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

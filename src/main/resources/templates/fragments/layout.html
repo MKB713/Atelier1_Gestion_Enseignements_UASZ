@@ -79,6 +79,31 @@
                 <i class="bi bi-people-fill"></i> Classes
             </a>
         </li>
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'etudiants'} ? 'active'" th:href="@{/lst-etudiants}">
+                <i class="bi bi-person-badge"></i> Étudiants
+            </a>
+        </li>
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'inscriptions'} ? 'active'" th:href="@{/lst-inscriptions}">
+                <i class="bi bi-journal-check"></i> Inscriptions
+            </a>
+        </li>
+
+        <!-- SECTION: RESPONSABLES & COORDINATEURS -->
+        <li class="nav-item mb-1 mt-3 pt-3 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
+            <small class="text-white-50 text-uppercase px-3" style="font-size: 0.7rem;">Responsables</small>
+        </li>
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'responsables'} ? 'active'" th:href="@{/lst-responsables}">
+                <i class="bi bi-person-workspace"></i> Responsables
+            </a>
+        </li>
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'coordinateurs'} ? 'active'" th:href="@{/lst-coordinateurs}">
+                <i class="bi bi-person-gear"></i> Coordinateurs
+            </a>
+        </li>
 
         <!-- SECTION: PLANNING -->
         <li class="nav-item mb-1 mt-3 pt-3 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
