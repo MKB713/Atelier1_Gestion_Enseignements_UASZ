@@ -1,176 +1,193 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Détails de l'Enseignant - UASZ</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <style>
-        .sidebar {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        .nav-link {
-            color: rgba(255,255,255,0.8);
-            transition: all 0.3s;
-        }
-        .nav-link:hover, .nav-link.active {
-            color: #fff;
-            background-color: rgba(255,255,255,0.1);
-        }
-        .card-header-custom {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-    </style>
-</head>
+
+<head th:replace="~{fragments/layout :: headerParams('Dossier Enseignant')}"></head>
+
 <body>
-<div class="container-fluid">
-    <div class="row">
-        <!-- Sidebar (à externaliser en fragment Thymeleaf si besoin) -->
-        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-0">
-            <div class="position-sticky pt-3">
-                <div class="text-center mb-4">
-                    <h4 class="text-white fw-bold">UASZ</h4>
-                    <p class="text-white-50 small">Gestion des Enseignements</p>
+
+<nav th:replace="~{fragments/layout :: sidebar(activePage='enseignants')}"></nav>
+
+<main class="main-content">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark">Dossier Enseignant</h2>
+            <p class="text-muted mb-0">Consultation des informations administratives et pédagogiques.</p>
+        </div>
+        <a th:href="@{/lst-enseignants}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Retour à la liste
+        </a>
+    </div>
+
+    <div th:if="${message}" th:classappend="${typeMessage == 'success' ? 'alert-success' : 'alert-danger'}"
+         class="alert alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi" th:classappend="${typeMessage == 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'}"></i>
+        <span th:text="${message}" class="ms-2"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div th:if="${enseignant}" class="row">
+
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center pt-5 pb-4">
+                    <div class="d-flex justify-content-center align-items-center rounded-circle mx-auto mb-3 shadow-sm"
+                         style="width: 120px; height: 120px; background-color: #1a5e34; color: white; font-size: 2.5rem;">
+                        <span th:text="${#strings.substring(enseignant.nom,0,1) + #strings.substring(enseignant.prenom,0,1)}">JD</span>
+                    </div>
+
+                    <h4 class="fw-bold mb-1" th:text="${enseignant.prenom + ' ' + enseignant.nom}">Jean Dupont</h4>
+                    <p class="text-muted mb-2" th:text="${enseignant.grade}">Maître de Conférences</p>
+
+                    <div class="d-flex justify-content-center gap-2 mb-4">
+                        <span th:if="${enseignant.estActif}" class="badge bg-success rounded-pill px-3">
+                            <i class="bi bi-check-circle me-1"></i>Actif
+                        </span>
+                        <span th:unless="${enseignant.estActif}" class="badge bg-danger rounded-pill px-3">
+                            <i class="bi bi-x-circle me-1"></i>Inactif
+                        </span>
+
+                        <span class="badge bg-secondary rounded-pill px-3" th:text="${enseignant.statut.displayValue}">Permanent</span>
+                    </div>
+
+                    <div class="d-grid gap-2 px-4">
+                        <a th:href="@{/edit-enseignant/{id}(id=${enseignant.id})}" class="btn btn-outline-primary">
+                            <i class="bi bi-pencil me-2"></i>Modifier le dossier
+                        </a>
+                    </div>
                 </div>
-                <ul class="nav flex-column px-2">
-                    <li class="nav-item">
-                        <a class="nav-link rounded mb-1" href="/" th:href="@{/}">
-                            <i class="bi bi-house-door me-2"></i> Accueil
-                        </a>
-
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link rounded mb-1" href="/lst-filieres" th:href="@{/lst-filieres}">
-                            <i class="bi bi-diagram-3 me-2"></i> Filières
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link rounded mb-1 active" href="/lst-enseignants" th:href="@{/lst-enseignants}">
-                            <i class="bi bi-person-badge me-2"></i> Enseignants
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link rounded mb-1" href="/lst-formations" th:href="@{/lst-formations}">
-                            <i class="bi bi-book me-2"></i> Formations
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link rounded mb-1" href="/lst-modules" th:href="@{/lst-modules}">
-                            <i class="bi bi-journal-code me-2"></i> Modules
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link rounded mb-1" href="/lst-ues" th:href="@{/lst-ues}">
-                            <i class="bi bi-layers me-2"></i> Unités d'Enseignement
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link rounded mb-1" href="/seances" th:href="@{/seances}">
-                            <i class="bi bi-calendar-event me-2"></i> Gestion des Emplois du Temps
-                        </a>
-                    </li>
-                </ul>
+                <div class="card-footer bg-white border-top-0 text-center pb-4">
+                    <small class="text-muted d-block">Matricule Universitaire</small>
+                    <span class="fw-bold text-dark fs-5" th:text="${enseignant.matricule}">AAAA12345</span>
+                </div>
             </div>
-        </nav>
+        </div>
 
-        <!-- Main content -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <div class="pt-3 pb-2 mb-3 border-bottom d-flex justify-content-between align-items-center">
-                <h1 class="h2">Détails de l'Enseignant</h1>
-                <a th:href="@{/lst-enseignants}" class="btn btn-secondary" aria-label="Retour à la liste des enseignants">
-                    <i class="bi bi-arrow-left-circle me-2"></i>Retour à la liste
-                </a>
-            </div>
-
-            <!-- Carte enseignant -->
-            <div class="card shadow-sm" th:if="${enseignant}">
-                <div class="card-header card-header-custom">
-                    <h5 class="mb-0 text-white">
-                        <i class="bi bi-person-vcard me-2"></i>
-                        <span th:text="${enseignant.prenom + ' ' + enseignant.nom}"></span>
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <h5 class="mb-0 text-success fw-bold">
+                        <i class="bi bi-file-text me-2"></i>Informations Détaillées
                     </h5>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <!-- Colonne gauche -->
-                        <div class="col-md-6">
-                            <p><strong>Matricule:</strong> <span class="badge bg-secondary" th:text="${enseignant.matricule}"></span></p>
-                            <p><strong>Nom:</strong> <span th:text="${enseignant.nom ?: 'Non défini'}"></span></p>
-                            <p><strong>Prénom:</strong> <span th:text="${enseignant.prenom ?: 'Non défini'}"></span></p>
-                            <p><strong>Date de Naissance:</strong>
-                                <span th:text="${enseignant.dateNaissance != null ? #temporals.format(enseignant.dateNaissance, 'dd-MM-yyyy') : 'Non défini'}"></span>
-                            </p>
-                            <p><strong>Lieu de Naissance:</strong> <span th:text="${enseignant.lieuNaissance ?: 'Non défini'}"></span></p>
-                            <p><strong>Email:</strong> <span th:text="${enseignant.email ?: 'Non défini'}"></span></p>
-                            <p><strong>Téléphone:</strong> <span th:text="${enseignant.telephone ?: 'Non défini'}"></span></p>
+                <div class="card-body p-4">
+
+                    <h6 class="text-muted text-uppercase small fw-bold mb-3">
+                        <i class="bi bi-person me-2"></i>État Civil
+                    </h6>
+                    <div class="row mb-4">
+                        <div class="col-sm-6 mb-2">
+                            <span class="d-block text-muted small">Date de naissance</span>
+                            <span class="fw-medium" th:text="${enseignant.dateNaissance != null ? #temporals.format(enseignant.dateNaissance, 'dd MMMM yyyy') : '-'}">01/01/1980</span>
                         </div>
-                        <!-- Colonne droite -->
-                        <div class="col-md-6">
-                            <p><strong>Grade:</strong> <span class="badge bg-info" th:text="${enseignant.grade ?: 'Non défini'}"></span></p>
-                            <p><strong>Spécialité:</strong> <span th:text="${enseignant.specialite ?: 'Non défini'}"></span></p>
-                            <p><strong>Etat:</strong>
-                                <span th:if="${enseignant.estActif}" class="badge bg-success">Actif</span>
-                                <span th:unless="${enseignant.estActif}" class="badge bg-danger">Inactif</span>
-                            </p>
-                            <p><strong>Statut:</strong>
-                                <span th:if="${enseignant.statut != null}"
-                                      class="badge"
-                                      th:classappend="${enseignant.statut == 'PERMANENT'} ? 'bg-primary' : 'bg-warning'"
-                                      th:text="${enseignant.statut.displayValue}">
-                                       Statut
-                                </span>
-                                <span th:unless="${enseignant.statut}" class="text-muted">Non défini</span>
-                            </p>
-                            <p><strong>Date de Création:</strong>
-                                <span th:text="${enseignant.dateCreation != null ? #temporals.format(enseignant.dateCreation, 'dd-MM-yyyy HH:mm') : 'Non défini'}"></span>
-                            </p>
-                            <p><strong>Date de Modification:</strong>
-                                <span th:text="${enseignant.dateModification != null ? #temporals.format(enseignant.dateModification, 'dd-MM-yyyy HH:mm') : 'Non défini'}"></span>
-                            </p>
+                        <div class="col-sm-6 mb-2">
+                            <span class="d-block text-muted small">Lieu de naissance</span>
+                            <span class="fw-medium" th:text="${enseignant.lieuNaissance}">Ziguinchor</span>
+                        </div>
+                    </div>
+
+                    <hr class="text-muted opacity-25">
+
+                    <h6 class="text-muted text-uppercase small fw-bold mb-3 mt-4">
+                        <i class="bi bi-briefcase me-2"></i>Carrière
+                    </h6>
+                    <div class="row mb-4">
+                        <div class="col-sm-6 mb-2">
+                            <span class="d-block text-muted small">Spécialité</span>
+                            <span class="fw-medium" th:text="${enseignant.specialite}">Informatique</span>
+                        </div>
+                        <div class="col-sm-6 mb-2">
+                            <span class="d-block text-muted small">Date d'embauche</span>
+                            <span class="fw-medium" th:text="${enseignant.dateEmbauche != null ? #temporals.format(enseignant.dateEmbauche, 'dd MMMM yyyy') : '-'}">01/01/2010</span>
+                        </div>
+                    </div>
+
+                    <hr class="text-muted opacity-25">
+
+                    <h6 class="text-muted text-uppercase small fw-bold mb-3 mt-4">
+                        <i class="bi bi-envelope-paper me-2"></i>Coordonnées
+                    </h6>
+                    <div class="row">
+                        <div class="col-sm-6 mb-3">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-light rounded p-2 me-3 text-success"><i class="bi bi-envelope-at"></i></div>
+                                <div>
+                                    <span class="d-block text-muted small">Email</span>
+                                    <a href="#" class="text-decoration-none text-dark fw-medium" th:text="${enseignant.email}">email@uasz.sn</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-light rounded p-2 me-3 text-success"><i class="bi bi-telephone"></i></div>
+                                <div>
+                                    <span class="d-block text-muted small">Téléphone</span>
+                                    <span class="fw-medium" th:text="${enseignant.telephone}">+221 77...</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-light rounded p-2 me-3 text-success"><i class="bi bi-geo-alt"></i></div>
+                                <div>
+                                    <span class="d-block text-muted small">Adresse Physique</span>
+                                    <span class="fw-medium" th:text="${enseignant.adresse}">Adresse...</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="card-footer text-end">
-                    <a th:href="@{/edit-enseignant/{id}(id=${enseignant.id})}" class="btn btn-primary">
-                        <i class="bi bi-pencil me-2"></i>Modifier
-                    </a>
-                    <button type="button" class="btn btn-danger"
-                            th:onclick="'archiverEnseignant(' + ${enseignant.id} + ')'">
-                        <i class="bi bi-archive me-2"></i>Archiver
-                    </button>
+
+                <div class="card-footer bg-light border-top text-end">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="text-start small text-muted">
+                            <div>Créé le : <span th:text="${enseignant.dateCreation != null ? #temporals.format(enseignant.dateCreation, 'dd/MM/yyyy') : '-'}"></span></div>
+                        </div>
+
+                        <button type="button"
+                                class="btn btn-sm btn-danger"
+                                th:disabled="${enseignant.statutEnseignant != null and enseignant.statutEnseignant.name() == 'ARCHIVE'}"
+                                th:onclick="'archiverEnseignant(' + ${enseignant.id} + ')'">
+                            <i class="bi bi-archive me-2"></i>Archiver ce dossier
+                        </button>
+                    </div>
                 </div>
             </div>
-
-            <!-- Message si enseignant introuvable -->
-            <div th:if="${enseignant == null}" class="alert alert-warning mt-3">
-                Aucun enseignant trouvé avec l'ID fourni.
-            </div>
-        </main>
+        </div>
     </div>
-</div>
+
+    <div th:if="${enseignant == null}" class="alert alert-warning shadow-sm mt-3">
+        <i class="bi bi-exclamation-circle me-2"></i> Aucun enseignant trouvé avec cet identifiant.
+    </div>
+
+</main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     function archiverEnseignant(id) {
-        if (confirm('Êtes-vous sûr de vouloir archiver cet enseignant?')) {
-            fetch('/' + id + '/archiver', { method: 'PATCH' })
+        if (confirm('ATTENTION : Êtes-vous sûr de vouloir archiver cet enseignant ?\nCette action retirera l\'enseignant des listes actives.')) {
+
+            // --- CORRECTION ICI ---
+            // On utilise '/archive-enseignant/' pour correspondre à ton Controller Java
+            const url = '/archive-enseignant/' + id;
+
+            fetch(url, { method: 'POST' })
                 .then(response => {
-                    if (response.ok) {
-                        alert('Enseignant archivé avec succès!');
-                        window.location.href = '/lst-enseignants';
+                    if (response.ok || response.redirected) {
+                        // Redirection vers la liste avec un message de succès
+                        window.location.href = '/lst-enseignants?success=Enseignant archive avec succes';
                     } else {
-                        alert('Erreur lors de l\'archivage.');
+                        // Gestion des erreurs serveur
+                        response.text().then(msg => alert('Erreur : ' + msg));
                     }
                 })
                 .catch(error => {
                     console.error('Erreur:', error);
-                    alert('Impossible d’archiver l’enseignant.');
+                    alert('Erreur de communication avec le serveur.');
                 });
         }
     }
 </script>
+
 </body>
 </html>

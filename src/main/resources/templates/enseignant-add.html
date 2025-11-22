@@ -1,312 +1,191 @@
+
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajouter un Enseignant - UASZ</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <style>
-        .sidebar {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        .nav-link {
-            color: rgba(255,255,255,0.8);
-            transition: all 0.3s;
-        }
-        .nav-link:hover, .nav-link.active {
-            color: #fff;
-            background-color: rgba(255,255,255,0.1);
-        }
-        .section-header {
-            background-color: #f8f9fa;
-            padding: 10px 15px;
-            border-left: 4px solid #667eea;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-    </style>
-</head>
+
+<head th:replace="~{fragments/layout :: headerParams('Ajouter un Enseignant')}"></head>
+
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar -->
-            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-0">
-                <div class="position-sticky pt-3">
-                    <div class="text-center mb-4">
-                        <h4 class="text-white fw-bold">UASZ</h4>
-                        <p class="text-white-50 small">Gestion des Enseignements</p>
+
+<nav th:replace="~{fragments/layout :: sidebar(activePage='enseignants')}"></nav>
+
+<main class="main-content">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark">Nouvel Enseignant</h2>
+            <p class="text-muted mb-0">Remplissez le formulaire pour ajouter un membre au corps professoral.</p>
+        </div>
+        <a th:href="@{/lst-enseignants}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Retour à la liste
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <i class="bi bi-person-plus-fill me-2"></i>Formulaire d'inscription
+                </div>
+
+                <div class="card-body p-4">
+
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${matriculeError != null}">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>Erreur :</strong> <span th:text="${matriculeError}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
-                    <ul class="nav flex-column px-2">
-                        <li class="nav-item">
-                            <a class="nav-link rounded mb-1" href="/" th:href="@{/}">
-                                <i class="bi bi-house-door me-2"></i> Accueil
-                            </a>
 
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link rounded mb-1" href="/lst-filieres" th:href="@{/lst-filieres}">
-                                <i class="bi bi-diagram-3 me-2"></i> Filières
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link rounded mb-1 active" href="/lst-enseignants" th:href="@{/lst-enseignants}">
-                                <i class="bi bi-person-badge me-2"></i> Enseignants
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link rounded mb-1" href="/lst-formations" th:href="@{/lst-formations}">
-                                <i class="bi bi-book me-2"></i> Formations
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link rounded mb-1" href="/lst-modules" th:href="@{/lst-modules}">
-                                <i class="bi bi-journal-code me-2"></i> Modules
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link rounded mb-1" href="/lst-ues" th:href="@{/lst-ues}">
-                                <i class="bi bi-layers me-2"></i> Unités d'Enseignement
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link rounded mb-1" href="/seances" th:href="@{/seances}">
-                                <i class="bi bi-calendar-event me-2"></i> Gestion des Emplois du Temps
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${error != null}">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <strong>Erreur :</strong> <span th:text="${error}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
 
-            <!-- Main content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="pt-3 pb-2 mb-3 border-bottom d-flex justify-content-between align-items-center">
-                    <h1 class="h2">
-                        <span th:if="${enseignant.id == null}">Nouvel Enseignant</span>
-                        <span th:if="${enseignant.id != null}">Modifier Enseignant</span>
-                    </h1>
-                    <a href="/lst-enseignants" th:href="@{/lst-enseignants}" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left me-2"></i>Retour à la liste
-                    </a>
-                </div>
+                    <form method="post" th:action="@{/save-enseignant}" th:object="${enseignant}" class="needs-validation">
+                        <input type="hidden" th:field="*{id}" />
 
-                <!-- Form Card -->
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card shadow-sm">
-                            <div class="card-header bg-success text-white">
-                                <h5 class="mb-0">
-                                    <i class="bi bi-person-badge me-2"></i>Informations de l'enseignant
-                                </h5>
+                        <div class="alert alert-light border-start border-4 border-info small text-muted mb-4" role="alert">
+                            <i class="bi bi-info-circle-fill text-info me-2"></i>
+                            Le <strong>Matricule</strong> sera généré automatiquement par le système (Format: AAAAEEEEE).
+                        </div>
+
+                        <h6 class="text-success fw-bold mb-3 border-bottom pb-2">
+                            <i class="bi bi-card-checklist me-2"></i>Grade & Statut
+                        </h6>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3">
+                                <label for="grade" class="form-label">Grade académique <span class="text-danger">*</span></label>
+                                <select class="form-select" id="grade" th:field="*{grade}" required>
+                                    <option value="">-- Sélectionner --</option>
+                                    <option value="Assistant">Assistant</option>
+                                    <option value="Maître-Assistant">Maître-Assistant</option>
+                                    <option value="Maître de Conférences">Maître de Conférences</option>
+                                    <option value="Professeur Titulaire">Professeur Titulaire</option>
+                                    <option value="Professeur Assimilé">Professeur Assimilé</option>
+                                </select>
                             </div>
-                            <div class="card-body">
-                                <!-- Alerte en cas d'erreur de matricule -->
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${matriculeError != null}">
-                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                                    <strong>Erreur!</strong> <span th:text="${matriculeError}"></span>
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>
-
-                                <!-- Alerte en cas d'erreur générale -->
-                                <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${error != null}">
-                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                                    <strong>Erreur!</strong> <span th:text="${error}"></span>
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>
-
-                                <form method="post" th:action="@{/save-enseignant}" th:object="${enseignant}">
-                                    <input type="hidden" th:field="*{id}" />
-
-                                    <!-- Identification -->
-                                    <div class="section-header">
-                                        <i class="bi bi-card-checklist me-2"></i>Identification
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="matricule" class="form-label">
-                                                Matricule <span class="text-danger">*</span>
-                                            </label>
-                                            <input type="number" class="form-control" id="matricule"
-                                                   th:field="*{matricule}"
-                                                   th:classappend="${matriculeError != null} ? 'is-invalid' : ''"
-                                                   placeholder="Ex: 20240001" required>
-                                            <div class="invalid-feedback" th:if="${matriculeError != null}" th:text="${matriculeError}">
-                                                Erreur de matricule
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="grade" class="form-label">
-                                                Grade <span class="text-danger">*</span>
-                                            </label>
-                                            <select class="form-select" id="grade" th:field="*{grade}" required>
-                                                <option value="">Sélectionner un grade</option>
-                                                <option value="Assistant">Assistant</option>
-                                                <option value="Maître-Assistant">Maître-Assistant</option>
-                                                <option value="Maître de Conférences">Maître de Conférences</option>
-                                                <option value="Professeur Titulaire">Professeur Titulaire</option>
-                                                <option value="Professeur Assimilé">Professeur Assimilé</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <!-- Informations personnelles -->
-                                    <div class="section-header">
-                                        <i class="bi bi-person me-2"></i>Informations personnelles
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="nom" class="form-label">
-                                                Nom <span class="text-danger">*</span>
-                                            </label>
-                                            <input type="text" class="form-control" id="nom"
-                                                   th:field="*{nom}" placeholder="Nom de famille" required>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="prenom" class="form-label">
-                                                Prénom <span class="text-danger">*</span>
-                                            </label>
-                                            <input type="text" class="form-control" id="prenom"
-                                                   th:field="*{prenom}" placeholder="Prénom" required>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="dateNaissance" class="form-label">
-                                                Date de naissance <span class="text-danger">*</span>
-                                                <small class="text-muted">(minimum 25 ans)</small>
-                                            </label>
-                                            <input type="date" class="form-control" id="dateNaissance"
-                                                   th:field="*{dateNaissance}"
-                                                   th:classappend="${#fields.hasErrors('dateNaissance')} ? 'is-invalid' : ''"
-                                                   required>
-                                            <div class="invalid-feedback" th:if="${#fields.hasErrors('dateNaissance')}" th:errors="*{dateNaissance}">
-                                                Erreur de validation
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="lieuNaissance" class="form-label">
-                                                Lieu de naissance <span class="text-danger">*</span>
-                                            </label>
-                                            <input type="text" class="form-control" id="lieuNaissance"
-                                                   th:field="*{lieuNaissance}" placeholder="Ville, Pays" required>
-                                        </div>
-                                    </div>
-
-                                    <!-- Contact -->
-                                    <div class="section-header">
-                                        <i class="bi bi-telephone me-2"></i>Coordonnées
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-4 mb-3">
-                                            <label for="email" class="form-label">
-                                                Email <span class="text-danger">*</span>
-                                            </label>
-                                            <input type="email" class="form-control" id="email"
-                                                   th:field="*{email}" placeholder="email@uasz.sn" required>
-                                        </div>
-                                        <div class="col-md-4 mb-3">
-                                            <label for="telephone" class="form-label">
-                                                Téléphone <span class="text-danger">*</span>
-                                            </label>
-                                            <input type="tel" class="form-control" id="telephone"
-                                                   th:field="*{telephone}" placeholder="+221 77 123 45 67" required>
-                                        </div>
-                                        <div class="col-md-4 mb-3">
-                                            <label for="adresse" class="form-label">
-                                                Adresse <span class="text-danger">*</span>
-                                            </label>
-                                            <input type="text" class="form-control" id="adresse"
-                                                   th:field="*{adresse}" placeholder="Adresse complète" required>
-                                        </div>
-                                    </div>
-
-                                    <!-- Informations professionnelles -->
-                                    <div class="section-header">
-                                        <i class="bi bi-briefcase me-2"></i>Informations professionnelles
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="specialite" class="form-label">
-                                                Spécialité <span class="text-danger">*</span>
-                                            </label>
-                                            <input type="text" class="form-control" id="specialite"
-                                                   th:field="*{specialite}" placeholder="Ex: Informatique" required>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="dateEmbauche" class="form-label">
-                                                Date d'embauche <span class="text-danger">*</span>
-                                            </label>
-                                            <input type="date" class="form-control" id="dateEmbauche"
-                                                   th:field="*{dateEmbauche}"
-                                                   th:classappend="${#fields.hasErrors('dateEmbauche')} ? 'is-invalid' : ''"
-                                                   th:max="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}" required>
-                                            <div class="invalid-feedback" th:if="${#fields.hasErrors('dateEmbauche')}" th:errors="*{dateEmbauche}">
-                                                Erreur de validation
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="statut" class="form-label">
-                                                Statut <span class="text-danger">*</span>
-                                            </label>
-                                            <select class="form-select" id="statut" th:field="*{statut}" required>
-                                                <option value="">Sélectionner un statut</option>
-                                                <option value="PERMANENT">Permanent</option>
-                                                <option value="VACATAIRE">Vacataire</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label class="form-label">État</label>
-                                            <div class="form-check form-switch">
-                                                <input class="form-check-input" type="checkbox" id="estActif"
-                                                       th:field="*{estActif}">
-                                                <label class="form-check-label" for="estActif">
-                                                    Enseignant actif
-                                                </label>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Buttons -->
-                                    <div class="d-flex gap-2 justify-content-end mt-4">
-                                        <a href="/lst-enseignants" th:href="@{/lst-enseignants}"
-                                           class="btn btn-secondary">
-                                            <i class="bi bi-x-circle me-2"></i>Annuler
-                                        </a>
-                                        <button type="submit" class="btn btn-success">
-                                            <i class="bi bi-check-circle me-2"></i>
-                                            <span th:if="${enseignant.id == null}">Créer</span>
-                                            <span th:if="${enseignant.id != null}">Mettre à jour</span>
-                                        </button>
-                                    </div>
-                                </form>
+                            <div class="col-md-6 mb-3">
+                                <label for="statut" class="form-label">Type de Contrat <span class="text-danger">*</span></label>
+                                <select class="form-select" id="statut" th:field="*{statut}" required>
+                                    <option value="">-- Sélectionner --</option>
+                                    <option value="PERMANENT">Permanent</option>
+                                    <option value="VACATAIRE">Vacataire</option>
+                                </select>
                             </div>
                         </div>
-                    </div>
+
+                        <h6 class="text-success fw-bold mb-3 border-bottom pb-2">
+                            <i class="bi bi-person me-2"></i>Informations Personnelles
+                        </h6>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3">
+                                <label for="nom" class="form-label">Nom <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="nom" th:field="*{nom}" placeholder="Nom de famille" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="prenom" class="form-label">Prénom <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="prenom" th:field="*{prenom}" placeholder="Prénom(s)" required>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3">
+                                <label for="dateNaissance" class="form-label">Date de naissance <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="dateNaissance"
+                                       th:field="*{dateNaissance}"
+                                       th:classappend="${#fields.hasErrors('dateNaissance')} ? 'is-invalid' : ''"
+                                       max="2000-12-31" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('dateNaissance')}" th:errors="*{dateNaissance}">
+                                    Date invalide
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="lieuNaissance" class="form-label">Lieu de naissance <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="lieuNaissance" th:field="*{lieuNaissance}" placeholder="Ville, Pays" required>
+                            </div>
+                        </div>
+
+                        <h6 class="text-success fw-bold mb-3 border-bottom pb-2">
+                            <i class="bi bi-envelope-at me-2"></i>Coordonnées & Profession
+                        </h6>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Email Institutionnel <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-envelope"></i></span>
+                                    <input type="email" class="form-control" id="email"
+                                           th:field="*{email}"
+                                           placeholder="prenom.nom@univ-zig.sn"
+                                           required
+                                           pattern="[A-Za-z0-9+._-]+@univ-zig\.sn"
+                                           oninvalid="this.setCustomValidity('L\'email doit se terminer par @univ-zig.sn')"
+                                           oninput="this.setCustomValidity('')">
+                                </div>
+                                <div class="form-text">Domaine obligatoire : @univ-zig.sn</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="telephone" class="form-label">Téléphone <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light"><i class="bi bi-telephone"></i></span>
+                                    <input type="tel" class="form-control" id="telephone" th:field="*{telephone}" placeholder="+221 77 ..." required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-12 mb-3">
+                                <label for="adresse" class="form-label">Adresse physique <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="adresse" th:field="*{adresse}" placeholder="Quartier, Rue, Ville..." required>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3">
+                                <label for="specialite" class="form-label">Spécialité de recherche <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="specialite" th:field="*{specialite}" placeholder="Ex: Intelligence Artificielle" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="dateEmbauche" class="form-label">Date d'embauche <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="dateEmbauche"
+                                       th:field="*{dateEmbauche}"
+                                       th:max="${#dates.format(#dates.createNow(), 'yyyy-MM-dd')}"
+                                       required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('dateEmbauche')}" th:errors="*{dateEmbauche}">
+                                    Date invalide
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-light p-3 rounded mb-4 border">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="estActif" th:field="*{estActif}" checked>
+                                <label class="form-check-label fw-bold" for="estActif">
+                                    Activer ce compte enseignant immédiatement
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                            <a th:href="@{/lst-enseignants}" class="btn btn-light border">
+                                Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="bi bi-check-lg me-2"></i>Enregistrer
+                            </button>
+                        </div>
+
+                    </form>
                 </div>
-            </main>
+            </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Définir la date max pour la date de naissance (aujourd'hui - 25 ans)
-        document.addEventListener('DOMContentLoaded', function() {
-            const dateNaissanceInput = document.getElementById('dateNaissance');
-            const dateEmbaucheInput = document.getElementById('dateEmbauche');
+</main>
 
-            // Calculer la date max pour la date de naissance (aujourd'hui - 25 ans)
-            const today = new Date();
-            const maxDateNaissance = new Date(today.getFullYear() - 25, today.getMonth(), today.getDate());
-            dateNaissanceInput.max = maxDateNaissance.toISOString().split('T')[0];
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-            // Définir la date max pour la date d'embauche (aujourd'hui)
-            dateEmbaucheInput.max = today.toISOString().split('T')[0];
-        });
-    </script>
 </body>
 </html>
