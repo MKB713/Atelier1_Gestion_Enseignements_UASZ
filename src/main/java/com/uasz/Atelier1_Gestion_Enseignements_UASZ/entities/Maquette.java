@@ -22,7 +22,7 @@ public class Maquette {
 
     @ManyToOne
     @JoinColumn(name = "formation_id")
-    private Formation formation;
+    private Formation formation ;
 
     // RELATION MAINTAINED - maintenant elle fonctionnera car Module a le champ maquette
     @OneToMany(mappedBy = "maquette", cascade = CascadeType.ALL)
