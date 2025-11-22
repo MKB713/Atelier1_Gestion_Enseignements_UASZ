@@ -28,66 +28,74 @@
 
     <ul class="nav flex-column px-2 mt-3">
 
+        <!-- TABLEAU DE BORD -->
         <li class="nav-item mb-1">
             <a class="nav-link" th:classappend="${activePage == 'accueil'} ? 'active'" th:href="@{/}">
                 <i class="bi bi-speedometer2"></i> Tableau de bord
             </a>
         </li>
 
-        <li class="nav-item mb-1">
-            <a class="nav-link" th:classappend="${activePage == 'enseignants'} ? 'active'" th:href="@{/lst-enseignants}">
-                <i class="bi bi-person-video3"></i> Enseignants
-            </a>
+        <!-- SECTION: MAQUETTE PÉDAGOGIQUE -->
+        <li class="nav-item mb-1 mt-3 pt-3 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
+            <small class="text-white-50 text-uppercase px-3" style="font-size: 0.7rem;">Maquette Pédagogique</small>
         </li>
-
-        <li class="nav-item mb-1">
-            <a class="nav-link" th:classappend="${activePage == 'classes'} ? 'active'" th:href="@{/lst-classes}">
-                <i class="bi bi-people-fill"></i> Classes
-            </a>
-        </li>
-
         <li class="nav-item mb-1">
             <a class="nav-link" th:classappend="${activePage == 'formations'} ? 'active'" th:href="@{/lst-formations}">
                 <i class="bi bi-mortarboard"></i> Formations
             </a>
         </li>
-
         <li class="nav-item mb-1">
             <a class="nav-link" th:classappend="${activePage == 'filieres'} ? 'active'" th:href="@{/lst-filieres}">
                 <i class="bi bi-diagram-3"></i> Filières
             </a>
         </li>
-
         <li class="nav-item mb-1">
             <a class="nav-link" th:classappend="${activePage == 'maquettes'} ? 'active'" th:href="@{/lst-maquettes}">
                 <i class="bi bi-diagram-2"></i> Maquettes
             </a>
         </li>
-
         <li class="nav-item mb-1">
             <a class="nav-link" th:classappend="${activePage == 'modules'} ? 'active'" th:href="@{/lst-modules}">
                 <i class="bi bi-journal-bookmark"></i> Modules
             </a>
         </li>
-
         <li class="nav-item mb-1">
             <a class="nav-link" th:classappend="${activePage == 'ues'} ? 'active'" th:href="@{/lst-ues}">
                 <i class="bi bi-layers"></i> UEs & ECs
             </a>
         </li>
 
+        <!-- SECTION: GESTION DES ENSEIGNEMENTS -->
+        <li class="nav-item mb-1 mt-3 pt-3 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
+            <small class="text-white-50 text-uppercase px-3" style="font-size: 0.7rem;">Gestion des Enseignements</small>
+        </li>
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'enseignants'} ? 'active'" th:href="@{/lst-enseignants}">
+                <i class="bi bi-person-video3"></i> Enseignants
+            </a>
+        </li>
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'classes'} ? 'active'" th:href="@{/lst-classes}">
+                <i class="bi bi-people-fill"></i> Classes
+            </a>
+        </li>
+
+        <!-- SECTION: PLANNING -->
+        <li class="nav-item mb-1 mt-3 pt-3 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
+            <small class="text-white-50 text-uppercase px-3" style="font-size: 0.7rem;">Planning</small>
+        </li>
         <li class="nav-item mb-1">
             <a class="nav-link" th:classappend="${activePage == 'emploi-temps'} ? 'active'" th:href="@{/emploi-du-temps}">
                 <i class="bi bi-calendar-week"></i> Emploi du Temps
             </a>
         </li>
-
         <li class="nav-item mb-1">
             <a class="nav-link" th:classappend="${activePage == 'cahier'} ? 'active'" th:href="@{/lst-notes-cahier}">
                 <i class="bi bi-journal-text"></i> Cahier de Texte
             </a>
         </li>
 
+        <!-- SECTION: ADMINISTRATION -->
         <li class="nav-item mb-1 mt-3 pt-3 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
             <small class="text-white-50 text-uppercase px-3" style="font-size: 0.7rem;">Administration</small>
         </li>
@@ -97,6 +105,7 @@
             </a>
         </li>
 
+        <!-- DÉCONNEXION -->
         <li class="nav-item mt-4 pt-3 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
             <a class="nav-link text-warning" th:href="@{/logout}">
                 <i class="bi bi-box-arrow-left"></i> Déconnexion
