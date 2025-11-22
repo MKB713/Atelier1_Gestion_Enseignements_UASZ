@@ -4,24 +4,26 @@ import com.uasz.Atelier1_Gestion_Enseignements_UASZ.enums.Cycle;
 import jakarta.persistence.*;
 
 @Entity
-@Table (name="niveaux")
+@Table(name = "niveaux")
 public class Niveau {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private int numero;
+
     @Enumerated(EnumType.STRING)
     private Cycle cycle;
 
     public Niveau() {
     }
 
-    public Niveau(Long id, int numero, Cycle cycle) {
-        this.id = id;
+    public Niveau(int numero, Cycle cycle) {
         this.numero = numero;
         this.cycle = cycle;
     }
 
+    // Getters et setters...
     public Long getId() {
         return id;
     }
@@ -44,5 +46,10 @@ public class Niveau {
 
     public void setCycle(Cycle cycle) {
         this.cycle = cycle;
+    }
+
+    @Override
+    public String toString() {
+        return "Niveau " + numero + " - " + cycle;
     }
 }
