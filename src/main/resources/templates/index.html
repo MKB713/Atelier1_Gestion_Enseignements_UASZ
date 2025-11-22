@@ -21,6 +21,112 @@
         </div>
     </div>
 
+    <!-- GUIDE DE DÉMARRAGE -->
+    <div class="card border-0 shadow-sm mb-4" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+        <div class="card-header bg-transparent border-0 pt-4">
+            <h5 class="fw-bold text-dark mb-0">
+                <i class="bi bi-info-circle-fill text-primary me-2"></i>
+                Guide de Démarrage - Ordre de Création
+            </h5>
+        </div>
+        <div class="card-body pt-2">
+            <div class="row g-3">
+                <!-- ÉTAPE 1 -->
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="badge bg-success rounded-circle me-2" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">1</span>
+                                <h6 class="mb-0 fw-bold">Prérequis de Base</h6>
+                            </div>
+                            <ul class="list-unstyled mb-0 small">
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <a href="/lst-filieres" class="text-decoration-none">Filières</a>
+                                    <span class="text-muted">(Indépendant)</span>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                    <a href="/lst-enseignants" class="text-decoration-none">Enseignants</a>
+                                    <span class="text-muted">(Indépendant)</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ÉTAPE 2 -->
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="badge bg-primary rounded-circle me-2" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">2</span>
+                                <h6 class="mb-0 fw-bold">Structure Académique</h6>
+                            </div>
+                            <ul class="list-unstyled mb-0 small">
+                                <li class="mb-2">
+                                    <i class="bi bi-arrow-right-circle text-primary me-2"></i>
+                                    <a href="/lst-formations" class="text-decoration-none">Formations</a>
+                                    <span class="text-muted">(Filière + Niveau)</span>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-arrow-right-circle text-primary me-2"></i>
+                                    <a href="/lst-maquettes" class="text-decoration-none">Maquettes</a>
+                                    <span class="text-muted">(Formation)</span>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-arrow-right-circle text-primary me-2"></i>
+                                    <a href="/lst-modules" class="text-decoration-none">Modules</a>
+                                    <span class="text-muted">(Maquette)</span>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-arrow-right-circle text-primary me-2"></i>
+                                    <a href="/lst-ues" class="text-decoration-none">UEs & ECs</a>
+                                    <span class="text-muted">(Module)</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ÉTAPE 3 -->
+                <div class="col-md-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <span class="badge bg-warning rounded-circle me-2" style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;">3</span>
+                                <h6 class="mb-0 fw-bold">Organisation & Planning</h6>
+                            </div>
+                            <ul class="list-unstyled mb-0 small">
+                                <li class="mb-2">
+                                    <i class="bi bi-arrow-right-circle text-warning me-2"></i>
+                                    <a href="/lst-classes" class="text-decoration-none">Classes</a>
+                                    <span class="text-muted">(Formation + Filière)</span>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-arrow-right-circle text-warning me-2"></i>
+                                    <a href="/emploi-du-temps" class="text-decoration-none">Emploi du Temps</a>
+                                    <span class="text-muted">(Classes + Modules)</span>
+                                </li>
+                                <li class="mb-2">
+                                    <i class="bi bi-arrow-right-circle text-warning me-2"></i>
+                                    <a href="/lst-notes-cahier" class="text-decoration-none">Cahier de Texte</a>
+                                    <span class="text-muted">(Séances)</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="alert alert-info border-0 mt-3 mb-0" style="background-color: rgba(13, 202, 240, 0.1);">
+                <i class="bi bi-lightbulb-fill me-2"></i>
+                <strong>Astuce:</strong> Respectez cet ordre pour éviter les erreurs de dépendances.
+                Les entités dépendent de celles créées dans les étapes précédentes.
+            </div>
+        </div>
+    </div>
+
     <div class="row g-3 mb-4">
         <div class="col-md-4 col-xl-2">
             <div class="card border-0 shadow-sm text-center h-100 border-top border-4 border-success">

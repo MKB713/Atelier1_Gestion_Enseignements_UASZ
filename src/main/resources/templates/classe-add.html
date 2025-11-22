@@ -28,6 +28,21 @@
                     </h5>
                 </div>
                 <div class="card-body">
+                    <!-- Message d'information - Prérequis -->
+                    <div class="alert alert-info border-0 shadow-sm mb-3" style="background-color: rgba(13, 202, 240, 0.1);">
+                        <div class="d-flex align-items-start">
+                            <i class="bi bi-info-circle-fill text-info me-2 fs-5"></i>
+                            <div>
+                                <strong class="d-block mb-2">Prérequis pour créer une classe:</strong>
+                                <ul class="mb-0 small">
+                                    <li>Une <strong>Filière</strong> doit exister → <a href="/lst-filieres" class="text-decoration-none">Gérer les filières</a></li>
+                                    <li>Un <strong>Niveau</strong> doit exister → <a href="/lst-niveaux" class="text-decoration-none">Gérer les niveaux</a></li>
+                                    <li>Une <strong>Formation</strong> (associant Filière + Niveau) doit exister → <a href="/lst-formations" class="text-decoration-none">Gérer les formations</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Alerte en cas d'erreur de code -->
                     <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert" th:if="${codeError != null}">
                         <i class="bi bi-exclamation-triangle-fill me-2"></i>

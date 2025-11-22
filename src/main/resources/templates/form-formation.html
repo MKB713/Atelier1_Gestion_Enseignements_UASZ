@@ -28,6 +28,20 @@
                 </div>
                 <div class="card-body p-4">
 
+                    <!-- Message d'information - Prérequis -->
+                    <div class="alert alert-info border-0 shadow-sm mb-4" style="background-color: rgba(13, 202, 240, 0.1);">
+                        <div class="d-flex align-items-start">
+                            <i class="bi bi-info-circle-fill text-info me-2 fs-5"></i>
+                            <div>
+                                <strong class="d-block mb-2">Prérequis pour créer une formation:</strong>
+                                <ul class="mb-0 small">
+                                    <li>Au moins une <strong>Filière</strong> doit exister → <a href="/lst-filieres" class="text-decoration-none">Gérer les filières</a></li>
+                                    <li>Au moins un <strong>Niveau</strong> doit exister → <a href="/lst-niveaux" class="text-decoration-none">Gérer les niveaux</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
                     <form th:action="@{/save-formation}" method="post" th:object="${formation}">
                         <input type="hidden" th:field="*{id}" />
 <!--                        <input type="hidden" th:field="*{dateCreation}" />-->
