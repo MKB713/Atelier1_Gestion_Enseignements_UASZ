@@ -24,7 +24,7 @@ public class EC {
 
     @ManyToOne
     @JoinColumn(name = "ue_id")
-    private UE ue;
+    private Ue ue;
 
     @Column(updatable = false)
     private LocalDateTime dateCreation;
@@ -37,7 +37,7 @@ public class EC {
     // Constructeurs, Getters/Setters...
     public EC() {}
 
-    public EC(String code, String libelle, UE ue) {
+    public EC(String code, String libelle, Ue ue) {
         this.code = code;
         this.libelle = libelle;
         this.ue = ue;
@@ -59,8 +59,8 @@ public class EC {
     public void setVolumeHoraireTP(int volumeHoraireTP) { this.volumeHoraireTP = volumeHoraireTP; }
     public int getVolumeHoraireTD() { return volumeHoraireTD; }
     public void setVolumeHoraireTD(int volumeHoraireTD) { this.volumeHoraireTD = volumeHoraireTD; }
-    public UE getUe() { return ue; }
-    public void setUe(UE ue) { this.ue = ue; }
+    public Ue getUe() { return ue; }
+    public void setUe(Ue ue) { this.ue = ue; }
     public LocalDateTime getDateCreation() { return dateCreation; }
     public void setDateCreation(LocalDateTime dateCreation) { this.dateCreation = dateCreation; }
 }

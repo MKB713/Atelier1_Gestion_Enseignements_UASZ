@@ -7,7 +7,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "ues")
-public class UE {
+public class Ue {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -43,15 +43,15 @@ public class UE {
     }
 
     // Constructeurs
-    public UE() {}
+    public Ue() {}
 
-    public UE(String code, String libelle, Formation formation) {
+    public Ue(String code, String libelle, Formation formation) {
         this.code = code;
         this.libelle = libelle;
         this.formation = formation;
     }
 
-    public UE(String code, String libelle, Formation formation, Module module) {
+    public Ue(String code, String libelle, Formation formation, Module module) {
         this.code = code;
         this.libelle = libelle;
         this.formation = formation;

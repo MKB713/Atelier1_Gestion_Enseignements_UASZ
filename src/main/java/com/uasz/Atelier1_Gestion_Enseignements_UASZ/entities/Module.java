@@ -30,7 +30,7 @@ public class Module {
     private Maquette maquette;
 
     @OneToMany(mappedBy = "module", cascade = CascadeType.ALL)
-    private List<UE> ues = new ArrayList<>();
+    private List<Ue> ues = new ArrayList<>();
 
     // Constructeurs
     public Module() {}
@@ -65,6 +65,6 @@ public class Module {
     public void setFormation(Formation formation) { this.formation = formation; }
     public Maquette getMaquette() { return maquette; }
     public void setMaquette(Maquette maquette) { this.maquette = maquette; }
-    public List<UE> getUes() { return ues; }
-    public void setUes(List<UE> ues) { this.ues = ues; }
+    public List<Ue> getUes() { return ues; }
+    public void setUes(List<Ue> ues) { this.ues = ues; }
 }

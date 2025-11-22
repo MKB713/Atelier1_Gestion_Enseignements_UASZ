@@ -1,6 +1,6 @@
 package com.uasz.Atelier1_Gestion_Enseignements_UASZ.services;
 
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.UE;
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Ue;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.repositories.UERepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,28 +20,28 @@ public class UEService {
     @Autowired
     private ModuleService moduleService;
 
-    public List<UE> getAllUEs() {
+    public List<Ue> getAllUEs() {
         return ueRepository.findAll();
     }
 
-    public Optional<UE> getUEById(Long id) {
+    public Optional<Ue> getUEById(Long id) {
         return ueRepository.findById(id);
     }
 
-    public List<UE> getUEsByFormation(Long formationId) {
+    public List<Ue> getUEsByFormation(Long formationId) {
         return ueRepository.findByFormationId(formationId);
     }
 
-    public List<UE> getUEsByModule(Long moduleId) {
+    public List<Ue> getUEsByModule(Long moduleId) {
         return ueRepository.findByModuleId(moduleId);
     }
 
-    public List<UE> searchByLibelle(String libelle) {
+    public List<Ue> searchByLibelle(String libelle) {
         return ueRepository.findByLibelleContainingIgnoreCase(libelle);
     }
 
     @Transactional
-    public UE saveUE(UE ue) {
+    public Ue saveUE(Ue ue) {
         validateUE(ue);
 
         if (ue.getId() == null) {
@@ -49,7 +49,7 @@ public class UEService {
                 throw new IllegalArgumentException("Une UE avec le code " + ue.getCode() + " existe déjà");
             }
         } else {
-            Optional<UE> existingUE = ueRepository.findByCode(ue.getCode());
+            Optional<Ue> existingUE = ueRepository.findByCode(ue.getCode());
             if (existingUE.isPresent() && !existingUE.get().getId().equals(ue.getId())) {
                 throw new IllegalArgumentException("Une autre UE utilise déjà le code " + ue.getCode());
             }
@@ -70,7 +70,7 @@ public class UEService {
         return ueRepository.save(ue);
     }
 
-    private void validateUE(UE ue) {
+    private void validateUE(Ue ue) {
         if (ue.getCode() == null || ue.getCode().trim().isEmpty()) {
             throw new IllegalArgumentException("Le code de l'UE est obligatoire");
         }

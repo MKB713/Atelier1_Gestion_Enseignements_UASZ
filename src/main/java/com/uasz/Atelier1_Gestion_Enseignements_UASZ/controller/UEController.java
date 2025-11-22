@@ -1,6 +1,6 @@
 package com.uasz.Atelier1_Gestion_Enseignements_UASZ.controller;
 
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.UE;
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Ue;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.FiliereService;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.FormationService;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.UEService;
@@ -21,7 +21,7 @@ public class UEController {
     @Autowired
     private FiliereService filiereService; // AJOUT pour avoir getAllFiliere()
 
-    @GetMapping("/ue")
+    @GetMapping("/ues")
     public String listUEs(
             @RequestParam(required = false) String mode,
             @RequestParam(required = false) Long id,
@@ -32,12 +32,12 @@ public class UEController {
         model.addAttribute("formations", formationService.getAllFormations());
 
         if ("ajout".equals(mode)) {
-            model.addAttribute("ue", new UE());
+            model.addAttribute("ue", new Ue());
             model.addAttribute("mode", "ajout");
         }
         else if ("modification".equals(mode) && id != null) {
             try {
-                UE ue = ueService.getUEById(id)
+                Ue ue = ueService.getUEById(id)
                         .orElseThrow(() -> new RuntimeException("UE non trouvée"));
                 model.addAttribute("ue", ue);
                 model.addAttribute("mode", "modification");
@@ -59,7 +59,7 @@ public class UEController {
     }
 
     @PostMapping("/save-ue")
-    public String saveUE(@ModelAttribute UE ue, Model model) {
+    public String saveUE(@ModelAttribute Ue ue, Model model) {
         try {
             ueService.saveUE(ue);
             return "redirect:/ues?success=UE créée avec succès";
@@ -74,7 +74,7 @@ public class UEController {
     }
 
     @PostMapping("/update-ue")
-    public String updateUE(@ModelAttribute UE ue, Model model) {
+    public String updateUE(@ModelAttribute Ue ue, Model model) {
         try {
             ueService.saveUE(ue);
             return "redirect:/ues?success=UE modifiée avec succès";
