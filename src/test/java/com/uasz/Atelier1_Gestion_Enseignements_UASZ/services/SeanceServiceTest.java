@@ -1,6 +1,9 @@
 package com.uasz.Atelier1_Gestion_Enseignements_UASZ.services;
 
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Ec;
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Emploi;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Enseignant;
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Repartition;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Salle;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Seance;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.repositories.SeanceRepository;
@@ -32,6 +35,9 @@ public class SeanceServiceTest {
     private Seance seance2;
     private Salle salle;
     private Enseignant enseignant;
+    private Ec ec;
+    private Emploi emploi;
+    private Repartition repartition;
 
     @BeforeEach
     void setUp() {
@@ -42,6 +48,20 @@ public class SeanceServiceTest {
         enseignant = new Enseignant();
         enseignant.setId(1L);
         enseignant.setNom("Doe");
+        enseignant.setPrenom("John");
+
+        ec = new Ec();
+        ec.setId(100L);
+        ec.setLibelle("Matiere Test");
+
+        emploi = new Emploi();
+        emploi.setId(1L);
+        emploi.setLibelle("Emploi Test");
+
+        repartition = new Repartition();
+        repartition.setId(1L);
+        repartition.setEnseignant(enseignant);
+        repartition.setEc(ec);
 
         seance1 = new Seance();
         seance1.setId(1L);
@@ -49,7 +69,9 @@ public class SeanceServiceTest {
         seance1.setHeureDebut(LocalTime.of(8, 0));
         seance1.setHeureFin(LocalTime.of(10, 0));
         seance1.setSalle(salle);
-        seance1.setEnseignant(enseignant);
+        seance1.setRepartition(repartition);
+        seance1.setEmploi(emploi);
+        seance1.setDuree(120);
 
         seance2 = new Seance();
         seance2.setId(2L);
@@ -57,7 +79,9 @@ public class SeanceServiceTest {
         seance2.setHeureDebut(LocalTime.of(10, 0));
         seance2.setHeureFin(LocalTime.of(12, 0));
         seance2.setSalle(salle);
-        seance2.setEnseignant(enseignant);
+        seance2.setRepartition(repartition);
+        seance2.setEmploi(emploi);
+        seance2.setDuree(120);
     }
 
     @Test

@@ -88,9 +88,22 @@ public class EnseignantController {
     public String editEnseignant(@PathVariable Long id, Model model) {
         Enseignant enseignant = enseignantService.getEnseignantById(id);
 
-        model.addAttribute("enseignant", enseignant);
+        EnseignantUpdateDTO enseignantUpdateDTO = new EnseignantUpdateDTO();
+        // Removed setId and setMatricule as they are not typically updated via DTO
+        enseignantUpdateDTO.setNom(enseignant.getNom());
+        enseignantUpdateDTO.setPrenom(enseignant.getPrenom());
+        enseignantUpdateDTO.setEmail(enseignant.getEmail());
+        enseignantUpdateDTO.setTelephone(enseignant.getTelephone());
+        enseignantUpdateDTO.setGrade(enseignant.getGrade());
+        enseignantUpdateDTO.setStatut(enseignant.getStatut());
+        // Removed setDateNaissance and setLieuNaissance as they are not in EnseignantUpdateDTO
+        enseignantUpdateDTO.setDateEmbauche(enseignant.getDateEmbauche());
+        enseignantUpdateDTO.setSpecialite(enseignant.getSpecialite());
+        enseignantUpdateDTO.setAdresse(enseignant.getAdresse());
+
+        model.addAttribute("enseignant", enseignantUpdateDTO);
         model.addAttribute("grades", List.of("Assistant", "Maître-Assistant", "Maître de Conférences", "Professeur Titulaire", "Professeur Assimilé"));
-        model.addAttribute("statuts", Statut.values()); // Assurez-vous d'envoyer l'enum Statut
+        model.addAttribute("statuts", Statut.values());
 
         return "enseignant-edit";
     }
@@ -100,10 +113,10 @@ public class EnseignantController {
      */
     @PostMapping("/update-enseignant/{id}")
     public String updateEnseignant(@PathVariable Long id,
-                                   @ModelAttribute Enseignant enseignantForm, // Utilisation de l'entité
+                                   @ModelAttribute EnseignantUpdateDTO enseignantUpdateDTO, // Changed to DTO
                                    RedirectAttributes redirectAttributes) {
         try {
-            Enseignant updatedEnseignant = enseignantService.updateEnseignant(id, enseignantForm);
+            Enseignant updatedEnseignant = enseignantService.updateEnseignant(id, enseignantUpdateDTO); // Pass DTO
             redirectAttributes.addFlashAttribute("success", "Enseignant " + updatedEnseignant.getMatricule() + " mis à jour avec succès.");
             return "redirect:/lst-enseignants";
         } catch (IllegalArgumentException e) {

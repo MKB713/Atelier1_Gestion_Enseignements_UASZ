@@ -78,6 +78,18 @@ public class EnseignantService {
         }
     }
 
+    private void validateEmailFormat(String email) {
+        if (email == null || !email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")) {
+            throw new IllegalArgumentException("Format d'email invalide");
+        }
+    }
+
+    private void validateTelephoneFormat(String telephone) {
+        if (telephone == null || !telephone.matches("^\\+?[0-9. ()-]{7,25}$")) {
+            throw new IllegalArgumentException("Format de téléphone invalide");
+        }
+    }
+
     // ----------------------------------------------------------------------
     // --- GENERATION MATRICULE ---
     // ----------------------------------------------------------------------
@@ -133,28 +145,55 @@ public class EnseignantService {
     }
 
     @Transactional
-    public Enseignant updateEnseignant(Long id, Enseignant enseignantForm) {
+    public Enseignant updateEnseignant(Long id, com.uasz.Atelier1_Gestion_Enseignements_UASZ.dto.EnseignantUpdateDTO updateDTO) {
         Enseignant enseignant = getEnseignantById(id);
 
-        // 1. Validations
-        validateDateEmbauche(enseignantForm.getDateEmbauche());
-        validateAge(enseignantForm.getDateNaissance()); // Ajout de la validation d'âge
+        // 1. Validations (apply only if DTO fields are present)
+        if (updateDTO.getDateEmbauche() != null) {
+            validateDateEmbauche(updateDTO.getDateEmbauche());
+        }
+        if (updateDTO.getEmail() != null) {
+            validateEmailFormat(updateDTO.getEmail());
+        }
+        if (updateDTO.getTelephone() != null) {
+            validateTelephoneFormat(updateDTO.getTelephone());
+        }
+
+        // Note: DateNaissance and LieuNaissance are not in EnseignantUpdateDTO, so no validation/update here.
 
         // 2. Mise à jour des champs
-        enseignant.setNom(enseignantForm.getNom());
-        enseignant.setPrenom(enseignantForm.getPrenom());
-        enseignant.setSpecialite(enseignantForm.getSpecialite());
-
-        enseignant.setDateNaissance(enseignantForm.getDateNaissance()); // Ajouté
-        enseignant.setLieuNaissance(enseignantForm.getLieuNaissance()); // Ajouté
-
-        enseignant.setDateEmbauche(enseignantForm.getDateEmbauche());
-        enseignant.setGrade(enseignantForm.getGrade());
-        enseignant.setStatut(enseignantForm.getStatut());
-
-        // On met à jour le téléphone et l'adresse, mais pas l'email pro (généralement fixe)
-        enseignant.setTelephone(enseignantForm.getTelephone());
-        enseignant.setAdresse(enseignantForm.getAdresse());
+        if (updateDTO.getNom() != null) {
+            enseignant.setNom(updateDTO.getNom());
+        }
+        if (updateDTO.getPrenom() != null) {
+            enseignant.setPrenom(updateDTO.getPrenom());
+        }
+        if (updateDTO.getSpecialite() != null) {
+            enseignant.setSpecialite(updateDTO.getSpecialite());
+        }
+        if (updateDTO.getDateEmbauche() != null) {
+            enseignant.setDateEmbauche(updateDTO.getDateEmbauche());
+        }
+        if (updateDTO.getGrade() != null) {
+            enseignant.setGrade(updateDTO.getGrade());
+        }
+        if (updateDTO.getStatut() != null) {
+            enseignant.setStatut(updateDTO.getStatut());
+        }
+        if (updateDTO.getTelephone() != null) {
+            enseignant.setTelephone(updateDTO.getTelephone());
+        }
+        if (updateDTO.getAdresse() != null) {
+            enseignant.setAdresse(updateDTO.getAdresse());
+        }
+        if (updateDTO.getEmail() != null && !updateDTO.getEmail().equals(enseignant.getEmail())) {
+            // Validate if new email is already used by another enseignant
+            Optional<Enseignant> existingEnseignantWithEmail = enseignantRepository.findByEmail(updateDTO.getEmail());
+            if (existingEnseignantWithEmail.isPresent() && !existingEnseignantWithEmail.get().getId().equals(enseignant.getId())) {
+                throw new IllegalArgumentException("Cet email est déjà utilisé par un autre enseignant.");
+            }
+            enseignant.setEmail(updateDTO.getEmail());
+        }
 
         enseignant.setDateModification(LocalDateTime.now());
 

@@ -48,7 +48,7 @@ class EnseignantServiceTest {
         updateDTO = new EnseignantUpdateDTO();
     }
 
-//    @Test
+    @Test
     void testUpdateEnseignant_Success() {
         // Arrange
         updateDTO.setGrade("Maître de Conférences");
@@ -74,7 +74,7 @@ class EnseignantServiceTest {
         verify(enseignantRepository, times(1)).save(enseignant);
     }
 
-//    @Test
+    @Test
     void testUpdateEnseignant_NotFound() {
         // Arrange
         when(enseignantRepository.findById(999L)).thenReturn(Optional.empty());
@@ -89,7 +89,7 @@ class EnseignantServiceTest {
         verify(enseignantRepository, never()).save(any(Enseignant.class));
     }
 
-//    @Test
+    @Test
     void testUpdateEnseignant_OnlyGrade() {
         // Arrange
         updateDTO.setGrade("Maître Assistant");
@@ -107,7 +107,7 @@ class EnseignantServiceTest {
         verify(enseignantRepository, times(1)).save(enseignant);
     }
 
-//    @Test
+    @Test
     void testUpdateEnseignant_OnlyEmail() {
         // Arrange
         updateDTO.setEmail("new.email@example.com");
@@ -125,7 +125,7 @@ class EnseignantServiceTest {
         verify(enseignantRepository, times(1)).findByEmail("new.email@example.com");
     }
 
-//    @Test
+    @Test
     void testUpdateEnseignant_EmailAlreadyUsed() {
         // Arrange
         updateDTO.setEmail("existing@example.com");
@@ -137,15 +137,15 @@ class EnseignantServiceTest {
         when(enseignantRepository.findByEmail("existing@example.com")).thenReturn(Optional.of(autreEnseignant));
 
         // Act & Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
             enseignantService.updateEnseignant(1L, updateDTO);
         });
 
-        assertEquals("Cet email est déjà utilisé par un autre enseignant", exception.getMessage());
+        assertEquals("Cet email est déjà utilisé par un autre enseignant.", exception.getMessage());
         verify(enseignantRepository, never()).save(any(Enseignant.class));
     }
 
-//    @Test
+    @Test
     void testUpdateEnseignant_InvalidEmail() {
         // Arrange
         updateDTO.setEmail("invalid-email");
@@ -161,7 +161,7 @@ class EnseignantServiceTest {
         verify(enseignantRepository, never()).save(any(Enseignant.class));
     }
 
-//    @Test
+    @Test
     void testUpdateEnseignant_InvalidTelephone() {
         // Arrange
         updateDTO.setTelephone("invalid-phone");
@@ -177,7 +177,7 @@ class EnseignantServiceTest {
         verify(enseignantRepository, never()).save(any(Enseignant.class));
     }
 
-//    @Test
+    @Test
     void testUpdateEnseignant_OnlyStatut() {
         // Arrange
         updateDTO.setStatut(Statut.VACATAIRE);
@@ -194,7 +194,7 @@ class EnseignantServiceTest {
         verify(enseignantRepository, times(1)).save(enseignant);
     }
 
-//    @Test
+    @Test
     void testUpdateEnseignant_DateModificationUpdated() {
         // Arrange
         LocalDateTime beforeUpdate = LocalDateTime.now().minusDays(1);
@@ -215,4 +215,5 @@ class EnseignantServiceTest {
         verify(enseignantRepository, times(1)).save(enseignant);
     }
 }
+
 

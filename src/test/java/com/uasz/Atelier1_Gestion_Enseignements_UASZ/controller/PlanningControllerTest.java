@@ -4,6 +4,7 @@ import com.lowagie.text.DocumentException;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.dto.PlanningDTO;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.PdfGenerationService;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.PlanningService;
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.SeanceService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,9 @@ public class PlanningControllerTest {
 
     @MockBean
     private PdfGenerationService pdfGenerationService;
+
+    @MockBean
+    private SeanceService seanceService;
 
     private PlanningDTO planningDTO;
     private byte[] pdfBytes;

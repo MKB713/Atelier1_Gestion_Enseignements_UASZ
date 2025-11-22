@@ -1,15 +1,9 @@
 package com.uasz.Atelier1_Gestion_Enseignements_UASZ.services;
 
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.dto.SeanceDTO;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Ec;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Enseignant;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Salle;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Seance;
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.*;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.exceptions.ConflictException;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.repositories.EcRepository;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.repositories.EnseignantRepository;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.repositories.SalleRepository;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.repositories.SeanceRepository;
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.repositories.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,10 +19,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class SeanceServiceConflictTest {
@@ -36,36 +27,67 @@ public class SeanceServiceConflictTest {
     @Mock
     private SeanceRepository seanceRepository;
     @Mock
-    private EnseignantRepository enseignantRepository;
-    @Mock
     private SalleRepository salleRepository;
     @Mock
-    private EcRepository ecRepository;
+    private EmploiRepository emploiRepository;
+    @Mock
+    private RepartitionRepository repartitionRepository;
+    @Mock
+    private DeroulementRepository deroulementRepository;
 
     @InjectMocks
     private SeanceService seanceService;
 
     private SeanceDTO seanceDTO;
+    private Salle salle;
+    private Enseignant enseignant;
+    private Ec ec;
+    private Emploi emploi;
+    private Repartition repartition;
 
     @BeforeEach
     void setUp() {
+        salle = new Salle();
+        salle.setId(1L);
+        salle.setLibelle("Salle A");
+
+        enseignant = new Enseignant();
+        enseignant.setId(10L);
+        enseignant.setNom("Doe");
+        enseignant.setPrenom("John");
+
+        ec = new Ec();
+        ec.setId(100L);
+        ec.setLibelle("Maths");
+
+        emploi = new Emploi();
+        emploi.setId(1L);
+        emploi.setLibelle("Emploi du temps L1");
+
+        repartition = new Repartition();
+        repartition.setId(1L);
+        repartition.setEnseignant(enseignant);
+        repartition.setEc(ec);
+
         seanceDTO = new SeanceDTO();
         seanceDTO.setDateSeance(LocalDate.now());
         seanceDTO.setHeureDebut(LocalTime.of(10, 0));
         seanceDTO.setHeureFin(LocalTime.of(12, 0));
-        seanceDTO.setEnseignantId(1L);
-        seanceDTO.setSalleId(1L);
-        seanceDTO.setEcId(1L);
+        seanceDTO.setDuree(120);
+        seanceDTO.setSalleId(salle.getId());
+        seanceDTO.setEmploiId(emploi.getId());
+        seanceDTO.setRepartitionId(repartition.getId());
     }
 
     @Test
     void testCreateSeance_NoConflict() {
         // Arrange
-        when(enseignantRepository.findById(1L)).thenReturn(Optional.of(new Enseignant()));
-        when(salleRepository.findById(1L)).thenReturn(Optional.of(new Salle()));
-        when(ecRepository.findById(1L)).thenReturn(Optional.of(new Ec()));
-        when(seanceRepository.findByEnseignantIdAndDateSeanceAndHeureDebutBeforeAndHeureFinAfter(any(), any(), any(), any())).thenReturn(Collections.emptyList());
+        when(salleRepository.findById(salle.getId())).thenReturn(Optional.of(salle));
+        when(emploiRepository.findById(emploi.getId())).thenReturn(Optional.of(emploi));
+        when(repartitionRepository.findById(repartition.getId())).thenReturn(Optional.of(repartition));
+        when(seanceRepository.findTeacherConflicts(any(), any(), any(), any())).thenReturn(Collections.emptyList());
         when(seanceRepository.findBySalleIdAndDateSeanceAndHeureDebutBeforeAndHeureFinAfter(any(), any(), any(), any())).thenReturn(Collections.emptyList());
+        when(deroulementRepository.save(any(Deroulement.class))).thenReturn(new Deroulement());
         when(seanceRepository.save(any(Seance.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
@@ -74,24 +96,28 @@ public class SeanceServiceConflictTest {
         // Assert
         assertNotNull(result);
         assertEquals(seanceDTO.getDateSeance(), result.getDateSeance());
+        verify(seanceRepository, times(1)).save(any(Seance.class));
     }
 
     @Test
     void testCreateSeance_TeacherConflict() {
         // Arrange
-        when(seanceRepository.findByEnseignantIdAndDateSeanceAndHeureDebutBeforeAndHeureFinAfter(any(), any(), any(), any())).thenReturn(Collections.singletonList(new Seance()));
+        when(repartitionRepository.findById(repartition.getId())).thenReturn(Optional.of(repartition));
+        when(seanceRepository.findTeacherConflicts(any(), any(), any(), any())).thenReturn(Collections.singletonList(new Seance()));
 
         // Act & Assert
         ConflictException exception = assertThrows(ConflictException.class, () -> {
             seanceService.createSeance(seanceDTO);
         });
         assertEquals("Conflit d'horaire : L'enseignant est déjà occupé à ce créneau.", exception.getMessage());
+        verify(seanceRepository, never()).save(any(Seance.class));
     }
 
     @Test
     void testCreateSeance_RoomConflict() {
         // Arrange
-        when(seanceRepository.findByEnseignantIdAndDateSeanceAndHeureDebutBeforeAndHeureFinAfter(any(), any(), any(), any())).thenReturn(Collections.emptyList());
+        when(repartitionRepository.findById(repartition.getId())).thenReturn(Optional.of(repartition));
+        when(seanceRepository.findTeacherConflicts(any(), any(), any(), any())).thenReturn(Collections.emptyList());
         when(seanceRepository.findBySalleIdAndDateSeanceAndHeureDebutBeforeAndHeureFinAfter(any(), any(), any(), any())).thenReturn(Collections.singletonList(new Seance()));
 
         // Act & Assert
@@ -99,20 +125,20 @@ public class SeanceServiceConflictTest {
             seanceService.createSeance(seanceDTO);
         });
         assertEquals("Conflit d'horaire : La salle est déjà occupée à ce créneau.", exception.getMessage());
+        verify(seanceRepository, never()).save(any(Seance.class));
     }
 
     @Test
-    void testCreateSeance_EnseignantNotFound() {
+    void testCreateSeance_RepartitionNotFound() {
         // Arrange
-        when(seanceRepository.findByEnseignantIdAndDateSeanceAndHeureDebutBeforeAndHeureFinAfter(any(), any(), any(), any())).thenReturn(Collections.emptyList());
-        when(seanceRepository.findBySalleIdAndDateSeanceAndHeureDebutBeforeAndHeureFinAfter(any(), any(), any(), any())).thenReturn(Collections.emptyList());
-        when(enseignantRepository.findById(1L)).thenReturn(Optional.empty());
+        when(repartitionRepository.findById(repartition.getId())).thenReturn(Optional.empty());
 
         // Act & Assert
         EntityNotFoundException exception = assertThrows(EntityNotFoundException.class, () -> {
             seanceService.createSeance(seanceDTO);
         });
-        assertEquals("Enseignant non trouvé avec l'id: 1", exception.getMessage());
+        assertEquals("Repartition non trouvée avec l'id: " + repartition.getId(), exception.getMessage());
+        verify(seanceRepository, never()).save(any(Seance.class));
     }
 
     @Test
@@ -121,12 +147,13 @@ public class SeanceServiceConflictTest {
         Long seanceId = 1L;
         Seance existingSeance = new Seance();
         existingSeance.setId(seanceId);
+        existingSeance.setRepartition(repartition); // Important for conflict check
 
         when(seanceRepository.findById(seanceId)).thenReturn(Optional.of(existingSeance));
-        when(enseignantRepository.findById(1L)).thenReturn(Optional.of(new Enseignant()));
-        when(salleRepository.findById(1L)).thenReturn(Optional.of(new Salle()));
-        when(ecRepository.findById(1L)).thenReturn(Optional.of(new Ec()));
-        when(seanceRepository.findByEnseignantIdAndDateSeanceAndHeureDebutBeforeAndHeureFinAfterAndIdNot(any(), any(), any(), any(), any())).thenReturn(Collections.emptyList());
+        when(salleRepository.findById(salle.getId())).thenReturn(Optional.of(salle));
+        when(emploiRepository.findById(emploi.getId())).thenReturn(Optional.of(emploi));
+        when(repartitionRepository.findById(repartition.getId())).thenReturn(Optional.of(repartition));
+        when(seanceRepository.findTeacherConflictsExcludingId(any(), any(), any(), any(), any())).thenReturn(Collections.emptyList());
         when(seanceRepository.findBySalleIdAndDateSeanceAndHeureDebutBeforeAndHeureFinAfterAndIdNot(any(), any(), any(), any(), any())).thenReturn(Collections.emptyList());
         when(seanceRepository.save(any(Seance.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -137,6 +164,7 @@ public class SeanceServiceConflictTest {
         // Assert
         assertNotNull(result);
         assertEquals(seanceDTO.getHeureDebut(), result.getHeureDebut());
+        verify(seanceRepository, times(1)).save(any(Seance.class));
     }
 
     @Test
@@ -145,15 +173,18 @@ public class SeanceServiceConflictTest {
         Long seanceId = 1L;
         Seance existingSeance = new Seance();
         existingSeance.setId(seanceId);
+        existingSeance.setRepartition(repartition);
 
         when(seanceRepository.findById(seanceId)).thenReturn(Optional.of(existingSeance));
-        when(seanceRepository.findByEnseignantIdAndDateSeanceAndHeureDebutBeforeAndHeureFinAfterAndIdNot(any(), any(), any(), any(), any())).thenReturn(Collections.singletonList(new Seance()));
+        when(repartitionRepository.findById(repartition.getId())).thenReturn(Optional.of(repartition));
+        when(seanceRepository.findTeacherConflictsExcludingId(any(), any(), any(), any(), any())).thenReturn(Collections.singletonList(new Seance()));
 
         // Act & Assert
         ConflictException exception = assertThrows(ConflictException.class, () -> {
             seanceService.updateSeance(seanceId, seanceDTO);
         });
         assertEquals("Conflit d'horaire : L'enseignant est déjà occupé à ce créneau.", exception.getMessage());
+        verify(seanceRepository, never()).save(any(Seance.class));
     }
 
     @Test
@@ -162,9 +193,11 @@ public class SeanceServiceConflictTest {
         Long seanceId = 1L;
         Seance existingSeance = new Seance();
         existingSeance.setId(seanceId);
+        existingSeance.setRepartition(repartition);
 
         when(seanceRepository.findById(seanceId)).thenReturn(Optional.of(existingSeance));
-        when(seanceRepository.findByEnseignantIdAndDateSeanceAndHeureDebutBeforeAndHeureFinAfterAndIdNot(any(), any(), any(), any(), any())).thenReturn(Collections.emptyList());
+        when(repartitionRepository.findById(repartition.getId())).thenReturn(Optional.of(repartition));
+        when(seanceRepository.findTeacherConflictsExcludingId(any(), any(), any(), any(), any())).thenReturn(Collections.emptyList());
         when(seanceRepository.findBySalleIdAndDateSeanceAndHeureDebutBeforeAndHeureFinAfterAndIdNot(any(), any(), any(), any(), any())).thenReturn(Collections.singletonList(new Seance()));
 
         // Act & Assert
@@ -172,6 +205,7 @@ public class SeanceServiceConflictTest {
             seanceService.updateSeance(seanceId, seanceDTO);
         });
         assertEquals("Conflit d'horaire : La salle est déjà occupée à ce créneau.", exception.getMessage());
+        verify(seanceRepository, never()).save(any(Seance.class));
     }
 
     @Test
@@ -185,6 +219,7 @@ public class SeanceServiceConflictTest {
             seanceService.updateSeance(seanceId, seanceDTO);
         });
         assertEquals("Séance non trouvée avec l'id: 99", exception.getMessage());
+        verify(seanceRepository, never()).save(any(Seance.class));
     }
 
     @Test

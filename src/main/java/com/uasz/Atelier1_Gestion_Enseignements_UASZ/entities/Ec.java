@@ -14,9 +14,6 @@ public class Ec {
     @ManyToOne
     private Ue ue;
 
-    @OneToMany(mappedBy = "ec", cascade = CascadeType.ALL)
-    private List<Seance> seances;
-
     public Ec() {
     }
 

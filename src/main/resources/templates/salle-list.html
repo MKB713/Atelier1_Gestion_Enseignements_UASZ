@@ -107,6 +107,7 @@
                                 <th>Libellé</th>
                                 <th>Capacité</th>
                                 <th>Description</th>
+                                <th>Bâtiment</th>
                                 <th class="text-end">Actions</th>
                             </tr>
                             </thead>
@@ -116,6 +117,7 @@
                                 <td th:text="${salle.libelle}">Libellé</td>
                                 <td th:text="${salle.capacite}">Capacité</td>
                                 <td th:text="${salle.description}">Description</td>
+                                <td th:text="${salle.batiment?.libelle}">Bâtiment</td>
                                 <td class="text-end">
                                     <div class="btn-group" role="group">
                                         <a th:href="@{/salles/edit/{id}(id=${salle.id})}"

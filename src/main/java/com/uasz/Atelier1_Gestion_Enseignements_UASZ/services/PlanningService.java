@@ -44,15 +44,33 @@ public class PlanningService {
 
     private SeanceDTO mapToSeanceDTO(Seance seance) {
         SeanceDTO dto = new SeanceDTO();
+        dto.setId(seance.getId());
         dto.setDateSeance(seance.getDateSeance());
         dto.setHeureDebut(seance.getHeureDebut());
         dto.setHeureFin(seance.getHeureFin());
-        dto.setSalleId(seance.getSalle().getId());
-        dto.setSalleNom(seance.getSalle().getLibelle());
-        dto.setEnseignantId(seance.getEnseignant().getId());
-        dto.setEnseignantNom(seance.getEnseignant().getPrenom() + " " + seance.getEnseignant().getNom());
-        dto.setEcId(seance.getEc().getId());
-        dto.setEcNom(seance.getEc().getLibelle());
+        dto.setDuree(seance.getDuree());
+
+        // Set IDs for relationships
+        dto.setSalleId(seance.getSalle() != null ? seance.getSalle().getId() : null);
+        dto.setEmploiId(seance.getEmploi() != null ? seance.getEmploi().getId() : null);
+        dto.setRepartitionId(seance.getRepartition() != null ? seance.getRepartition().getId() : null);
+        dto.setDeroulementId(seance.getDeroulement() != null ? seance.getDeroulement().getId() : null);
+
+        // Set fields for display
+        if (seance.getSalle() != null) {
+            dto.setSalleNom(seance.getSalle().getLibelle());
+        }
+        if (seance.getEmploi() != null) {
+            dto.setEmploiLibelle(seance.getEmploi().getLibelle());
+        }
+        if (seance.getRepartition() != null) {
+            if (seance.getRepartition().getEnseignant() != null) {
+                dto.setEnseignantNom(seance.getRepartition().getEnseignant().getPrenom() + " " + seance.getRepartition().getEnseignant().getNom());
+            }
+            if (seance.getRepartition().getEc() != null) {
+                dto.setEcLibelle(seance.getRepartition().getEc().getLibelle());
+            }
+        }
         return dto;
     }
 }

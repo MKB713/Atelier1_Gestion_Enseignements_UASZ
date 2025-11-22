@@ -139,6 +139,7 @@
                                 <th>Heure Fin</th>
                                 <th>Enseignant</th>
                                 <th>Salle</th>
+                                <th>Bâtiment</th>
                                 <th>EC</th>
                                 <th class="text-end">Actions</th>
                             </tr>
@@ -151,7 +152,8 @@
                                 <td th:text="${#temporals.format(seance.heureFin, 'HH:mm')}">Heure Fin</td>
                                 <td th:text="${seance.enseignantNom}">Enseignant</td>
                                 <td th:text="${seance.salleNom}">Salle</td>
-                                <td th:text="${seance.ecNom}">EC</td>
+                                <td th:text="${seance.batimentNom}">Bâtiment</td>
+                                <td th:text="${seance.ecLibelle}">EC</td>
                                 <td class="text-end">
                                     <div class="btn-group" role="group">
                                         <a th:href="@{/seances/edit/{id}(id=${seance.id})}"

@@ -35,9 +35,6 @@ public class Enseignant {
     private boolean estActif;
     private String specialite;
 
-    @OneToMany(mappedBy = "enseignant", cascade = CascadeType.ALL)
-    private List<Seance> seances;
-
     public Enseignant() {
     }
 

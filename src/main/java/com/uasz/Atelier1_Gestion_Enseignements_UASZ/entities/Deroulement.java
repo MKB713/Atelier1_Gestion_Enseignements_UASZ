@@ -5,24 +5,20 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Salle {
+public class Deroulement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String libelle;
-    private int capacite;
-    private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "batiment_id")
-    private Batiment batiment;
+    @Column(length = 2000)
+    private String contenu;
+    private String progression;
+    private String remarques;
 
-    @OneToMany(mappedBy = "salle", cascade = CascadeType.ALL)
-    private List<Seance> seances;
+    @OneToOne(mappedBy = "deroulement")
+    private Seance seance;
 }

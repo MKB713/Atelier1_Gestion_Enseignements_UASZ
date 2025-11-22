@@ -1,20 +1,15 @@
 package com.uasz.Atelier1_Gestion_Enseignements_UASZ.services;
 
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.dto.SeanceDTO;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Ec;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Enseignant;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Salle;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Seance;
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.*;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.exceptions.ConflictException;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.repositories.EcRepository;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.repositories.EnseignantRepository;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.repositories.SalleRepository;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.repositories.SeanceRepository;
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.repositories.*;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.time.LocalDate;
 
 @Service
 public class SeanceService {
@@ -23,31 +18,38 @@ public class SeanceService {
     private SeanceRepository seanceRepository;
 
     @Autowired
-    private EnseignantRepository enseignantRepository;
-
-    @Autowired
     private SalleRepository salleRepository;
 
     @Autowired
-    private EcRepository ecRepository;
+    private EmploiRepository emploiRepository;
+
+    @Autowired
+    private RepartitionRepository repartitionRepository;
+
+    @Autowired
+    private DeroulementRepository deroulementRepository;
 
     public List<Seance> getAllSeances() {
         return seanceRepository.findAll();
     }
 
     public Seance getSeanceById(Long id) {
-        return seanceRepository.findById(id).orElse(null);
+        return seanceRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Séance non trouvée avec l'id: " + id));
     }
 
     public Seance createSeance(SeanceDTO seanceDTO) {
-        // Vérifier les conflits pour l'enseignant
-        List<Seance> teacherConflicts = seanceRepository.findByEnseignantIdAndDateSeanceAndHeureDebutBeforeAndHeureFinAfter(
-                seanceDTO.getEnseignantId(), seanceDTO.getDateSeance(), seanceDTO.getHeureFin(), seanceDTO.getHeureDebut());
+        Repartition repartition = repartitionRepository.findById(seanceDTO.getRepartitionId())
+                .orElseThrow(() -> new EntityNotFoundException("Repartition non trouvée avec l'id: " + seanceDTO.getRepartitionId()));
+        Long enseignantId = repartition.getEnseignant().getId();
+
+        // Vérifier les conflits pour l'enseignant via la nouvelle méthode
+        List<Seance> teacherConflicts = seanceRepository.findTeacherConflicts(
+                enseignantId, seanceDTO.getDateSeance(), seanceDTO.getHeureDebut(), seanceDTO.getHeureFin());
         if (!teacherConflicts.isEmpty()) {
             throw new ConflictException("Conflit d'horaire : L'enseignant est déjà occupé à ce créneau.");
         }
 
-        // Vérifier les conflits pour la salle
+        // Vérifier les conflits pour la salle (l'ancienne méthode est toujours valide mais les paramètres sont inversés)
         List<Seance> roomConflicts = seanceRepository.findBySalleIdAndDateSeanceAndHeureDebutBeforeAndHeureFinAfter(
                 seanceDTO.getSalleId(), seanceDTO.getDateSeance(), seanceDTO.getHeureFin(), seanceDTO.getHeureDebut());
         if (!roomConflicts.isEmpty()) {
@@ -59,29 +61,36 @@ public class SeanceService {
         seance.setDateSeance(seanceDTO.getDateSeance());
         seance.setHeureDebut(seanceDTO.getHeureDebut());
         seance.setHeureFin(seanceDTO.getHeureFin());
-
-        Enseignant enseignant = enseignantRepository.findById(seanceDTO.getEnseignantId())
-                .orElseThrow(() -> new EntityNotFoundException("Enseignant non trouvé avec l'id: " + seanceDTO.getEnseignantId()));
-        seance.setEnseignant(enseignant);
+        seance.setDuree(seanceDTO.getDuree());
 
         Salle salle = salleRepository.findById(seanceDTO.getSalleId())
                 .orElseThrow(() -> new EntityNotFoundException("Salle non trouvée avec l'id: " + seanceDTO.getSalleId()));
         seance.setSalle(salle);
 
-        Ec ec = ecRepository.findById(seanceDTO.getEcId())
-                .orElseThrow(() -> new EntityNotFoundException("EC non trouvé avec l'id: " + seanceDTO.getEcId()));
-        seance.setEc(ec);
+        Emploi emploi = emploiRepository.findById(seanceDTO.getEmploiId())
+                .orElseThrow(() -> new EntityNotFoundException("Emploi non trouvé avec l'id: " + seanceDTO.getEmploiId()));
+        seance.setEmploi(emploi);
+
+        seance.setRepartition(repartition);
+
+        // Créer un Deroulement par défaut
+        Deroulement deroulement = new Deroulement();
+        deroulementRepository.save(deroulement);
+        seance.setDeroulement(deroulement);
 
         return seanceRepository.save(seance);
     }
 
     public Seance updateSeance(Long id, SeanceDTO seanceDTO) {
-        Seance existingSeance = seanceRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Séance non trouvée avec l'id: " + id));
+        Seance existingSeance = getSeanceById(id);
+
+        Repartition repartition = repartitionRepository.findById(seanceDTO.getRepartitionId())
+                .orElseThrow(() -> new EntityNotFoundException("Repartition non trouvée avec l'id: " + seanceDTO.getRepartitionId()));
+        Long enseignantId = repartition.getEnseignant().getId();
 
         // Vérifier les conflits pour l'enseignant
-        List<Seance> teacherConflicts = seanceRepository.findByEnseignantIdAndDateSeanceAndHeureDebutBeforeAndHeureFinAfterAndIdNot(
-                seanceDTO.getEnseignantId(), seanceDTO.getDateSeance(), seanceDTO.getHeureFin(), seanceDTO.getHeureDebut(), id);
+        List<Seance> teacherConflicts = seanceRepository.findTeacherConflictsExcludingId(
+                enseignantId, seanceDTO.getDateSeance(), seanceDTO.getHeureDebut(), seanceDTO.getHeureFin(), id);
         if (!teacherConflicts.isEmpty()) {
             throw new ConflictException("Conflit d'horaire : L'enseignant est déjà occupé à ce créneau.");
         }
@@ -97,18 +106,17 @@ public class SeanceService {
         existingSeance.setDateSeance(seanceDTO.getDateSeance());
         existingSeance.setHeureDebut(seanceDTO.getHeureDebut());
         existingSeance.setHeureFin(seanceDTO.getHeureFin());
-
-        Enseignant enseignant = enseignantRepository.findById(seanceDTO.getEnseignantId())
-                .orElseThrow(() -> new EntityNotFoundException("Enseignant non trouvé avec l'id: " + seanceDTO.getEnseignantId()));
-        existingSeance.setEnseignant(enseignant);
+        existingSeance.setDuree(seanceDTO.getDuree());
 
         Salle salle = salleRepository.findById(seanceDTO.getSalleId())
                 .orElseThrow(() -> new EntityNotFoundException("Salle non trouvée avec l'id: " + seanceDTO.getSalleId()));
         existingSeance.setSalle(salle);
 
-        Ec ec = ecRepository.findById(seanceDTO.getEcId())
-                .orElseThrow(() -> new EntityNotFoundException("EC non trouvé avec l'id: " + seanceDTO.getEcId()));
-        existingSeance.setEc(ec);
+        Emploi emploi = emploiRepository.findById(seanceDTO.getEmploiId())
+                .orElseThrow(() -> new EntityNotFoundException("Emploi non trouvé avec l'id: " + seanceDTO.getEmploiId()));
+        existingSeance.setEmploi(emploi);
+
+        existingSeance.setRepartition(repartition);
 
         return seanceRepository.save(existingSeance);
     }
@@ -126,5 +134,15 @@ public class SeanceService {
 
     public List<Seance> getByEnseignant(Long enseignantId) {
         return seanceRepository.findByEnseignantId(enseignantId);
+    }
+
+    public List<Seance> getSeancesByWeek(LocalDate dateInWeek) {
+        LocalDate monday = dateInWeek.with(java.time.DayOfWeek.MONDAY);
+        LocalDate saturday = dateInWeek.with(java.time.DayOfWeek.SATURDAY);
+        return seanceRepository.findByDateSeanceBetweenOrderByDateSeanceAscHeureDebutAsc(monday, saturday);
+    }
+
+    public List<Seance> getSeancesByDateRange(LocalDate startDate, LocalDate endDate) {
+        return seanceRepository.findByDateSeanceBetweenOrderByDateSeanceAscHeureDebutAsc(startDate, endDate);
     }
 }

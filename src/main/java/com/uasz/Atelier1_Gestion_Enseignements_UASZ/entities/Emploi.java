@@ -11,18 +11,13 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Salle {
+public class Emploi {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String libelle;
-    private int capacite;
-    private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "batiment_id")
-    private Batiment batiment;
-
-    @OneToMany(mappedBy = "salle", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "emploi", cascade = CascadeType.ALL)
     private List<Seance> seances;
 }

@@ -35,7 +35,7 @@ public class PdfGenerationServiceTest {
         seance1.setHeureFin(LocalTime.of(11, 0));
         seance1.setSalleNom("Salle A101");
         seance1.setEnseignantNom("Jean Dupont");
-        seance1.setEcNom("Programmation Avancée");
+        seance1.setEcLibelle("Programmation Avancée");
 
         SeanceDTO seance2 = new SeanceDTO();
         seance2.setDateSeance(LocalDate.of(2025, 1, 10));
@@ -43,7 +43,7 @@ public class PdfGenerationServiceTest {
         seance2.setHeureFin(LocalTime.of(16, 0));
         seance2.setSalleNom("Salle A101");
         seance2.setEnseignantNom("Jean Dupont");
-        seance2.setEcNom("Programmation Avancée");
+        seance2.setEcLibelle("Programmation Avancée");
 
         planningDTO.addSeance(LocalDate.of(2025, 1, 10), seance1);
         planningDTO.addSeance(LocalDate.of(2025, 1, 10), seance2);
