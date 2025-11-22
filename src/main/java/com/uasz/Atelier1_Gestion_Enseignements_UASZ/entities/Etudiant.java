@@ -5,8 +5,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "etudiants")
@@ -59,10 +57,6 @@ public class Etudiant {
 
     @Column(name = "date_inscription")
     private LocalDate dateInscription;
-
-    // Relations
-    @OneToMany(mappedBy = "etudiant", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Inscription> inscriptions = new ArrayList<>();
 
     // Constructeurs
     public Etudiant() {
@@ -200,13 +194,5 @@ public class Etudiant {
 
     public void setDateInscription(LocalDate dateInscription) {
         this.dateInscription = dateInscription;
-    }
-
-    public List<Inscription> getInscriptions() {
-        return inscriptions;
-    }
-
-    public void setInscriptions(List<Inscription> inscriptions) {
-        this.inscriptions = inscriptions;
     }
 }

@@ -4,7 +4,6 @@ import com.uasz.Atelier1_Gestion_Enseignements_UASZ.dto.EtudiantDTO;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Etudiant;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.enums.StatutEtudiant;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.EtudiantService;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.InscriptionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,9 +20,6 @@ public class EtudiantController {
 
     @Autowired
     private EtudiantService etudiantService;
-
-    @Autowired
-    private InscriptionService inscriptionService;
 
     /**
      * Affiche la liste de tous les étudiants
@@ -115,7 +111,6 @@ public class EtudiantController {
         try {
             Etudiant etudiant = etudiantService.getEtudiantById(id);
             model.addAttribute("etudiant", etudiant);
-            model.addAttribute("inscriptions", inscriptionService.getInscriptionsEtudiant(id));
             return "etudiant-detail";
         } catch (RuntimeException e) {
             model.addAttribute("error", e.getMessage());
