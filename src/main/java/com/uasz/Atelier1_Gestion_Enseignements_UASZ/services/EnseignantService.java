@@ -6,19 +6,24 @@ import com.uasz.Atelier1_Gestion_Enseignements_UASZ.enums.StatutEnseignant;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.exceptions.MatriculeAlreadyExistsException;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.repositories.EnseignantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class EnseignantService {
 
     @Autowired
     private EnseignantRepository enseignantRepository;
-
+    @Autowired
+    private MailService mailService;
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public Enseignant getEnseignantById(Long id) {
         return enseignantRepository.findById(id)
@@ -42,10 +47,26 @@ public class EnseignantService {
             // Initialisation de estActif à true par défaut lors de la création
             enseignant.setEstActif(true);
         }
+        String password = generatePassword();
+        enseignant.setPassword(bCryptPasswordEncoder.encode(password));
+        String subject = " Création de votre compte UASZ ";
+        String text = "Bonjour " + enseignant.getNom() + " " + enseignant.getPrenom() + " !\n\n"
+                + "Votre compte a été créé avec succès.\n"
+                + "Voici vos identifiants de connexion :\n"
+                + "Email : " + enseignant.getEmail() + "\n"
+                + "Mot de passe : " + password + "\n\n"
+                + "Merci de conserver ces informations en lieu sûr.\n"
+                + "Cordialement,\n"
+                + "L'équipe UASZ";
+
+        mailService.sendMail(enseignant.getEmail(),subject,text);
         enseignant.setDateModification(LocalDateTime.now());
         enseignantRepository.save(enseignant);
     }
-
+    public String generatePassword() {
+        String password = UUID.randomUUID().toString().substring(0, 6);
+        return password;
+    }
     public Enseignant archiverEnseignant(Long id) {
         Enseignant enseignant = enseignantRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Enseignant non trouvé avec l'id : " + id));
