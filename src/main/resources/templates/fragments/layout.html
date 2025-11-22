@@ -127,13 +127,8 @@
             <small class="text-white-50 text-uppercase px-3" style="font-size: 0.7rem;">Responsables</small>
         </li>
         <li class="nav-item mb-1">
-            <a class="nav-link" th:classappend="${activePage == 'responsables'} ? 'active'" th:href="@{/lst-responsables}">
-                <i class="bi bi-person-workspace"></i> Responsables
-            </a>
-        </li>
-        <li class="nav-item mb-1">
-            <a class="nav-link" th:classappend="${activePage == 'coordinateurs'} ? 'active'" th:href="@{/lst-coordinateurs}">
-                <i class="bi bi-person-gear"></i> Coordinateurs
+            <a class="nav-link" th:classappend="${activePage == 'responsables'} ? 'active'" th:href="@{/lst-responsables-coordinateurs}">
+                <i class="bi bi-people"></i> Responsables & Coordinateurs
             </a>
         </li>
 

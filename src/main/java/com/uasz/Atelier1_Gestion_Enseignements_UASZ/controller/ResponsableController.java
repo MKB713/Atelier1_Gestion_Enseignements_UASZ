@@ -2,6 +2,7 @@ package com.uasz.Atelier1_Gestion_Enseignements_UASZ.controller;
 
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.dto.ResponsableDTO;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Responsable;
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.CoordinateurService;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.EnseignantService;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.FormationService;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.ResponsableService;
@@ -23,6 +24,9 @@ public class ResponsableController {
     private ResponsableService responsableService;
 
     @Autowired
+    private CoordinateurService coordinateurService;
+
+    @Autowired
     private FormationService formationService;
 
     @Autowired
@@ -40,6 +44,16 @@ public class ResponsableController {
     }
 
     /**
+     * Affiche la liste unifiée des responsables et coordinateurs
+     */
+    @GetMapping("/lst-responsables-coordinateurs")
+    public String listResponsablesCoordinateurs(Model model) {
+        model.addAttribute("responsables", responsableService.getAllResponsables());
+        model.addAttribute("coordinateurs", coordinateurService.getAllCoordinateurs());
+        return "responsable-coordinateur-list";
+    }
+
+    /**
      * Affiche le formulaire pour ajouter un responsable
      */
     @GetMapping("/add-responsable")
@@ -49,6 +63,16 @@ public class ResponsableController {
         model.addAttribute("formations", formationService.getAllFormations());
         model.addAttribute("enseignants", enseignantService.getAllEnseignants());
         return "responsable-add";
+    }
+
+    /**
+     * Affiche le formulaire unifié pour ajouter un responsable ou coordinateur
+     */
+    @GetMapping("/add-responsable-coordinateur")
+    public String addResponsableCoordinateur(Model model) {
+        model.addAttribute("formations", formationService.getAllFormations());
+        model.addAttribute("enseignants", enseignantService.getAllEnseignants());
+        return "responsable-coordinateur-add";
     }
 
     /**
