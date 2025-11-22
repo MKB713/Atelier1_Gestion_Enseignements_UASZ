@@ -155,17 +155,7 @@ public class ClasseService {
         return classeRepository.save(classe);
     }
 
-    /**
-     * Désarchive une classe
-     */
-    @Transactional
-    public Classe desarchiverClasse(Long id) {
-        Classe classe = getClasseById(id);
-        classe.setEstArchivee(false);
-        classe.setEstActive(true);
-        classe.setDateModification(LocalDateTime.now());
-        return classeRepository.save(classe);
-    }
+
 
     /**
      * Active une classe

@@ -232,20 +232,7 @@ public class ClasseController {
         }
     }
 
-    /**
-     * API - Désarchive une classe
-     */
-    @PatchMapping("/api/classes/{id}/desarchiver")
-    @ResponseBody
-    public ResponseEntity<String> desarchiverClasse(@PathVariable Long id) {
-        try {
-            classeService.desarchiverClasse(id);
-            return ResponseEntity.ok("La classe a été désarchivée avec succès.");
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Classe non trouvée avec l'ID : " + id);
-        }
-    }
+
 
     /**
      * API - Active une classe
@@ -276,13 +263,24 @@ public class ClasseController {
     }
 
     /**
-     * API - Recherche des classes
+     * Gère la recherche de classes par un terme (libellé ou code) et affiche les résultats.
      */
-    @GetMapping("/api/classes/search")
-    @ResponseBody
-    public ResponseEntity<List<Classe>> rechercherClasses(@RequestParam String term) {
-        List<Classe> classes = classeService.rechercherClasses(term);
-        return ResponseEntity.ok(classes);
+    @GetMapping("/classes/search") // Utilisez GET pour les recherches
+    public String searchClasses(@RequestParam(name = "keyword", required = false) String keyword, Model model) {
+        List<Classe> classes;
+
+        if (keyword != null && !keyword.isEmpty()) {
+            // Utilise la méthode de recherche déjà implémentée dans ClasseService
+            classes = classeService.rechercherClasses(keyword);
+            model.addAttribute("keyword", keyword); // Pour conserver le terme recherché dans le formulaire
+            model.addAttribute("message", classes.size() + " résultats trouvés pour '" + keyword + "'");
+        } else {
+            // Si pas de mot-clé, affiche toutes les classes
+            classes = classeService.getAllClasses();
+        }
+
+        model.addAttribute("classes", classes);
+        return "classe-list"; // Renvoie au template d'affichage de la liste
     }
 
     /**
