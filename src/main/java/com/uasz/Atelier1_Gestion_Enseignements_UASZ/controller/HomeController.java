@@ -13,7 +13,7 @@ public class HomeController {
     @Autowired
     private DashboardService dashboardService;
 
-    @GetMapping("/")
+    @GetMapping("/welcom")
     public String index(Model model) {
         DashboardStatsDTO stats = dashboardService.getStats();
         model.addAttribute("stats", stats);

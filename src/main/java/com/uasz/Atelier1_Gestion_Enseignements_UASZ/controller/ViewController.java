@@ -40,7 +40,7 @@ public class ViewController {
     private EcService ecService;
 
     // --- Home Page (redirect to Seances list) ---
-    @GetMapping("/")
+    @GetMapping("/lst-seances")
     public String home() {
         return "";
     }
