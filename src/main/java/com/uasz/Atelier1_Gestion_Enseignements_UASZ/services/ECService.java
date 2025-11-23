@@ -4,6 +4,7 @@ import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.EC;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.repositories.ECRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ public class ECService {
     private ECRepository ecRepository;
 
     public List<EC> getAllECs() {
+        // Retourne uniquement les ECs non archivés
         return ecRepository.findByArchive(false);
     }
 
@@ -25,43 +27,37 @@ public class ECService {
         return ecRepository.findById(id).orElse(null);
     }
 
+    @Transactional
     public EC addEC(EC ec) {
+        ec.setArchive(false);
+        ec.setActif(true); // Par défaut actif à la création
         return ecRepository.save(ec);
     }
 
+    @Transactional
     public EC updateEC(Long id, EC ecDetails) {
         EC ec = getECById(id);
         if (ec != null) {
             ec.setCode(ecDetails.getCode());
             ec.setLibelle(ecDetails.getLibelle());
-            ec.setCredit(ecDetails.getCredit());
+            ec.setModule(ecDetails.getModule());
+
+            // Mise à jour des heures et coefficients
             ec.setHeureCm(ecDetails.getHeureCm());
             ec.setHeureTd(ecDetails.getHeureTd());
             ec.setHeureTp(ecDetails.getHeureTp());
             ec.setCoefficient(ecDetails.getCoefficient());
+            ec.setCredit(ecDetails.getCredit());
             ec.setTpe(ecDetails.getTpe());
-            ec.setModule(ecDetails.getModule());
+
             return ecRepository.save(ec);
         }
         return null;
     }
 
-    public void archiveEC(Long id) {
-        EC ec = getECById(id);
-        if (ec != null) {
-            ec.setArchive(true);
-            ecRepository.save(ec);
-        }
-    }
+    // --- GESTION DES ÉTATS ---
 
-    public void unarchiveEC(Long id) {
-        EC ec = getECById(id);
-        if (ec != null) {
-            ec.setArchive(false);
-            ecRepository.save(ec);
-        }
-    }
-
+    @Transactional
     public void activateEC(Long id) {
         EC ec = getECById(id);
         if (ec != null) {
@@ -70,6 +66,7 @@ public class ECService {
         }
     }
 
+    @Transactional
     public void deactivateEC(Long id) {
         EC ec = getECById(id);
         if (ec != null) {
@@ -78,7 +75,23 @@ public class ECService {
         }
     }
 
-    public List<EC> searchECs(String keyword) {
-        return ecRepository.findByLibelleContainingIgnoreCaseAndArchive(keyword, false);
+    @Transactional
+    public void archiveEC(Long id) {
+        EC ec = getECById(id);
+        if (ec != null) {
+            ec.setArchive(true);
+            ec.setActif(false); // On désactive aussi quand on archive
+            ecRepository.save(ec);
+        }
+    }
+
+    @Transactional
+    public void unarchiveEC(Long id) {
+        EC ec = getECById(id);
+        if (ec != null) {
+            ec.setArchive(false);
+            ec.setActif(true); // On réactive à la restauration
+            ecRepository.save(ec);
+        }
     }
 }

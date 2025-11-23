@@ -1,13 +1,15 @@
 package com.uasz.Atelier1_Gestion_Enseignements_UASZ.controller;
 
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Module;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.ModuleService;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.enums.Cycle;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.enums.Niveau;
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.ModuleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class ModuleController {
@@ -15,47 +17,79 @@ public class ModuleController {
     @Autowired
     private ModuleService moduleService;
 
+    // --- VUE UNIQUE (LISTE + MODALE) ---
     @GetMapping("/lst-modules")
     public String index(Model model) {
+        // Liste des modules actifs
         model.addAttribute("modules", moduleService.getAllModules());
-        return "module-list";
-    }
 
-    @GetMapping("/add-module")
-    public String addModule(Model model) {
-        Module module = new Module();
-        model.addAttribute("module", module);
+        // Listes pour les menus déroulants du formulaire
         model.addAttribute("cycles", Cycle.values());
         model.addAttribute("niveaux", Niveau.values());
-        return "module-add";
+
+        // Objet vide pour le formulaire d'ajout
+        model.addAttribute("module", new Module());
+
+        return "lst-modules";
     }
 
+    // --- ENREGISTREMENT (AJOUT & MODIF) ---
     @PostMapping("/save-module")
-    public String save(@ModelAttribute("module") Module module) {
-        moduleService.addModule(module);
+    public String save(@ModelAttribute Module module, RedirectAttributes ra) {
+        try {
+            if (module.getId() != null) {
+                moduleService.updateModule(module.getId(), module);
+                ra.addFlashAttribute("success", "Module mis à jour avec succès.");
+            } else {
+                moduleService.addModule(module);
+                ra.addFlashAttribute("success", "Nouveau module ajouté.");
+            }
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Erreur lors de l'enregistrement : " + e.getMessage());
+        }
         return "redirect:/lst-modules";
     }
 
-    @GetMapping("/edit-module/{id}")
-    public String editModule(@PathVariable Long id, Model model) {
-        Module module = moduleService.getModuleById(id);
-        model.addAttribute("module", module);
-        model.addAttribute("cycles", Cycle.values());
-        model.addAttribute("niveaux", Niveau.values());
-        return "module-add";
-    }
-
-    @GetMapping("/delete-module/{id}")
-    public String deleteModule(@PathVariable Long id) {
-        moduleService.deleteModule(id);
-        return "redirect:/lst-modules";
-    }
-
-    // ========== API REST pour les modales ==========
-
+    // --- API JSON (POUR LA MODALE JS) ---
     @GetMapping("/api/module/{id}")
     @ResponseBody
-    public Module getModuleJSON(@PathVariable Long id) {
-        return moduleService.getModuleById(id);
+    public ResponseEntity<Module> getModuleJSON(@PathVariable Long id) {
+        Module module = moduleService.getModuleById(id);
+        if (module != null) {
+            return ResponseEntity.ok(module);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    // --- ARCHIVAGE ---
+    @PostMapping("/archive-module/{id}")
+    public String archiveModule(@PathVariable Long id, RedirectAttributes ra) {
+        try {
+            moduleService.archiveModule(id);
+            ra.addFlashAttribute("success", "Module archivé.");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Erreur lors de l'archivage.");
+        }
+        return "redirect:/lst-modules";
+    }
+
+    // --- LISTE DES ARCHIVES ---
+    @GetMapping("/lst-modules-archives")
+    public String archives(Model model) {
+        model.addAttribute("modules", moduleService.getArchivedModules());
+        return "module-archived-list";
+    }
+
+    // --- DÉSARCHIVAGE (RESTAURATION) ---
+    @PostMapping("/unarchive-module/{id}")
+    public String unarchiveModule(@PathVariable Long id, RedirectAttributes ra) {
+        try {
+            moduleService.unarchiveModule(id);
+            ra.addFlashAttribute("success", "Module restauré avec succès.");
+        } catch (Exception e) {
+            ra.addFlashAttribute("error", "Erreur lors de la restauration.");
+        }
+        return "redirect:/lst-modules-archives"; // On reste sur les archives pour voir le résultat (ou rediriger vers /lst-modules selon pref)
     }
 }
