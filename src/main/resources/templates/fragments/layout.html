@@ -14,6 +14,26 @@
 
 <body>
 
+<nav class="top-navbar d-flex align-items-center justify-content-between px-4" th:fragment="navbar">
+    <div class="navbar-brand-text">
+        <h5 class="mb-0 fw-bold text-dark">Portail Académique UASZ</h5>
+    </div>
+
+    <div class="d-flex align-items-center gap-3">
+        <div th:if="${session.userRole != null}" class="user-info d-flex align-items-center gap-2">
+            <i class="bi bi-person-circle fs-4 text-primary"></i>
+            <div>
+                <small class="text-muted d-block" style="font-size: 0.7rem;">Connecté en tant que</small>
+                <span class="fw-semibold text-dark" th:text="${session.userRole.displayName}">Utilisateur</span>
+            </div>
+        </div>
+
+        <a th:href="@{/logout}" class="btn btn-outline-danger btn-sm">
+            <i class="bi bi-box-arrow-right me-1"></i> Déconnexion
+        </a>
+    </div>
+</nav>
+
 <nav class="sidebar d-flex flex-column" th:fragment="sidebar(activePage)">
 
     <div class="sidebar-brand">

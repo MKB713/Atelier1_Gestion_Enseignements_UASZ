@@ -10,6 +10,14 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     /**
+     * Page d'accueil publique
+     */
+    @GetMapping("/welcome")
+    public String welcome() {
+        return "welcome";
+    }
+
+    /**
      * Page de sélection du rôle (simulation de login)
      */
     @GetMapping("/select-role")
@@ -34,6 +42,6 @@ public class AuthController {
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "redirect:/select-role";
+        return "redirect:/welcome";
     }
 }
