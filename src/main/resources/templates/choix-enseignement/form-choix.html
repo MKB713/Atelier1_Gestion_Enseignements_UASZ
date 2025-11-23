@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: headerParams(${isEdit != null and isEdit} ? 'Modifier mon Choix' : 'Nouveau Choix d\'Enseignement')}"></head>
+
+<body>
+<nav th:replace="~{fragments/layout :: sidebar(activePage='choix')}"></nav>
+
+<main class="main-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark" th:text="${isEdit != null and isEdit} ? 'Modifier mon Choix' : 'Nouveau Choix d\'Enseignement'">Choix</h2>
+            <p class="text-muted mb-0">Saisissez vos préférences d'enseignement pour le semestre.</p>
+        </div>
+        <a th:href="@{/choix-enseignement/mes-choix}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Retour
+        </a>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Alertes -->
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3 border-bottom border-3 border-success">
+                    <h5 class="mb-0 text-success fw-bold">
+                        <i class="bi bi-bookmark-plus me-2"></i>Détails du Choix
+                    </h5>
+                </div>
+
+                <div class="card-body p-4">
+                    <form th:action="${isEdit != null and isEdit} ? @{/choix-enseignement/update/{id}(id=${choixDTO.id})} : @{/choix-enseignement/save}"
+                          method="post" th:object="${choixDTO}">
+
+                        <input type="hidden" th:field="*{id}" th:if="${isEdit != null and isEdit}" />
+
+                        <!-- Sélection Enseignant (seulement en création) -->
+                        <div class="mb-4" th:unless="${isEdit != null and isEdit}">
+                            <label class="form-label fw-bold small text-uppercase text-muted">
+                                Enseignant <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" th:field="*{enseignantId}" required>
+                                <option value="">-- Sélectionner un enseignant --</option>
+                                <option th:each="ens : ${enseignants}"
+                                        th:value="${ens.id}"
+                                        th:text="${ens.matricule + ' - ' + ens.prenom + ' ' + ens.nom}"
+                                        th:selected="${selectedEnseignantId != null and selectedEnseignantId == ens.id}">
+                                </option>
+                            </select>
+                        </div>
+
+                        <!-- Info enseignant (en modification) -->
+                        <div class="alert alert-light border mb-4" th:if="${isEdit != null and isEdit}">
+                            <strong>Enseignant:</strong>
+                            <span th:text="${choixDTO.enseignantNom}">Nom</span>
+                            <span class="badge bg-secondary ms-2" th:text="${choixDTO.enseignantMatricule}">MAT</span>
+                            <input type="hidden" th:field="*{enseignantId}" />
+                        </div>
+
+                        <!-- Semestre -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small text-uppercase text-muted">
+                                Semestre <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" th:field="*{semestre}" required>
+                                <option value="">-- Sélectionner un semestre --</option>
+                                <option th:each="sem : ${semestres}" th:value="${sem}" th:text="${sem}"></option>
+                            </select>
+                            <div class="form-text text-muted">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Vous ne pouvez soumettre qu'un seul choix par semestre.
+                            </div>
+                        </div>
+
+                        <!-- UE -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small text-uppercase text-muted">
+                                Unité d'Enseignement (UE) <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" th:field="*{ueId}" required id="ueSelect">
+                                <option value="">-- Sélectionner une UE --</option>
+                                <option th:each="ue : ${ues}" th:value="${ue.id}"
+                                        th:text="${ue.code + ' - ' + ue.libelle}"></option>
+                            </select>
+                        </div>
+
+                        <!-- EC -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small text-uppercase text-muted">
+                                Élément Constitutif (EC) <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" th:field="*{ecId}" required id="ecSelect">
+                                <option value="">-- Sélectionner un EC --</option>
+                                <option th:each="ec : ${ecs}" th:value="${ec.id}"
+                                        th:text="${ec.code + ' - ' + ec.libelle}"></option>
+                            </select>
+                        </div>
+
+                        <!-- Volume Horaire -->
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small text-uppercase text-muted">
+                                Volume Horaire Souhaité (heures) <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-clock"></i></span>
+                                <input type="number" class="form-control" th:field="*{volumeHoraire}"
+                                       min="1" max="200" required placeholder="Ex: 45">
+                                <span class="input-group-text">heures</span>
+                            </div>
+                        </div>
+
+                        <!-- Boutons -->
+                        <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                            <a th:href="@{/choix-enseignement/mes-choix}" class="btn btn-light border px-4">
+                                Annuler
+                            </a>
+                            <button type="submit" class="btn btn-success px-4 text-white fw-bold">
+                                <i class="bi bi-check-lg me-2"></i>
+                                <span th:text="${isEdit != null and isEdit} ? 'Enregistrer les modifications' : 'Soumettre mon choix'">Soumettre</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

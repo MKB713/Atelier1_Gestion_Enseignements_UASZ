@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: headerParams('Recherche Choix par Matricule')}"></head>
+
+<body>
+<nav th:replace="~{fragments/layout :: sidebar(activePage='choix-admin')}"></nav>
+
+<main class="main-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark">Rechercher par Matricule</h2>
+            <p class="text-muted mb-0">Consultez les choix d'un enseignant spécifique.</p>
+        </div>
+        <a th:href="@{/choix-enseignement/admin/liste}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Retour à la liste
+        </a>
+    </div>
+
+    <!-- Formulaire de recherche -->
+    <div class="card mb-4 border-0 shadow-sm">
+        <div class="card-header bg-white py-3 border-bottom border-3 border-primary">
+            <h5 class="mb-0 text-primary fw-bold">
+                <i class="bi bi-search me-2"></i>Recherche par Matricule Enseignant
+            </h5>
+        </div>
+        <div class="card-body p-4">
+            <form th:action="@{/choix-enseignement/admin/recherche}" method="get" class="row g-3 align-items-end">
+                <div class="col-md-8">
+                    <label class="form-label fw-bold small text-uppercase text-muted">
+                        Matricule de l'Enseignant
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light"><i class="bi bi-hash"></i></span>
+                        <input type="number" name="matricule" class="form-control form-control-lg"
+                               placeholder="Ex: 202500001"
+                               th:value="${matriculeRecherche}" required>
+                    </div>
+                    <div class="form-text">Entrez le matricule complet de l'enseignant (format: AAAAEEEEE)</div>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        <i class="bi bi-search me-2"></i>Rechercher
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Message info si aucun résultat -->
+    <div th:if="${info}" class="alert alert-info shadow-sm">
+        <i class="bi bi-info-circle me-2"></i><span th:text="${info}"></span>
+    </div>
+
+    <!-- Résultats de la recherche -->
+    <div class="card shadow-sm border-0" th:if="${choix != null and !choix.isEmpty()}">
+        <div class="card-header bg-light py-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 text-muted text-uppercase fw-bold small">
+                    <i class="bi bi-person me-2"></i>
+                    Choix de l'enseignant :
+                    <span class="text-dark" th:text="${choix[0].enseignantNom}">Nom</span>
+                    <span class="badge bg-secondary ms-2" th:text="${choix[0].enseignantMatricule}">MAT</span>
+                </h6>
+                <span class="badge bg-primary rounded-pill" th:text="${choix.size()} + ' choix trouvé(s)'">0</span>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-white border-bottom">
+                    <tr>
+                        <th class="ps-4">UE / EC</th>
+                        <th>Semestre</th>
+                        <th>Volume Horaire</th>
+                        <th>Statut</th>
+                        <th>Date Soumission</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="c : ${choix}">
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded bg-success bg-opacity-10 text-success d-flex justify-content-center align-items-center me-3"
+                                     style="width: 40px; height: 40px;">
+                                    <i class="bi bi-book fs-5"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-dark" th:text="${c.ueLibelle}">UE</div>
+                                    <small class="text-muted" th:text="${c.ecLibelle}">EC</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                                <span class="badge bg-info bg-opacity-10 text-info border border-info px-3 py-2 rounded-pill"
+                                      th:text="${c.semestre}">S1</span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-clock text-muted me-2"></i>
+                                <span th:text="${c.volumeHoraire + ' heures'}">45 heures</span>
+                            </div>
+                        </td>
+                        <td>
+                                <span th:switch="${c.statut.name()}">
+                                    <span th:case="'EN_ATTENTE'" class="badge bg-warning bg-opacity-10 text-warning border border-warning px-3 py-2 rounded-pill">
+                                        <i class="bi bi-hourglass-split me-1 small"></i>En attente
+                                    </span>
+                                    <span th:case="'VALIDE'" class="badge bg-success bg-opacity-10 text-success border border-success px-3 py-2 rounded-pill">
+                                        <i class="bi bi-check-circle me-1 small"></i>Validé
+                                    </span>
+                                    <span th:case="'REJETE'" class="badge bg-danger bg-opacity-10 text-danger border border-danger px-3 py-2 rounded-pill">
+                                        <i class="bi bi-x-circle me-1 small"></i>Rejeté
+                                    </span>
+                                </span>
+                        </td>
+                        <td class="small text-muted">
+                            <i class="bi bi-calendar3 me-1"></i>
+                            <span th:text="${#temporals.format(c.dateCreation, 'dd/MM/yyyy HH:mm')}">Date</span>
+                        </td>
+                        <td class="text-end pe-4">
+                            <a th:href="@{/choix-enseignement/admin/details/{id}(id=${c.id})}"
+                               class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-eye me-1"></i>Détails
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

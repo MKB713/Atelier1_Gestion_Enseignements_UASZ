@@ -106,6 +106,28 @@
             </a>
         </li>
     </ul>
+
+   <li class="nav-item mt-3">
+        <small class="text-white-50 text-uppercase px-3 fw-bold" style="font-size: 0.7rem;">
+            Choix d'Enseignement
+        </small>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link rounded mb-1"
+           th:classappend="${activePage == 'choix'} ? 'active' : ''"
+           th:href="@{/choix-enseignement/mes-choix}">
+            <i class="bi bi-bookmark-star me-2"></i>Mes Choix
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link rounded mb-1"
+           th:classappend="${activePage == 'choix-admin'} ? 'active' : ''"
+           th:href="@{/choix-enseignement/admin/en-attente}">
+            <i class="bi bi-clipboard-check me-2"></i>Validation Choix
+        </a>
+    </li>
 </nav>
 
 </body>

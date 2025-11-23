@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: headerParams('Choix en Attente de Validation')}"></head>
+
+<body>
+<nav th:replace="~{fragments/layout :: sidebar(activePage='choix-admin')}"></nav>
+
+<main class="main-content">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark">Choix en Attente</h2>
+            <p class="text-muted mb-0">Validez ou rejetez les demandes des enseignants.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a th:href="@{/choix-enseignement/admin/recherche}" class="btn btn-outline-primary">
+                <i class="bi bi-search me-2"></i>Rechercher par Matricule
+            </a>
+            <a th:href="@{/choix-enseignement/admin/liste}" class="btn btn-outline-secondary">
+                <i class="bi bi-list-ul me-2"></i>Voir tous les choix
+            </a>
+        </div>
+    </div>
+
+    <!-- Alertes -->
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i><span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i><span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Liste des choix en attente -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-warning bg-opacity-10 py-3 border-bottom border-warning">
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 class="mb-0 text-warning text-uppercase fw-bold small">
+                    <i class="bi bi-hourglass-split me-2"></i>Demandes en attente de traitement
+                </h6>
+                <span class="badge bg-warning text-dark rounded-pill"
+                      th:text="${choix != null ? choix.size() : 0} + ' en attente'">0</span>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">Enseignant</th>
+                        <th>UE / EC</th>
+                        <th>Semestre</th>
+                        <th>Volume</th>
+                        <th>Date</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${choix == null or choix.isEmpty()}">
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="bi bi-check-circle display-4 d-block mb-3 opacity-50 text-success"></i>
+                            Aucun choix en attente de validation.
+                        </td>
+                    </tr>
+                    <tr th:each="c : ${choix}">
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle bg-primary bg-opacity-10 text-primary d-flex justify-content-center align-items-center me-3"
+                                     style="width: 42px; height: 42px;">
+                                    <span th:text="${#strings.substring(c.enseignantNom, 0, 1)}">A</span>
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-dark" th:text="${c.enseignantNom}">Nom</div>
+                                    <small class="text-muted font-monospace" th:text="${c.enseignantMatricule}">MAT</small>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="fw-semibold" th:text="${c.ueLibelle}">UE</div>
+                            <small class="text-muted" th:text="${c.ecLibelle}">EC</small>
+                        </td>
+                        <td>
+                                <span class="badge bg-info bg-opacity-10 text-info border border-info px-2 rounded-pill"
+                                      th:text="${c.semestre}">S1</span>
+                        </td>
+                        <td th:text="${c.volumeHoraire + ' h'}">45 h</td>
+                        <td class="small text-muted" th:text="${#temporals.format(c.dateCreation, 'dd/MM/yyyy')}">Date</td>
+                        <td class="text-end pe-4">
+                            <div class="btn-group">
+                                <!-- Bouton Valider -->
+                                <button type="button" class="btn btn-sm btn-success"
+                                        th:onclick="'ouvrirModalValidation(' + ${c.id} + ')'"
+                                        title="Valider">
+                                    <i class="bi bi-check-lg"></i>
+                                </button>
+                                <!-- Bouton Rejeter -->
+                                <button type="button" class="btn btn-sm btn-danger"
+                                        th:onclick="'ouvrirModalRejet(' + ${c.id} + ')'"
+                                        title="Rejeter">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                                <!-- Bouton Détails -->
+                                <a th:href="@{/choix-enseignement/admin/details/{id}(id=${c.id})}"
+                                   class="btn btn-sm btn-outline-secondary" title="Voir détails">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Modal Validation -->
+<div class="modal fade" id="modalValidation" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title"><i class="bi bi-check-circle me-2"></i>Valider ce choix</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formValidation" method="post">
+                <div class="modal-body">
+                    <p>Confirmez-vous la validation de ce choix d'enseignement ?</p>
+                    <div class="mb-3">
+                        <label class="form-label">Commentaire (optionnel)</label>
+                        <textarea name="commentaire" class="form-control" rows="2"
+                                  placeholder="Ajouter un commentaire..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-lg me-2"></i>Valider
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Rejet -->
+<div class="modal fade" id="modalRejet" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title"><i class="bi bi-x-circle me-2"></i>Rejeter ce choix</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formRejet" method="post">
+                <div class="modal-body">
+                    <p>Veuillez indiquer le motif du rejet :</p>
+                    <div class="mb-3">
+                        <label class="form-label">Motif du rejet <span class="text-danger">*</span></label>
+                        <textarea name="commentaire" class="form-control" rows="3" required
+                                  placeholder="Expliquez la raison du rejet..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-x-lg me-2"></i>Rejeter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function ouvrirModalValidation(choixId) {
+        document.getElementById('formValidation').action = '/choix-enseignement/admin/valider/' + choixId;
+        new bootstrap.Modal(document.getElementById('modalValidation')).show();
+    }
+
+    function ouvrirModalRejet(choixId) {
+        document.getElementById('formRejet').action = '/choix-enseignement/admin/rejeter/' + choixId;
+        new bootstrap.Modal(document.getElementById('modalRejet')).show();
+    }
+</script>
+</body>
+</html>
