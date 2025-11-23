@@ -2,9 +2,16 @@ package com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities;
 
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.enums.StatutFormation;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.Date;
 
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "formations")
 public class Formation {
     @Id
@@ -28,37 +35,11 @@ public class Formation {
     @JoinColumn(name = "niveau_id")
     private Niveau niveau;
 
-    // Si vous n'avez pas encore la classe Maquette, commentez ces lignes :
-    // @OneToOne(mappedBy = "formation")
-    // private Maquette maquette;
+    // --- RETOUR A LA MÉTHODE STANDARD (Booleans) ---
+    private boolean active = true;  // Pour Activer/Désactiver (Vert/Rouge)
+    private boolean archive = false; // Pour la corbeille
 
+    // On garde l'enum si vous l'utilisez ailleurs, mais on ne s'en sert plus pour l'activation
     @Enumerated(EnumType.STRING)
     private StatutFormation statutFormation = StatutFormation.ACTIVE;
-
-    public Formation() {}
-
-    // Getters et Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public String getCode() { return code; }
-    public void setCode(String code) { this.code = code; }
-
-    public String getLibelle() { return libelle; }
-    public void setLibelle(String libelle) { this.libelle = libelle; }
-
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-
-    public Date getDateCreation() { return dateCreation; }
-    public void setDateCreation(Date dateCreation) { this.dateCreation = dateCreation; }
-
-    public Filiere getFiliere() { return filiere; }
-    public void setFiliere(Filiere filiere) { this.filiere = filiere; }
-
-    public Niveau getNiveau() { return niveau; }
-    public void setNiveau(Niveau niveau) { this.niveau = niveau; }
-
-    public StatutFormation getStatutFormation() { return statutFormation; }
-    public void setStatutFormation(StatutFormation statutFormation) { this.statutFormation = statutFormation; }
 }

@@ -1,131 +1,68 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ECs Archivés - UASZ</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <style>
-        .sidebar {
-            min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        .nav-link {
-            color: rgba(255,255,255,0.8);
-            transition: all 0.3s;
-        }
-        .nav-link:hover, .nav-link.active {
-            color: #fff;
-            background-color: rgba(255,255,255,0.1);
-        }
-    </style>
-</head>
+<head th:replace="~{fragments/layout :: headerParams('Archives EC')}"></head>
+
 <body>
-<div class="container-fluid">
-    <div class="row">
-        <!-- Sidebar -->
-        <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse p-0">
-            <div class="position-sticky pt-3">
-                <div class="text-center mb-4">
-                    <h4 class="text-white fw-bold">UASZ</h4>
-                    <p class="text-white-50 small">Gestion des Enseignements</p>
-                </div>
-                <ul class="nav flex-column px-2">
-                    <li class="nav-item">
-                        <a class="nav-link rounded mb-1" href="/" th:href="@{/}">
-                            <i class="bi bi-house-door me-2"></i> Accueil
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link rounded mb-1" href="/lst-filieres" th:href="@{/lst-filieres}">
-                            <i class="bi bi-diagram-3 me-2"></i> Filières
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link rounded mb-1" href="/lst-enseignants" th:href="@{/lst-enseignants}">
-                            <i class="bi bi-person-badge me-2"></i> Enseignants
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link rounded mb-1 active" href="/lst-ecs" th:href="@{/lst-ecs}">
-                            <i class="bi bi-journal-bookmark me-2"></i> EC
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+<nav th:replace="~{fragments/layout :: sidebar(activePage='ecs')}"></nav>
 
-        <!-- Main content -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <div class="pt-3 pb-2 mb-3 border-bottom d-flex justify-content-between align-items-center">
-                <h1 class="h2">Liste des ECs Archivés</h1>
-                <a href="/lst-ecs" th:href="@{/lst-ecs}" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-left me-2"></i>Retour à la liste
-                </a>
-            </div>
+<main class="main-content">
 
-            <!-- ECs Table -->
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead class="table-light">
-                            <tr>
-                                <th>#</th>
-                                <th>Code</th>
-                                <th>Libellé</th>
-                                <th>Crédit</th>
-                                <th>Heures CM</th>
-                                <th>Heures TD</th>
-                                <th>Heures TP</th>
-                                <th class="text-end">Actions</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:if="${ecs == null or ecs.isEmpty()}">
-                                <td colspan="8" class="text-center text-muted py-4">
-                                    <i class="bi bi-inbox" style="font-size: 3rem;"></i>
-                                    <p class="mt-2">Aucun EC archivé trouvé</p>
-                                </td>
-                            </tr>
-                            <tr th:each="ec, iterStat : ${ecs}">
-                                <td th:text="${iterStat.count}">1</td>
-                                <td>
-                                    <span class="badge bg-secondary" th:text="${ec.code}">INF101</span>
-                                </td>
-                                <td>
-                                    <strong th:text="${ec.libelle}">Algorithmique</strong>
-                                </td>
-                                <td th:text="${ec.credit}">5</td>
-                                <td th:text="${ec.heureCm}">20</td>
-                                <td th:text="${ec.heureTd}">10</td>
-                                <td th:text="${ec.heureTp}">10</td>
-                                <td class="text-end">
-                                    <div class="btn-group" role="group">
-                                        <a th:href="@{/ec/unarchive/{id}(id=${ec.id})}"
-                                           class="btn btn-sm btn-outline-success"
-                                           title="Désarchiver">
-                                            <i class="bi bi-box-arrow-up"></i>
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Stats -->
-            <div class="mt-3 text-muted">
-                <small>
-                    Total: <strong th:text="${ecs != null ? ecs.size() : 0}">0</strong> EC(s) archivé(s)
-                </small>
-            </div>
-        </main>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark">Archives EC</h2>
+            <p class="text-muted mb-0">Historique des éléments constitutifs supprimés.</p>
+        </div>
+        <a th:href="@{/lst-ecs}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Retour aux Actifs
+        </a>
     </div>
-</div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
+                    <tr>
+                        <th class="ps-4">EC</th>
+                        <th>Module</th>
+                        <th class="text-center">Statut</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${ecs == null or ecs.isEmpty()}">
+                        <td colspan="4" class="text-center py-5 text-muted">
+                            <i class="bi bi-archive display-4 d-block mb-3 opacity-50"></i>
+                            Aucune archive trouvée.
+                        </td>
+                    </tr>
+
+                    <tr th:each="ec : ${ecs}">
+                        <td class="ps-4">
+                            <div class="fw-bold text-muted" th:text="${ec.libelle}">Algo</div>
+                            <span class="badge bg-secondary" th:text="${ec.code}">CODE</span>
+                        </td>
+                        <td th:text="${ec.module != null ? ec.module.libelle : '-'}">Mod</td>
+
+                        <td class="text-center">
+                            <span class="badge bg-warning text-dark border border-warning">Archivé</span>
+                        </td>
+
+                        <td class="text-end pe-4">
+                            <form th:action="@{'/unarchive-ec/' + ${ec.id}}" method="post">
+                                <button type="submit" class="btn btn-sm btn-outline-success" title="Restaurer"
+                                        onclick="return confirm('Restaurer cet EC dans la liste active ?')">
+                                    <i class="bi bi-arrow-counterclockwise me-1"></i> Restaurer
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

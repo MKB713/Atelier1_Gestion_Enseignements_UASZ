@@ -13,10 +13,16 @@ public class HomeController {
     @Autowired
     private DashboardService dashboardService;
 
-    @GetMapping("/welcom")
+    /**
+     * Page d'accueil (Tableau de Bord)
+     * URL : http://localhost:8080/
+     */
+    @GetMapping("/")
     public String index(Model model) {
+        // Récupération des statistiques pour les graphiques et compteurs
         DashboardStatsDTO stats = dashboardService.getStats();
         model.addAttribute("stats", stats);
-        return "index"; // Cela correspondra à index.html
+
+        return "index"; // Correspond à src/main/resources/templates/index.html
     }
 }
