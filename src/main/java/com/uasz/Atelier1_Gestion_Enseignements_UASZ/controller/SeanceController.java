@@ -1,3 +1,5 @@
+package com.uasz.Atelier1_Gestion_Enseignements_UASZ.controller;
+
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.dto.SeanceDTO;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Seance;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.SeanceService;

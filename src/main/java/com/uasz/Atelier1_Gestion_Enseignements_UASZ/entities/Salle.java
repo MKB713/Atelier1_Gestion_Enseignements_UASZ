@@ -18,6 +18,11 @@ public class Salle {
     private String libelle;
     private int capacite;
     private String description;
+    private String numeroSalle;
+
+    @ManyToOne
+    @JoinColumn(name = "batiment_id")
+    private Batiment batiment;
 
     @ManyToOne
     @JoinColumn(name = "batiment_id")

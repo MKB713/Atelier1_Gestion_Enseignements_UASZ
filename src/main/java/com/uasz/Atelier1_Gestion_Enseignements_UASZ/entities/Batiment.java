@@ -16,7 +16,6 @@ public class Batiment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String libelle;
-    @Column(length = 1000)
     private String description;
     @OneToMany(mappedBy = "batiment", cascade = CascadeType.ALL)
     private List<Salle> salles;

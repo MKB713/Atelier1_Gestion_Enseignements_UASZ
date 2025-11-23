@@ -36,31 +36,32 @@
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label for="repartitionId" class="form-label">Affectation (Enseignant - Matière)</label>
-                    <select class="form-select" id="repartitionId" th:field="*{repartitionId}" required>
-                        <option value="">Sélectionner une affectation</option>
-                        <option th:each="repartition : ${repartitions}"
-                                th:value="${repartition.id}"
-                                th:text="${(repartition.enseignant?.specialite ?: 'Spécialité inconnue') + ' : ' + (repartition.enseignant?.prenom ?: '') + ' ' + (repartition.enseignant?.nom ?: 'Enseignant inconnu') + ' - ' + (repartition.ec?.libelle ?: 'Matière inconnue')}"></option>
+                    <label for="enseignantId" class="form-label">Enseignant</label>
+                    <select class="form-select" id="enseignantId" th:field="*{enseignantId}" required>
+                        <option value="">Sélectionner un enseignant</option>
+                        <!-- Options will be dynamically loaded from a list of Enseignants in the model -->
+                        <option th:each="enseignant : ${enseignants}" th:value="${enseignant.id}" th:text="${enseignant.prenom + ' ' + enseignant.nom}"></option>
                     </select>
                 </div>
                 <div class="mb-3">
                     <label for="salleId" class="form-label">Salle</label>
                     <select class="form-select" id="salleId" th:field="*{salleId}" required>
                         <option value="">Sélectionner une salle</option>
-                        <option th:each="salle : ${salles}" th:value="${salle.id}" th:text="${(salle.batiment?.libelle ?: 'N/A') + ' - ' + salle.libelle}"></option>
+                        <!-- Options will be dynamically loaded from a list of Salles in the model -->
+                        <option th:each="salle : ${salles}" th:value="${salle.id}" th:text="${salle.libelle}"></option>
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label for="emploiId" class="form-label">Emploi du temps</label>
-                    <select class="form-select" id="emploiId" th:field="*{emploiId}" required>
-                        <option value="">Sélectionner un emploi du temps</option>
-                        <option th:each="emploi : ${emplois}" th:value="${emploi.id}" th:text="${emploi.libelle}"></option>
+                    <label for="ecId" class="form-label">Élément Constitutif (EC)</label>
+                    <select class="form-select" id="ecId" th:field="*{ecId}" required>
+                        <option value="">Sélectionner un EC</option>
+                        <!-- Options will be dynamically loaded from a list of ECs in the model -->
+                        <option th:each="ec : ${ecs}" th:value="${ec.id}" th:text="${ec.libelle}"></option>
                     </select>
                 </div>
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                     <button type="submit" class="btn btn-success"><i class="bi bi-save me-2"></i>Ajouter la Séance</button>
-                    <a th:href="@{/seances}" class="btn btn-secondary"><i class="bi bi-x-circle me-2"></i>Annuler</a>
+                    <a th:href="@{/}" class="btn btn-secondary"><i class="bi bi-x-circle me-2"></i>Annuler</a>
                 </div>
             </form>
         </div>
