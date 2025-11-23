@@ -28,23 +28,23 @@
 
     <ul class="nav flex-column px-2 mt-3">
 
-        <!-- TABLEAU DE BORD -->
+        <!-- TABLEAU DE BORD : Tous les rôles -->
         <li class="nav-item mb-1">
             <a class="nav-link" th:classappend="${activePage == 'accueil'} ? 'active'" th:href="@{/}">
                 <i class="bi bi-speedometer2"></i> Tableau de bord
             </a>
         </li>
 
-        <!-- SECTION: MAQUETTE PÉDAGOGIQUE -->
-        <li class="nav-item mb-1 mt-3 pt-3 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
+        <!-- SECTION: MAQUETTE PÉDAGOGIQUE (Enseignant, Responsable, Coordinateur, Admin - PAS ETUDIANT) -->
+        <li th:if="${session.userRole != null && session.userRole.name() != 'ETUDIANT'}" class="nav-item mb-1 mt-3 pt-3 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
             <small class="text-white-50 text-uppercase px-3" style="font-size: 0.7rem;">Maquette Pédagogique</small>
         </li>
-        <li class="nav-item mb-1">
+        <li th:if="${session.userRole != null && session.userRole.name() != 'ETUDIANT'}" class="nav-item mb-1">
             <a class="nav-link" th:classappend="${activePage == 'formations'} ? 'active'" th:href="@{/lst-formations}">
                 <i class="bi bi-mortarboard"></i> Formations
             </a>
         </li>
-        <li class="nav-item mb-1">
+        <li th:if="${session.userRole != null && session.userRole.name() != 'ETUDIANT'}" class="nav-item mb-1">
             <a class="nav-link d-flex justify-content-between align-items-center"
                data-bs-toggle="collapse" href="#menuStructure" role="button" aria-expanded="false"
                th:classappend="${activePage == 'filieres' or activePage == 'niveaux' or activePage == 'formations' or activePage == 'classes'} ? 'active text-white bg-white bg-opacity-10'">
@@ -70,12 +70,12 @@
                 </ul>
             </div>
         </li>
-        <li class="nav-item mb-1">
+        <li th:if="${session.userRole != null && session.userRole.name() != 'ETUDIANT'}" class="nav-item mb-1">
             <a class="nav-link" th:classappend="${activePage == 'maquettes'} ? 'active'" th:href="@{/lst-maquettes}">
                 <i class="bi bi-diagram-2"></i> Maquettes
             </a>
         </li>
-        <li class="nav-item mb-1">
+        <li th:if="${session.userRole != null && session.userRole.name() != 'ETUDIANT'}" class="nav-item mb-1">
             <a class="nav-link d-flex justify-content-between align-items-center"
                data-bs-toggle="collapse" href="#menuPedago" role="button" aria-expanded="false"
                th:classappend="${activePage == 'maquettes' or activePage == 'modules' or activePage == 'ues' or activePage == 'ecs'} ? 'active text-white bg-white bg-opacity-10'">
@@ -102,26 +102,26 @@
             </div>
         </li>
 
-        <!-- SECTION: GESTION DES ENSEIGNEMENTS -->
-        <li class="nav-item mb-1 mt-3 pt-3 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
+        <!-- SECTION: GESTION DES ENSEIGNEMENTS (Responsable, Coordinateur, Admin - PAS ETUDIANT ni ENSEIGNANT) -->
+        <li th:if="${session.userRole != null && session.userRole.name() != 'ETUDIANT' && session.userRole.name() != 'ENSEIGNANT'}" class="nav-item mb-1 mt-3 pt-3 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
             <small class="text-white-50 text-uppercase px-3" style="font-size: 0.7rem;">Gestion des Enseignements</small>
         </li>
-        <li class="nav-item mb-1">
+        <li th:if="${session.userRole != null && session.userRole.name() != 'ETUDIANT' && session.userRole.name() != 'ENSEIGNANT'}" class="nav-item mb-1">
             <a class="nav-link" th:classappend="${activePage == 'enseignants'} ? 'active'" th:href="@{/lst-enseignants}">
                 <i class="bi bi-person-video3"></i> Enseignants
             </a>
         </li>
-        <li class="nav-item mb-1">
+        <li th:if="${session.userRole != null && session.userRole.name() != 'ETUDIANT' && session.userRole.name() != 'ENSEIGNANT'}" class="nav-item mb-1">
             <a class="nav-link" th:classappend="${activePage == 'etudiants'} ? 'active'" th:href="@{/lst-etudiants}">
                 <i class="bi bi-person-badge"></i> Étudiants
             </a>
         </li>
 
-        <!-- SECTION: RESPONSABLES & COORDINATEURS -->
-        <li class="nav-item mb-1 mt-3 pt-3 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
+        <!-- SECTION: RESPONSABLES & COORDINATEURS (Responsable, Coordinateur, Admin - PAS ETUDIANT ni ENSEIGNANT) -->
+        <li th:if="${session.userRole != null && session.userRole.name() != 'ETUDIANT' && session.userRole.name() != 'ENSEIGNANT'}" class="nav-item mb-1 mt-3 pt-3 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
             <small class="text-white-50 text-uppercase px-3" style="font-size: 0.7rem;">Responsables</small>
         </li>
-        <li class="nav-item mb-1">
+        <li th:if="${session.userRole != null && session.userRole.name() != 'ETUDIANT' && session.userRole.name() != 'ENSEIGNANT'}" class="nav-item mb-1">
             <a class="nav-link" th:classappend="${activePage == 'responsables'} ? 'active'" th:href="@{/lst-responsables-coordinateurs}">
                 <i class="bi bi-people"></i> Responsables & Coordinateurs
             </a>
@@ -131,28 +131,30 @@
         <li class="nav-item mb-1 mt-3 pt-3 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
             <small class="text-white-50 text-uppercase px-3" style="font-size: 0.7rem;">Planning</small>
         </li>
+        <!-- Emploi du Temps : Tous les rôles -->
         <li class="nav-item mb-1">
             <a class="nav-link" th:classappend="${activePage == 'emploi-temps'} ? 'active'" th:href="@{/emploi-du-temps}">
                 <i class="bi bi-calendar-week me-2"></i> Emploi du Temps
             </a>
         </li>
-        <li class="nav-item mb-1">
+        <!-- Cahier de Texte : Enseignant, Responsable, Coordinateur, Admin - PAS ETUDIANT -->
+        <li th:if="${session.userRole != null && session.userRole.name() != 'ETUDIANT'}" class="nav-item mb-1">
             <a class="nav-link" th:classappend="${activePage == 'cahier'} ? 'active'" th:href="@{/lst-notes-cahier}">
                 <i class="bi bi-journal-text"></i> Cahier de Texte
             </a>
         </li>
 
-        <!-- SECTION: ADMINISTRATION -->
-        <li class="nav-item mb-1 mt-3 pt-3 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
+        <!-- SECTION: ADMINISTRATION (Admin uniquement) -->
+        <li th:if="${session.userRole != null && session.userRole.isAdmin()}" class="nav-item mb-1 mt-3 pt-3 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
             <small class="text-white-50 text-uppercase px-3" style="font-size: 0.7rem;">Administration</small>
         </li>
-        <li class="nav-item mb-1">
+        <li th:if="${session.userRole != null && session.userRole.isAdmin()}" class="nav-item mb-1">
             <a class="nav-link" th:classappend="${activePage == 'utilisateurs'} ? 'active'" th:href="@{/lst-utilisateurs}">
                 <i class="bi bi-shield-lock"></i> Utilisateurs
             </a>
         </li>
 
-        <!-- DÉCONNEXION -->
+        <!-- DÉCONNEXION : Tous les rôles -->
         <li class="nav-item mt-5 pt-3 border-top pb-5" style="border-color: rgba(255,255,255,0.1) !important;">
             <a class="nav-link text-warning" th:href="@{/logout}">
                 <i class="bi bi-box-arrow-left me-2"></i> Déconnexion
