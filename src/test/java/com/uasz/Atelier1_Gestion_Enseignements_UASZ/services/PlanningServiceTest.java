@@ -1,7 +1,7 @@
 package com.uasz.Atelier1_Gestion_Enseignements_UASZ.services;
 
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.dto.PlanningDTO;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Ec;
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.EC;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Enseignant;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Salle;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Seance;
@@ -38,7 +38,7 @@ public class PlanningServiceTest {
 
     private Salle salle;
     private Enseignant enseignant;
-    private Ec ec;
+    private EC ec;
     private Seance seance1;
     private Seance seance2;
 
@@ -53,7 +53,7 @@ public class PlanningServiceTest {
         enseignant.setNom("Dupont");
         enseignant.setPrenom("Jean");
 
-        ec = new Ec();
+        ec = new EC();
         ec.setId(100L);
         ec.setLibelle("Programmation Avancée");
 
