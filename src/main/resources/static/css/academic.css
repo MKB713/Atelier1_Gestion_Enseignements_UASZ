@@ -124,6 +124,83 @@ body {
     text-align: center;
 }
 
+/*!* --- CUSTOM TABS (Profil) --- *!*/
+/*!* État par défaut (Inactif) : Texte Vert sur fond transparent/blanc *!*/
+/*.nav-tabs .nav-link.profile-tab {*/
+/*    color: var(--primary-color);*/
+/*    font-weight: 600;*/
+/*    border: none; !* On enlève les bordures par défaut *!*/
+/*    border-bottom: 3px solid transparent; !* Préparation pour la bordure active *!*/
+/*    background-color: transparent;*/
+/*    padding: 1rem 1.5rem;*/
+/*    transition: all 0.3s ease;*/
+/*}*/
+
+/*!* Au survol de l'onglet inactif *!*/
+/*.nav-tabs .nav-link.profile-tab:hover {*/
+/*    color: var(--primary-hover);*/
+/*    background-color: rgba(26, 94, 52, 0.05); !* Vert très très pâle *!*/
+/*    border-color: transparent;*/
+/*}*/
+
+/*!* État Actif : Texte Vert foncé avec une barre verte en dessous *!*/
+/*.nav-tabs .nav-item.show .nav-link.profile-tab,*/
+/*.nav-tabs .nav-link.profile-tab.active {*/
+/*    color: var(--primary-color) !important;*/
+/*    background-color: transparent !important;*/
+/*    border-color: transparent !important;*/
+/*    border-bottom: 3px solid var(--accent-color) !important; !* Barre verte vif en dessous *!*/
+/*}*/
+
+/* --- CUSTOM TABS (Profil) --- */
+
+/* Conteneur des onglets */
+.card-header-tabs {
+    margin-bottom: -1px;
+    border-bottom: 1px solid #e9ecef;
+    gap: 5px; /* Espace entre les onglets */
+}
+
+/* Style par défaut (Inactif) */
+.nav-tabs .nav-link.profile-tab {
+    color: #6c757d; /* Gris par défaut */
+    font-weight: 500;
+    border: none;
+    background-color: transparent;
+    padding: 1rem 1.5rem;
+    transition: all 0.3s ease;
+    border-radius: 8px 8px 0 0; /* Arrondi en haut */
+    opacity: 0.7; /* Légèrement transparent si inactif */
+}
+
+/* Au survol (Hover) */
+.nav-tabs .nav-link.profile-tab:hover {
+    color: var(--primary-color);
+    background-color: rgba(26, 94, 52, 0.05);
+    opacity: 1;
+}
+
+/* Style ACTIF (Sélectionné) */
+.nav-tabs .nav-item.show .nav-link.profile-tab,
+.nav-tabs .nav-link.profile-tab.active {
+    color: var(--primary-color) !important; /* Vert UASZ */
+    background-color: #fff !important;      /* Fond Blanc OBLIGATOIRE */
+    font-weight: 700;                       /* Texte plus gras */
+    opacity: 1;
+
+    /* Bordure verte en bas pour souligner */
+    border-bottom: 3px solid var(--accent-color) !important;
+
+    /* Ombre légère pour donner du relief */
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
+}
+
+/* Ajustement du conteneur des onglets */
+.card-header-tabs {
+    margin-bottom: -1px; /* Pour coller au contenu */
+    border-bottom: 1px solid #e9ecef; /* Ligne grise continue sous les onglets */
+}
+
 /* --- CONTENU PRINCIPAL --- */
 .main-content {
     margin-left: var(--sidebar-width);

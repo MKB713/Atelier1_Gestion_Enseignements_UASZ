@@ -100,6 +100,39 @@
             </a>
         </li>
 
+        <div class="sidebar-footer">
+            <div class="dropup w-100">
+                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+                   id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
+
+                    <div class="rounded-circle bg-warning text-dark fw-bold d-flex justify-content-center align-items-center me-2"
+                         style="width: 32px; height: 32px; font-size: 0.8rem;">
+                        AD </div>
+
+                    <div class="d-flex flex-column text-start me-auto" style="line-height: 1.1;">
+                        <span class="small fw-bold">Administrateur</span>
+                        <span class="text-white-50" style="font-size: 0.7rem;">En ligne</span>
+                    </div>
+                </a>
+
+                <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser"
+                    style="background-color: #144a29; border: 1px solid rgba(255,255,255,0.1);">
+
+                    <li><a class="dropdown-item" th:href="@{/profil}">
+                        <i class="bi bi-person-circle me-2"></i> Mon Profil
+                    </a></li>
+
+                    <li><a class="dropdown-item" th:href="@{/parametres}">
+                        <i class="bi bi-gear-fill me-2"></i> Paramètres
+                    </a></li>
+
+                    <li><a class="dropdown-item" th:href="@{/lst-utilisateurs}">
+                        <i class="bi bi-people-fill me-2"></i> Gestion Utilisateurs
+                    </a></li>
+                </ul>
+            </div>
+        </div>
+
         <li class="nav-item mt-5 pt-3 border-top pb-5" style="border-color: rgba(255,255,255,0.1) !important;">
             <a class="nav-link text-warning" th:href="@{/logout}">
                 <i class="bi bi-box-arrow-left me-2"></i> Déconnexion
