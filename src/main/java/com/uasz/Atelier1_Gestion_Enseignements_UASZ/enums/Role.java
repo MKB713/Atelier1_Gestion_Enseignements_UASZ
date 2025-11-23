@@ -1,0 +1,5 @@
+package com.uasz.Atelier1_Gestion_Enseignements_UASZ.enums;
+
+public enum Role {
+    ADMIN,RESPONSABLE_MASTER,CHEF_DE_DEPARTEMENT,ENSEIGNANT,ETUDIANT,COORDONATEUR_DES_LICENCES
+}
