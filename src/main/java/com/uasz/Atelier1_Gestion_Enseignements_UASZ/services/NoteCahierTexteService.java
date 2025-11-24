@@ -207,9 +207,11 @@ public class NoteCahierTexteService {
 
     /**
      * Récupère les notes par classe
+     * Note: Seance n'a pas de relation avec Classe, donc retourne une liste vide pour l'instant
      */
     public List<NoteCahierTexte> getNotesByClasse(Long classeId) {
-        return noteCahierTexteRepository.findBySeanceClasseId(classeId);
+        // TODO: Implémenter la logique correcte si Seance doit avoir une relation avec Classe
+        return new java.util.ArrayList<>();
     }
 
     /**

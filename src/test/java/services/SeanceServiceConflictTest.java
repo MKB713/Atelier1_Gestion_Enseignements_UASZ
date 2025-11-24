@@ -1,12 +1,12 @@
 package com.uasz.Atelier1_Gestion_Enseignements_UASZ.services;
 
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.dto.SeanceDTO;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Ec;
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.EC;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Enseignant;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Salle;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Seance;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.exceptions.ConflictException;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.repositories.EcRepository;
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.repositories.ECRepository;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.repositories.EnseignantRepository;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.repositories.SalleRepository;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.repositories.SeanceRepository;
@@ -40,7 +40,7 @@ public class SeanceServiceConflictTest {
     @Mock
     private SalleRepository salleRepository;
     @Mock
-    private EcRepository ecRepository;
+    private ECRepository ecRepository;
 
     @InjectMocks
     private SeanceService seanceService;
@@ -63,7 +63,7 @@ public class SeanceServiceConflictTest {
         // Arrange
         when(enseignantRepository.findById(1L)).thenReturn(Optional.of(new Enseignant()));
         when(salleRepository.findById(1L)).thenReturn(Optional.of(new Salle()));
-        when(ecRepository.findById(1L)).thenReturn(Optional.of(new Ec()));
+        when(ecRepository.findById(1L)).thenReturn(Optional.of(new EC()));
         when(seanceRepository.findByEnseignantIdAndDateSeanceAndHeureDebutBeforeAndHeureFinAfter(any(), any(), any(), any())).thenReturn(Collections.emptyList());
         when(seanceRepository.findBySalleIdAndDateSeanceAndHeureDebutBeforeAndHeureFinAfter(any(), any(), any(), any())).thenReturn(Collections.emptyList());
         when(seanceRepository.save(any(Seance.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -125,7 +125,7 @@ public class SeanceServiceConflictTest {
         when(seanceRepository.findById(seanceId)).thenReturn(Optional.of(existingSeance));
         when(enseignantRepository.findById(1L)).thenReturn(Optional.of(new Enseignant()));
         when(salleRepository.findById(1L)).thenReturn(Optional.of(new Salle()));
-        when(ecRepository.findById(1L)).thenReturn(Optional.of(new Ec()));
+        when(ecRepository.findById(1L)).thenReturn(Optional.of(new EC()));
         when(seanceRepository.findByEnseignantIdAndDateSeanceAndHeureDebutBeforeAndHeureFinAfterAndIdNot(any(), any(), any(), any(), any())).thenReturn(Collections.emptyList());
         when(seanceRepository.findBySalleIdAndDateSeanceAndHeureDebutBeforeAndHeureFinAfterAndIdNot(any(), any(), any(), any(), any())).thenReturn(Collections.emptyList());
         when(seanceRepository.save(any(Seance.class))).thenAnswer(invocation -> invocation.getArgument(0));
