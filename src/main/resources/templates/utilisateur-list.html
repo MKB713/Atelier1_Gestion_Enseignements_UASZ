@@ -43,7 +43,7 @@
               <div class="mb-3">
                 <label>Role</label>
                 <select name="role" class="form-select" required>
-                  <option value="CHEF_DE_DEPARTEMENT">Chef de departement</option>
+                  <option value="CHEF_DE_DEPARTEMENT" th:if="${currentUser.role.name() == 'ADMIN'}">Chef de departement</option>
                   <option value="COORDONATEUR_DES_LICENCES">Coordonateur des licences</option>
                   <option value="RESPONSABLE_MASTER">Responsable des Masters</option>
                   <option value="ETUDIANT">Etudiant</option>

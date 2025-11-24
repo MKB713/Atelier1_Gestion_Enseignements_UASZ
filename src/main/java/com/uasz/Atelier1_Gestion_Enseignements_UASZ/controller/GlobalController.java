@@ -18,7 +18,7 @@ public class GlobalController {
 
         if (auth != null && auth.isAuthenticated()
                 && auth.getPrincipal() instanceof CustomUserDetails userDetails) {
-            return userDetails;  // Utilisateur OU Enseignant
+            return userDetails;
         }
 
         return null;
