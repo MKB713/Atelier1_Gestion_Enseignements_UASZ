@@ -39,7 +39,7 @@
             </a>
         </li>
 
-        <li class="nav-item mb-1">
+        <li class="nav-item mb-1" th:if="${currentUser.role.name() == 'CHEF_DE_DEPARTEMENT' or currentUser.role.name() == 'ADMIN'}">
             <a class="nav-link d-flex justify-content-between align-items-center"
                data-bs-toggle="collapse" href="#menuStructure" role="button" aria-expanded="false"
                th:classappend="${activePage == 'filieres' or activePage == 'niveaux' or activePage == 'formations' or activePage == 'classes'} ? 'active text-white bg-white bg-opacity-10'">
@@ -56,17 +56,17 @@
                     <li class="nav-item">
                         <a class="nav-link py-1 small" th:classappend="${activePage == 'niveaux'} ? 'text-warning fw-bold' : 'text-white-50'" th:href="@{/niveaux}">Niveaux</a>
                     </li>
-                    <li class="nav-item" th:if="${currentUser.role.name() == 'CHEF_DE_DEPARTEMENT' or currentUser.role.name() == 'ADMIN'}">
+                    <li class="nav-item" >
                         <a class="nav-link py-1 small" th:classappend="${activePage == 'formations'} ? 'text-warning fw-bold' : 'text-white-50'" th:href="@{/lst-formations}">Formations</a>
                     </li>
-                    <li class="nav-item" th:if="${currentUser.role.name() == 'CHEF_DE_DEPARTEMENT' or currentUser.role.name() == 'ADMIN'}">
+                    <li class="nav-item" >
                         <a class="nav-link py-1 small" th:classappend="${activePage == 'classes'} ? 'text-warning fw-bold' : 'text-white-50'" th:href="@{/lst-classes}">Classes</a>
                     </li>
                 </ul>
             </div>
         </li>
 
-        <li class="nav-item mb-1">
+        <li class="nav-item mb-1" th:if="${currentUser.role.name() == 'CHEF_DE_DEPARTEMENT' or currentUser.role.name() == 'ADMIN' or currentUser.role.name() == ''}">
             <a class="nav-link d-flex justify-content-between align-items-center"
                data-bs-toggle="collapse" href="#menuPedago" role="button" aria-expanded="false"
                th:classappend="${activePage == 'maquettes' or activePage == 'modules' or activePage == 'ues' or activePage == 'ecs'} ? 'active text-white bg-white bg-opacity-10'">
@@ -77,16 +77,16 @@
             <div class="collapse" id="menuPedago"
                  th:classappend="${activePage == 'maquettes' or activePage == 'modules' or activePage == 'ues' or activePage == 'ecs'} ? 'show'">
                 <ul class="nav flex-column ms-3 ps-2 border-start border-white-50 mt-1">
-                    <li class="nav-item" th:if="${currentUser.role.name() == 'CHEF_DE_DEPARTEMENT' or currentUser.role.name() == 'ADMIN'}">
+                    <li class="nav-item" >
                         <a class="nav-link py-1 small" th:classappend="${activePage == 'maquettes'} ? 'text-warning fw-bold' : 'text-white-50'" th:href="@{/lst-maquettes}">Maquettes</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link py-1 small" th:classappend="${activePage == 'modules'} ? 'text-warning fw-bold' : 'text-white-50'" th:href="@{/lst-modules}">Modules</a>
                     </li>
-                    <li class="nav-item" th:if="${currentUser.role.name() == 'CHEF_DE_DEPARTEMENT' or currentUser.role.name() == 'ADMIN'}">
+                    <li class="nav-item" >
                         <a class="nav-link py-1 small" th:classappend="${activePage == 'ues'} ? 'text-warning fw-bold' : 'text-white-50'" th:href="@{/lst-ues}">Unités d'Ens. (UE)</a>
                     </li>
-                    <li class="nav-item" th:if="${currentUser.role.name() == 'CHEF_DE_DEPARTEMENT' or currentUser.role.name() == 'ADMIN'}">
+                    <li class="nav-item">
                         <a class="nav-link py-1 small" th:classappend="${activePage == 'ecs'} ? 'text-warning fw-bold' : 'text-white-50'" th:href="@{/lst-ecs}">Éléments (EC)</a>
                     </li>
                 </ul>
@@ -103,18 +103,38 @@
                 <i class="bi bi-people me-2"></i> Utilisateurs
             </a>
         </li>
+        <li class="nav-item mt-3" th:if="${currentUser.role.name() == 'CHEF_DE_DEPARTEMENT' or currentUser.role.name() == 'ADMIN' or currentUser.role.name() == 'ENSEIGNANT'} " >
+            <small class="text-white-50 text-uppercase px-3 fw-bold" style="font-size: 0.7rem;">
+                Choix d'Enseignement
+            </small>
+        </li>
 
+        <li class="nav-item" th:if="${currentUser.role.name() == 'CHEF_DE_DEPARTEMENT' or currentUser.role.name() == 'ADMIN' or currentUser.role.name() == 'ENSEIGNANT'} ">
+            <a class="nav-link rounded mb-1"
+               th:classappend="${activePage == 'choix'} ? 'active' : ''"
+               th:href="@{/choix-enseignement/mes-choix}">
+                <i class="bi bi-bookmark-star me-2"></i>Mes Choix
+            </a>
+        </li>
+
+        <li class="nav-item" th:if="${currentUser.role.name() == 'CHEF_DE_DEPARTEMENT' or currentUser.role.name() == 'ADMIN' or currentUser.role.name() == 'ENSEIGNANT'} " >
+            <a class="nav-link rounded mb-1"
+               th:classappend="${activePage == 'choix-admin'} ? 'active' : ''"
+               th:href="@{/choix-enseignement/admin/en-attente}">
+                <i class="bi bi-clipboard-check me-2"></i>Validation Choix
+            </a>
+        </li>
         <div class="sidebar-footer">
             <div class="dropup w-100">
                 <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
                    id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
 
                     <div class="rounded-circle bg-warning text-dark fw-bold d-flex justify-content-center align-items-center me-2"
-                         style="width: 32px; height: 32px; font-size: 0.8rem;">
+                         style="width: 32px; height: 32px; font-size: 0.8rem;" th:text="${#strings.substring(currentUser.prenom,0,1)} + ${#strings.substring(currentUser.nom,0,1)}">
                         AD </div>
 
                     <div class="d-flex flex-column text-start me-auto" style="line-height: 1.1;">
-                        <span class="small fw-bold">Administrateur</span>
+                        <span class="small fw-bold" th:text="${currentUser.role}">Administrateur</span>
                         <span class="text-white-50" style="font-size: 0.7rem;">En ligne</span>
                     </div>
                 </a>
@@ -144,27 +164,6 @@
         </li>
     </ul>
 
-   <li class="nav-item mt-3">
-        <small class="text-white-50 text-uppercase px-3 fw-bold" style="font-size: 0.7rem;">
-            Choix d'Enseignement
-        </small>
-    </li>
-
-    <li class="nav-item">
-        <a class="nav-link rounded mb-1"
-           th:classappend="${activePage == 'choix'} ? 'active' : ''"
-           th:href="@{/choix-enseignement/mes-choix}">
-            <i class="bi bi-bookmark-star me-2"></i>Mes Choix
-        </a>
-    </li>
-
-    <li class="nav-item">
-        <a class="nav-link rounded mb-1"
-           th:classappend="${activePage == 'choix-admin'} ? 'active' : ''"
-           th:href="@{/choix-enseignement/admin/en-attente}">
-            <i class="bi bi-clipboard-check me-2"></i>Validation Choix
-        </a>
-    </li>
 </nav>
 
 </body>
