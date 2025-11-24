@@ -18,17 +18,19 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authorize -> authorize
-                .anyRequest().permitAll()
+                .requestMatchers("/login", "/auth2", "/css/**", "/js/**", "/img/**").permitAll()
+                .anyRequest().authenticated()
             )
-
-            .csrf(csrf -> csrf.disable()
+            .formLogin(form -> form
+                .loginPage("/login")
+                .permitAll()
             )
-
-                // ✅ Désactive la protection CSRF (utile en développement)
-                .formLogin(form -> form.disable())
-
-                // ✅ Désactive aussi la déconnexion sécurisée
-                .logout(logout -> logout.disable());
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/login?logout")
+                .permitAll()
+            )
+            .csrf(csrf -> csrf.disable());
 
         return http.build();
     }

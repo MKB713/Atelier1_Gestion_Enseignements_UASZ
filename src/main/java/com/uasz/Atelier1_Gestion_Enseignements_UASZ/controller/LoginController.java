@@ -28,15 +28,38 @@ public class LoginController {
     @PostMapping("/auth2")
     public String signIn(Model model, UserDTO userDTO, HttpSession session) {
         try {
-
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(userDTO.getEmail(), userDTO.getPassword())
             );
-            System.out.println("Connexion réussie");
+
             SecurityContextHolder.getContext().setAuthentication(authentication);
             session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
 
-            return "redirect:/lst-enseignants";
+            // Récupérer le rôle de l'utilisateur connecté
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            String redirectUrl = "/";
+
+            switch (userDetails.getRole()) {
+                case ETUDIANT:
+                    redirectUrl = "/dashboard/etudiant";
+                    break;
+                case ENSEIGNANT:
+                    redirectUrl = "/dashboard/enseignant";
+                    break;
+                case RESPONSABLE_MASTER:
+                    redirectUrl = "/dashboard/responsable";
+                    break;
+                case COORDONATEUR_DES_LICENCES:
+                    redirectUrl = "/dashboard/coordinateur";
+                    break;
+                case ADMIN:
+                case CHEF_DE_DEPARTEMENT:
+                    redirectUrl = "/dashboard/admin";
+                    break;
+            }
+
+            System.out.println("Connexion réussie - Rôle: " + userDetails.getRole() + " - Redirection vers: " + redirectUrl);
+            return "redirect:" + redirectUrl;
 
         } catch (Exception e) {
             model.addAttribute("errorMessage", "Email ou mot de passe incorrect");
