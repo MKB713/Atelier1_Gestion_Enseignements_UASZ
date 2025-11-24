@@ -1,12 +1,12 @@
 package com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities;
 
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.enums.Role;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.enums.Statut;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.enums.StatutEnseignant;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name="Enseignants")
@@ -34,10 +34,9 @@ public class Enseignant {
     private StatutEnseignant statutEnseignant;
     private boolean estActif;
     private String specialite;
-
-    @OneToMany(mappedBy = "enseignant", cascade = CascadeType.ALL)
-    private List<Seance> seances;
-
+    private String password;
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.ENSEIGNANT;
     public Enseignant() {
     }
 
@@ -59,6 +58,8 @@ public class Enseignant {
         this.statutEnseignant = statutEnseignant;
         this.estActif = estActif;
         this.specialite = specialite;
+        this.password = password;
+
     }
 
     public Long getId() {
@@ -196,4 +197,9 @@ public class Enseignant {
     public void setSpecialite(String specialite) {
         this.specialite = specialite;
     }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
 }
