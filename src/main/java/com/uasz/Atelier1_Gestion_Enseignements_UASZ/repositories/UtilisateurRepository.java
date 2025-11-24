@@ -16,6 +16,7 @@ public interface UtilisateurRepository extends JpaRepository<Utilisateur, Intege
     Optional<Utilisateur> findByEmail(String email);
     List<Utilisateur> findByRoleNotAndEtatNot(Role role , Etat etat);
     List<Utilisateur> findByEtat(Etat etat);
+    List<Utilisateur> findByRoleNotInAndEtatNot(List<Role> roles, Etat etat);
 
 
 }

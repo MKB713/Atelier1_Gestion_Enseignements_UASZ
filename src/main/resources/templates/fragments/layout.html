@@ -27,14 +27,13 @@
     </div>
 
     <ul class="nav flex-column px-2 mt-3">
-
         <li class="nav-item mb-1">
             <a class="nav-link" th:classappend="${activePage == 'accueil'} ? 'active'" th:href="@{/}">
                 <i class="bi bi-speedometer2"></i> Tableau de bord
             </a>
         </li>
 
-        <li class="nav-item mb-1">
+        <li class="nav-item mb-1" th:if="${currentUser.role.name() == 'CHEF_DE_DEPARTEMENT' or currentUser.role.name() == 'ADMIN'}">
             <a class="nav-link" th:classappend="${activePage == 'enseignants'} ? 'active'" th:href="@{/lst-enseignants}">
                 <i class="bi bi-person-video3"></i> Enseignants
             </a>
@@ -57,10 +56,10 @@
                     <li class="nav-item">
                         <a class="nav-link py-1 small" th:classappend="${activePage == 'niveaux'} ? 'text-warning fw-bold' : 'text-white-50'" th:href="@{/niveaux}">Niveaux</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" th:if="${currentUser.role.name() == 'CHEF_DE_DEPARTEMENT' or currentUser.role.name() == 'ADMIN'}">
                         <a class="nav-link py-1 small" th:classappend="${activePage == 'formations'} ? 'text-warning fw-bold' : 'text-white-50'" th:href="@{/lst-formations}">Formations</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" th:if="${currentUser.role.name() == 'CHEF_DE_DEPARTEMENT' or currentUser.role.name() == 'ADMIN'}">
                         <a class="nav-link py-1 small" th:classappend="${activePage == 'classes'} ? 'text-warning fw-bold' : 'text-white-50'" th:href="@{/lst-classes}">Classes</a>
                     </li>
                 </ul>
@@ -78,16 +77,16 @@
             <div class="collapse" id="menuPedago"
                  th:classappend="${activePage == 'maquettes' or activePage == 'modules' or activePage == 'ues' or activePage == 'ecs'} ? 'show'">
                 <ul class="nav flex-column ms-3 ps-2 border-start border-white-50 mt-1">
-                    <li class="nav-item">
+                    <li class="nav-item" th:if="${currentUser.role.name() == 'CHEF_DE_DEPARTEMENT' or currentUser.role.name() == 'ADMIN'}">
                         <a class="nav-link py-1 small" th:classappend="${activePage == 'maquettes'} ? 'text-warning fw-bold' : 'text-white-50'" th:href="@{/lst-maquettes}">Maquettes</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link py-1 small" th:classappend="${activePage == 'modules'} ? 'text-warning fw-bold' : 'text-white-50'" th:href="@{/lst-modules}">Modules</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" th:if="${currentUser.role.name() == 'CHEF_DE_DEPARTEMENT' or currentUser.role.name() == 'ADMIN'}">
                         <a class="nav-link py-1 small" th:classappend="${activePage == 'ues'} ? 'text-warning fw-bold' : 'text-white-50'" th:href="@{/lst-ues}">Unités d'Ens. (UE)</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" th:if="${currentUser.role.name() == 'CHEF_DE_DEPARTEMENT' or currentUser.role.name() == 'ADMIN'}">
                         <a class="nav-link py-1 small" th:classappend="${activePage == 'ecs'} ? 'text-warning fw-bold' : 'text-white-50'" th:href="@{/lst-ecs}">Éléments (EC)</a>
                     </li>
                 </ul>
@@ -97,6 +96,11 @@
         <li class="nav-item mb-1">
             <a class="nav-link" th:classappend="${activePage == 'seances'} ? 'active'" th:href="@{/seances}">
                 <i class="bi bi-calendar-week me-2"></i> Emploi du Temps
+            </a>
+        </li>
+        <li class="nav-item mb-1" th:if="${currentUser.role.name() == 'CHEF_DE_DEPARTEMENT' or currentUser.role.name() == 'ADMIN'}">
+            <a class="nav-link" th:classappend="${activePage == 'lst-utilisateurs'} ? 'active'" th:href="@{/lst-utilisateurs}">
+                <i class="bi bi-people me-2"></i> Utilisateurs
             </a>
         </li>
 

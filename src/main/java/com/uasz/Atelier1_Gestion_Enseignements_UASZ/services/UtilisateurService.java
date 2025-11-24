@@ -36,9 +36,22 @@ public class UtilisateurService {
         mailService.sendMail(utilisateur.getEmail(),subject,text);
         return utilisateurRepository.save(utilisateur);
     }
-    public List<Utilisateur> findAll() {
-        return utilisateurRepository.findByRoleNotAndEtatNot(Role.ADMIN,Etat.ARCHIVE);
+    public List<Utilisateur> findAll(Utilisateur currentUser) {
+        if (currentUser == null) {
+            return List.of();
+        }
+        Role role = currentUser.getRole();
+        if (role.equals(Role.ADMIN)) {
+            return utilisateurRepository.findByRoleNotAndEtatNot(Role.ADMIN, Etat.ARCHIVE);
+        } else if (role.equals(Role.CHEF_DE_DEPARTEMENT)) {
+            return utilisateurRepository.findByRoleNotInAndEtatNot(
+                    List.of(Role.ADMIN, Role.CHEF_DE_DEPARTEMENT), Etat.ARCHIVE);
+        } else {
+
+            return List.of();
+        }
     }
+
     public Optional<Utilisateur> findUserByEmail(String email) {
         return utilisateurRepository.findByEmail(email);
     }
@@ -93,6 +106,17 @@ public class UtilisateurService {
         if (userOpt.isPresent()) {
             Utilisateur user = userOpt.get();
             user.setEtat(Etat.ARCHIVE);
+            return utilisateurRepository.save(user);
+        }
+        else {
+            return null;
+        }
+    }
+    public Utilisateur desarchiverUser(int id) {
+        Optional<Utilisateur> userOpt = utilisateurRepository.findById(id);
+        if (userOpt.isPresent()) {
+            Utilisateur user = userOpt.get();
+            user.setEtat(Etat.INACTIF);
             return utilisateurRepository.save(user);
         }
         else {

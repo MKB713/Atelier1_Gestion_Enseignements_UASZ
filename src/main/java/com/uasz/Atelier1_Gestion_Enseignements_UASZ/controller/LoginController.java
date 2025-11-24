@@ -32,7 +32,7 @@ public class LoginController {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(userDTO.getEmail(), userDTO.getPassword())
             );
-
+            System.out.println("Connexion réussie");
             SecurityContextHolder.getContext().setAuthentication(authentication);
             session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
 

@@ -23,7 +23,12 @@ public class SecurityConfig {
                 )
                 .csrf(csrf -> csrf.disable())
                 .formLogin(form -> form.disable())
-                .logout(logout -> logout.disable());
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                        .permitAll() );
 
         return http.build();
     }

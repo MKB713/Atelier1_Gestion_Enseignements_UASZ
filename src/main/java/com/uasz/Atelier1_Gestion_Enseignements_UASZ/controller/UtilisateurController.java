@@ -1,6 +1,7 @@
 package com.uasz.Atelier1_Gestion_Enseignements_UASZ.controller;
 
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Utilisateur;
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.enums.Role;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.CustomUserDetails;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.services.UtilisateurService;
 import jakarta.servlet.http.HttpSession;
@@ -16,6 +17,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -24,12 +26,30 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UtilisateurController {
     private final UtilisateurService utilisateurService;
+    private final GlobalController globalController;
+    private CustomUserDetails getLoggedUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return (auth != null && auth.getPrincipal() instanceof CustomUserDetails)
+                ? (CustomUserDetails) auth.getPrincipal()
+                : null;
+    }
 
+    // Liste des utilisateurs
     @GetMapping("/lst-utilisateurs")
-    public String listeUtilisateurs(Model model){
-        model.addAttribute("utilisateurs", utilisateurService.findAll());
+    public String listeUtilisateurs(Model model) {
+
+        CustomUserDetails cu = getLoggedUser();
+
+        if (cu != null && cu.getEntity() instanceof Utilisateur utilisateur) {
+            model.addAttribute("utilisateurs", utilisateurService.findAll(utilisateur));
+        } else {
+            model.addAttribute("utilisateurs", List.of());
+        }
+
         return "utilisateur-list";
     }
+
+
     @GetMapping("/parametres")
     public String settingsPage(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -37,6 +57,7 @@ public class UtilisateurController {
             CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
             System.out.println("Nom de l'utilisateur : " + userDetails.getUtilisateur().getNom());
             System.out.println("Prénom de l'utilisateur : " + userDetails.getUtilisateur().getPrenom());
+            System.out.println("ROle :" + userDetails.getUtilisateur().getRole());
             model.addAttribute("utilisateur", userDetails.getUtilisateur());
             return "parametres";
         }
@@ -99,6 +120,11 @@ public class UtilisateurController {
     @PostMapping("/archiver/{id}")
     public String archiverUtilisateur(@PathVariable int id) {
         utilisateurService.archiverUser(id);
+        return "redirect:/lst-utilisateurs";
+    }
+    @PostMapping("/desarchiver/{id}")
+    public String desarchiverUtilisateur(@PathVariable int id) {
+        utilisateurService.desarchiverUser(id);
         return "redirect:/lst-utilisateurs";
     }
     @PostMapping("/activer/{id}")
