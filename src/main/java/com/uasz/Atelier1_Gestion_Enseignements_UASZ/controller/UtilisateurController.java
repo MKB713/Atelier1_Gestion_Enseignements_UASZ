@@ -27,14 +27,25 @@ import java.util.Optional;
 public class UtilisateurController {
     private final UtilisateurService utilisateurService;
     private final GlobalController globalController;
+    private CustomUserDetails getLoggedUser() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return (auth != null && auth.getPrincipal() instanceof CustomUserDetails)
+                ? (CustomUserDetails) auth.getPrincipal()
+                : null;
+    }
+
+    // Liste des utilisateurs
     @GetMapping("/lst-utilisateurs")
-    public String listeUtilisateurs(Model model){
-        Utilisateur currentUser = globalController.getCurrentUser();
-        if (currentUser != null) {
-            model.addAttribute("utilisateurs", utilisateurService.findAll(currentUser));
+    public String listeUtilisateurs(Model model) {
+
+        CustomUserDetails cu = getLoggedUser();
+
+        if (cu != null && cu.getEntity() instanceof Utilisateur utilisateur) {
+            model.addAttribute("utilisateurs", utilisateurService.findAll(utilisateur));
         } else {
             model.addAttribute("utilisateurs", List.of());
         }
+
         return "utilisateur-list";
     }
 

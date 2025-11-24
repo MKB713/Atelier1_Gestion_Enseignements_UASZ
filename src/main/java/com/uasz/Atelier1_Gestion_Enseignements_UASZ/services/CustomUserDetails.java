@@ -12,8 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Collections;
 
-@RequiredArgsConstructor
 @Getter
+@RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
 
     private final Utilisateur utilisateur;
@@ -27,18 +27,34 @@ public class CustomUserDetails implements UserDetails {
 
     // Constructeur pour Enseignant
     public CustomUserDetails(Enseignant enseignant) {
-        this.enseignant = enseignant;
         this.utilisateur = null;
+        this.enseignant = enseignant;
     }
+
+    // -------- Accès unifié aux données --------
+
+    public String getNom() {
+        return (utilisateur != null) ? utilisateur.getNom() : enseignant.getNom();
+    }
+
+    public String getPrenom() {
+        return (utilisateur != null) ? utilisateur.getPrenom() : enseignant.getPrenom();
+    }
+
+    public Role getRole() {
+        return (utilisateur != null) ? utilisateur.getRole() : enseignant.getRole();
+    }
+
+    /** Retourne l’entité d'origine (Utilisateur OU Enseignant) */
+    public Object getEntity() {
+        return (utilisateur != null) ? utilisateur : enseignant;
+    }
+
+    // -------- Implémentation UserDetails --------
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Role role;
-        if (utilisateur != null) {
-            role = utilisateur.getRole();
-        } else {
-            role = enseignant.getRole();
-        }
+        Role role = getRole();
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
@@ -52,19 +68,13 @@ public class CustomUserDetails implements UserDetails {
         return (utilisateur != null) ? utilisateur.getEmail() : enseignant.getEmail();
     }
 
-    @Override
-    public boolean isAccountNonExpired() { return true; }
-
-    @Override
-    public boolean isAccountNonLocked() { return true; }
-
-    @Override
-    public boolean isCredentialsNonExpired() { return true; }
+    @Override public boolean isAccountNonExpired() { return true; }
+    @Override public boolean isAccountNonLocked() { return true; }
+    @Override public boolean isCredentialsNonExpired() { return true; }
 
     @Override
     public boolean isEnabled() {
         if (utilisateur != null) return utilisateur.getEtat() != null;
-        if (enseignant != null) return enseignant.isEstActif();
-        return false;
+        return enseignant != null && enseignant.isEstActif();
     }
 }
