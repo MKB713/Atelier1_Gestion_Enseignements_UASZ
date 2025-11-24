@@ -115,8 +115,8 @@ public class NoteCahierTexteService {
         if (noteDTO.getSeanceId() != null && (note.getSeance() == null || !noteDTO.getSeanceId().equals(note.getSeance().getId()))) {
             Seance seance = seanceRepository.findById(noteDTO.getSeanceId())
                     .orElseThrow(() -> new RuntimeException("Séance non trouvée avec l'ID : " + noteDTO.getSeanceId()));
-            String ancienneSeance = note.getSeance() != null ? note.getSeance().getTitre() : "Aucune";
-            enregistrerHistorique(note, "MODIFICATION", "seance", ancienneSeance, seance.getTitre(), noteDTO.getEnseignantId());
+            String ancienneSeance = note.getSeance() != null && note.getSeance().getEc() != null ? note.getSeance().getEc().getLibelle() : "Aucune";
+            enregistrerHistorique(note, "MODIFICATION", "seance", ancienneSeance, seance.getEc().getLibelle(), noteDTO.getEnseignantId());
             note.setSeance(seance);
         }
 

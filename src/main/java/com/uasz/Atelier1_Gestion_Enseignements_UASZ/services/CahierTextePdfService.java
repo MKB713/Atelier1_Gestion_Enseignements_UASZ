@@ -149,11 +149,11 @@ public class CahierTextePdfService {
             table.addCell(creerCellule(dateStr, cellFont));
 
             // Module/EC
-            String moduleStr = "-";
-            if (note.getSeance() != null && note.getSeance().getModule() != null) {
-                moduleStr = note.getSeance().getModule().getNom();
+            String ecStr = "-";
+            if (note.getSeance() != null && note.getSeance().getEc() != null) {
+                ecStr = note.getSeance().getEc().getLibelle();
             }
-            table.addCell(creerCellule(moduleStr, cellFont));
+            table.addCell(creerCellule(ecStr, cellFont));
 
             // Titre
             table.addCell(creerCellule(note.getTitre() != null ? note.getTitre() : "-", cellFont));
