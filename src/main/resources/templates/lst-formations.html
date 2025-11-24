@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: headerParams('Liste des Formations')}"></head>
+
+<body>
+<nav th:replace="~{fragments/layout :: sidebar(activePage='formations')}"></nav>
+
+<main class="main-content">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark">Formations</h2>
+            <p class="text-muted mb-0">Gestion des offres de formation (Licence, Master, Doctorat).</p>
+        </div>
+        <a th:href="@{/formations/ajouter}" class="btn btn-success shadow-sm px-4">
+            <i class="bi bi-plus-lg me-2"></i>Nouvelle Formation
+        </a>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show shadow-sm border-0" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> <span th:text="${success}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show shadow-sm border-0" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> <span th:text="${error}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="card mb-4 border-0 shadow-sm">
+        <div class="card-body p-3">
+            <div class="row g-2">
+                <div class="col-md-9">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0 ps-3"><i class="bi bi-search text-muted"></i></span>
+                        <input type="text" id="searchKeyword" class="form-control border-start-0 ps-0"
+                               placeholder="Rechercher par Code, Libellé ou Filière..." onkeyup="autoFilterTable()">
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <a th:href="@{/lst-formations-archives}" class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-archive me-2"></i>Voir les Archives
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" id="formationTable">
+                    <thead class="bg-light">
+                    <tr class="text-uppercase text-muted small fw-bold">
+                        <th class="ps-4 py-3">Formation</th>
+                        <th>Filière & Niveau</th>
+                        <th>Description</th>
+                        <th>Date Création</th>
+                        <th class="text-center">Statut</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                    <tr th:if="${formations == null or formations.isEmpty()}">
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="bi bi-mortarboard display-4 d-block mb-3 opacity-50"></i>
+                            Aucune formation trouvée.
+                        </td>
+                    </tr>
+
+                    <tr th:each="f : ${formations}"
+                        th:data-filter="${f.code + ' ' + f.libelle + ' ' + (f.filiere != null ? f.filiere.libelle : '')}">
+
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center">
+                                <div class="rounded bg-success bg-opacity-10 text-success d-flex justify-content-center align-items-center me-3"
+                                     style="width: 40px; height: 40px;">
+                                    <i class="bi bi-mortarboard-fill fs-5"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-bold text-dark" th:text="${f.libelle}">Libellé</div>
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary font-monospace"
+                                          style="font-size: 0.7rem;" th:text="${f.code}">CODE</span>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="fw-semibold text-dark" th:text="${f.filiere != null ? f.filiere.libelle : 'Non assignée'}">Filière</div>
+                            <span class="badge bg-light text-dark border" th:text="${f.niveau != null ? f.niveau.numero : '-'}">Niv</span>
+                        </td>
+
+                        <td>
+                            <small class="text-muted" th:text="${#strings.abbreviate(f.description, 40)}">Desc...</small>
+                        </td>
+
+                        <td class="text-muted small">
+                            <i class="bi bi-calendar3 me-1"></i>
+                            <span th:text="${f.dateCreation != null ? #dates.format(f.dateCreation, 'dd/MM/yyyy') : '-'}">Date</span>
+                        </td>
+
+                        <td class="text-center">
+                                <span th:if="${f.active}" class="badge badge-actif rounded-pill px-3">
+                                    <i class="bi bi-circle-fill small me-1" style="font-size: 6px; vertical-align: middle;"></i> Active
+                                </span>
+                            <span th:unless="${f.active}" class="badge badge-inactif rounded-pill px-3">
+                                    <i class="bi bi-circle-fill small me-1" style="font-size: 6px; vertical-align: middle;"></i> Inactive
+                                </span>
+                        </td>
+
+                        <td class="text-end pe-4">
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-light border" type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                                    <li>
+                                        <a class="dropdown-item" th:href="@{'/formations/modifier/' + ${f.id}}">
+                                            <i class="bi bi-pencil text-primary me-2"></i>Modifier
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+
+                                    <li th:if="${f.active}">
+                                        <button class="dropdown-item text-warning" th:onclick="'changerStatut(' + ${f.id} + ', \'desactiver\')'">
+                                            <i class="bi bi-pause-circle me-2"></i>Désactiver
+                                        </button>
+                                    </li>
+
+                                    <li th:unless="${f.active}">
+                                        <button class="dropdown-item text-success" th:onclick="'changerStatut(' + ${f.id} + ', \'activer\')'">
+                                            <i class="bi bi-play-circle me-2"></i>Activer
+                                        </button>
+                                    </li>
+
+                                    <li>
+                                        <button class="dropdown-item text-danger" th:onclick="'changerStatut(' + ${f.id} + ', \'archiver\')'">
+                                            <i class="bi bi-archive me-2"></i>Archiver
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer bg-white border-top py-3">
+            <small class="text-muted">Total : <strong th:text="${formations != null ? formations.size() : 0}">0</strong> formations</small>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Recherche instantanée
+    function autoFilterTable() {
+        const input = document.getElementById('searchKeyword');
+        const filter = input.value.toUpperCase();
+        const rows = document.querySelectorAll('#tableBody tr');
+        rows.forEach(row => {
+            if (row.cells.length < 2) return;
+            const text = row.getAttribute('data-filter');
+            if (text) row.style.display = text.toUpperCase().includes(filter) ? "" : "none";
+        });
+    }
+
+    // Gestion des statuts via AJAX (Patch)
+    function changerStatut(id, action) {
+        let msg = "Êtes-vous sûr ?";
+        if(action === 'archiver') msg = "Voulez-vous vraiment archiver cette formation ?";
+        if(action === 'desactiver') msg = "Voulez-vous désactiver cette formation ?";
+        if(action === 'activer') msg = "Voulez-vous réactiver cette formation ?";
+
+        if (!confirm(msg)) return;
+
+        fetch('/formations/' + id + '/' + action, { method: 'PATCH' })
+            .then(r => {
+                if (r.ok) {
+                    window.location.reload();
+                } else {
+                    r.text().then(t => alert('Erreur : ' + t));
+                }
+            }).catch(e => alert('Erreur réseau'));
+    }
+</script>
+</body>
+</html>

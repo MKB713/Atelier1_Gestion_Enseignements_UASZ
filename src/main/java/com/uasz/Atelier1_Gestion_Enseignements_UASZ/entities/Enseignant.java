@@ -1,10 +1,12 @@
 package com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities;
 
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.enums.Statut;
+import com.uasz.Atelier1_Gestion_Enseignements_UASZ.enums.StatutEnseignant;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name="Enseignants")
@@ -12,11 +14,13 @@ public class Enseignant {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true, nullable = false)
     private Long matricule;
     private String nom;
     private String prenom;
     private String adresse;
     private String telephone;
+    @Column(unique = true)
     private String email;
     private String grade;
     private LocalDate dateEmbauche;
@@ -26,13 +30,18 @@ public class Enseignant {
     private String lieuNaissance;
     @Enumerated(EnumType.STRING)
     private Statut statut;
+    @Enumerated(EnumType.STRING)
+    private StatutEnseignant statutEnseignant;
     private boolean estActif;
     private String specialite;
+
+    @OneToMany(mappedBy = "enseignant", cascade = CascadeType.ALL)
+    private List<Seance> seances;
 
     public Enseignant() {
     }
 
-    public Enseignant(Long id, Long matricule, String nom, String prenom, String adresse, String telephone, String email, String grade, LocalDate dateEmbauche, LocalDateTime dateCreation, LocalDateTime dateModification, LocalDate dateNaissance, String lieuNaissance, Statut statut, boolean estActif, String specialite) {
+    public Enseignant(Long id, Long matricule, String nom, String prenom, String adresse, String telephone, String email, String grade, LocalDate dateEmbauche, LocalDateTime dateCreation, LocalDateTime dateModification, LocalDate dateNaissance, String lieuNaissance, Statut statut, StatutEnseignant statutEnseignant, boolean estActif, String specialite) {
         this.id = id;
         this.matricule = matricule;
         this.nom = nom;
@@ -47,6 +56,7 @@ public class Enseignant {
         this.dateNaissance = dateNaissance;
         this.lieuNaissance = lieuNaissance;
         this.statut = statut;
+        this.statutEnseignant = statutEnseignant;
         this.estActif = estActif;
         this.specialite = specialite;
     }
@@ -161,6 +171,14 @@ public class Enseignant {
 
     public void setStatut(Statut statut) {
         this.statut = statut;
+    }
+
+    public StatutEnseignant getStatutEnseignant() {
+        return statutEnseignant;
+    }
+
+    public void setStatutEnseignant(StatutEnseignant statutEnseignant) {
+        this.statutEnseignant = statutEnseignant;
     }
 
     public boolean isEstActif() {

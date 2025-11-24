@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:fragment="headerParams(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">UASZ - Portail Académique</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+    <link rel="stylesheet" th:href="@{/css/academic.css}">
+</head>
+
+<body>
+
+<nav class="sidebar d-flex flex-column" th:fragment="sidebar(activePage)">
+
+    <div class="sidebar-brand">
+        <img th:src="@{/images/logo-uasz.jpg}"
+             alt="Logo UASZ"
+             class="university-logo"
+             onerror="this.src='https://via.placeholder.com/80/1a5e34/FFFFFF?text=UASZ'"/>
+
+        <h5 class="fw-bold mt-2 text-white">UASZ</h5>
+        <small class="text-white-50">Ziguinchor</small>
+    </div>
+
+    <ul class="nav flex-column px-2 mt-3">
+
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'accueil'} ? 'active'" th:href="@{/}">
+                <i class="bi bi-speedometer2"></i> Tableau de bord
+            </a>
+        </li>
+
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'enseignants'} ? 'active'" th:href="@{/lst-enseignants}">
+                <i class="bi bi-person-video3"></i> Enseignants
+            </a>
+        </li>
+
+        <li class="nav-item mb-1">
+            <a class="nav-link d-flex justify-content-between align-items-center"
+               data-bs-toggle="collapse" href="#menuStructure" role="button" aria-expanded="false"
+               th:classappend="${activePage == 'filieres' or activePage == 'niveaux' or activePage == 'formations' or activePage == 'classes'} ? 'active text-white bg-white bg-opacity-10'">
+                <span><i class="bi bi-building me-2"></i> Structure</span>
+                <i class="bi bi-chevron-down small" style="font-size: 0.7rem;"></i>
+            </a>
+
+            <div class="collapse" id="menuStructure"
+                 th:classappend="${activePage == 'filieres' or activePage == 'niveaux' or activePage == 'formations' or activePage == 'classes'} ? 'show'">
+                <ul class="nav flex-column ms-3 ps-2 border-start border-white-50 mt-1">
+                    <li class="nav-item">
+                        <a class="nav-link py-1 small" th:classappend="${activePage == 'filieres'} ? 'text-warning fw-bold' : 'text-white-50'" th:href="@{/lst-filieres}">Filières</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link py-1 small" th:classappend="${activePage == 'niveaux'} ? 'text-warning fw-bold' : 'text-white-50'" th:href="@{/niveaux}">Niveaux</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link py-1 small" th:classappend="${activePage == 'formations'} ? 'text-warning fw-bold' : 'text-white-50'" th:href="@{/lst-formations}">Formations</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link py-1 small" th:classappend="${activePage == 'classes'} ? 'text-warning fw-bold' : 'text-white-50'" th:href="@{/lst-classes}">Classes</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+
+        <li class="nav-item mb-1">
+            <a class="nav-link d-flex justify-content-between align-items-center"
+               data-bs-toggle="collapse" href="#menuPedago" role="button" aria-expanded="false"
+               th:classappend="${activePage == 'maquettes' or activePage == 'modules' or activePage == 'ues' or activePage == 'ecs'} ? 'active text-white bg-white bg-opacity-10'">
+                <span><i class="bi bi-journal-bookmark me-2"></i> Pédagogie</span>
+                <i class="bi bi-chevron-down small" style="font-size: 0.7rem;"></i>
+            </a>
+
+            <div class="collapse" id="menuPedago"
+                 th:classappend="${activePage == 'maquettes' or activePage == 'modules' or activePage == 'ues' or activePage == 'ecs'} ? 'show'">
+                <ul class="nav flex-column ms-3 ps-2 border-start border-white-50 mt-1">
+                    <li class="nav-item">
+                        <a class="nav-link py-1 small" th:classappend="${activePage == 'maquettes'} ? 'text-warning fw-bold' : 'text-white-50'" th:href="@{/lst-maquettes}">Maquettes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link py-1 small" th:classappend="${activePage == 'modules'} ? 'text-warning fw-bold' : 'text-white-50'" th:href="@{/lst-modules}">Modules</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link py-1 small" th:classappend="${activePage == 'ues'} ? 'text-warning fw-bold' : 'text-white-50'" th:href="@{/lst-ues}">Unités d'Ens. (UE)</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link py-1 small" th:classappend="${activePage == 'ecs'} ? 'text-warning fw-bold' : 'text-white-50'" th:href="@{/lst-ecs}">Éléments (EC)</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+
+        <li class="nav-item mb-1">
+            <a class="nav-link" th:classappend="${activePage == 'seances'} ? 'active'" th:href="@{/seances}">
+                <i class="bi bi-calendar-week me-2"></i> Emploi du Temps
+            </a>
+        </li>
+
+        <li class="nav-item mt-5 pt-3 border-top pb-5" style="border-color: rgba(255,255,255,0.1) !important;">
+            <a class="nav-link text-warning" th:href="@{/logout}">
+                <i class="bi bi-box-arrow-left me-2"></i> Déconnexion
+            </a>
+        </li>
+    </ul>
+</nav>
+
+</body>
+</html>
