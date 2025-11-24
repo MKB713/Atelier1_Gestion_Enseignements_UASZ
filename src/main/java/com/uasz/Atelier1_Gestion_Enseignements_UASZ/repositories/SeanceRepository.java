@@ -1,33 +1,28 @@
 package com.uasz.Atelier1_Gestion_Enseignements_UASZ.repositories;
 
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Classe;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Enseignant;
-import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Module;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.Seance;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Repository
 public interface SeanceRepository extends JpaRepository<Seance, Long> {
+    List<Seance> findBySalleId(Long salleId);
 
-    List<Seance> findByClasse(Classe classe);
+    List<Seance> findByEnseignantIdAndDateSeanceAndHeureDebutBeforeAndHeureFinAfter(
+            Long enseignantId, LocalDate dateSeance, LocalTime heureFin, LocalTime heureDebut);
 
-    List<Seance> findByEnseignant(Enseignant enseignant);
+    List<Seance> findBySalleIdAndDateSeanceAndHeureDebutBeforeAndHeureFinAfter(
+            Long salleId, LocalDate dateSeance, LocalTime heureFin, LocalTime heureDebut);
 
-    List<Seance> findByModule(Module module);
+    List<Seance> findByEnseignantIdAndDateSeanceAndHeureDebutBeforeAndHeureFinAfterAndIdNot(
+            Long enseignantId, LocalDate dateSeance, LocalTime heureFin, LocalTime heureDebut, Long seanceId);
 
-    List<Seance> findByDateSeance(LocalDate dateSeance);
+    List<Seance> findBySalleIdAndDateSeanceAndHeureDebutBeforeAndHeureFinAfterAndIdNot(
+            Long salleId, LocalDate dateSeance, LocalTime heureFin, LocalTime heureDebut, Long seanceId);
 
-    List<Seance> findByDateSeanceBetween(LocalDate dateDebut, LocalDate dateFin);
-
-    List<Seance> findByClasseAndDateSeance(Classe classe, LocalDate dateSeance);
-
-    List<Seance> findByEnseignantAndDateSeanceBetween(Enseignant enseignant, LocalDate dateDebut, LocalDate dateFin);
-
-    List<Seance> findByEstTerminee(boolean estTerminee);
-
-    List<Seance> findByTypeSeance(String typeSeance);
+    List<Seance> findByEnseignantId(Long enseignantId);
 }

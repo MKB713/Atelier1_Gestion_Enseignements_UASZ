@@ -2,70 +2,44 @@ package com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
-@Table(name = "seances")
 public class Seance {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String titre;
-
-    @Column(length = 1000)
-    private String description;
-
-    @Column(nullable = false)
     private LocalDate dateSeance;
-
-    @Column(nullable = false)
     private LocalTime heureDebut;
-
-    @Column(nullable = false)
     private LocalTime heureFin;
+    private int duree;
 
     @ManyToOne
-    @JoinColumn(name = "classe_id")
-    private Classe classe;
+    @JoinColumn(name = "salle_id")
+    private Salle salle;
 
     @ManyToOne
     @JoinColumn(name = "enseignant_id")
     private Enseignant enseignant;
 
     @ManyToOne
-    @JoinColumn(name = "module_id")
-    private Module module;
-
-    private String salle;
-
-    private String typeSeance; // CM, TD, TP, etc.
-
-    private boolean estTerminee = false;
-
-    private LocalDateTime dateCreation;
-
-    private LocalDateTime dateModification;
+    @JoinColumn(name = "ec_id")
+    private EC ec;
 
     public Seance() {
     }
 
-    public Seance(String titre, String description, LocalDate dateSeance, LocalTime heureDebut,
-                  LocalTime heureFin, Classe classe, Enseignant enseignant, Module module) {
-        this.titre = titre;
-        this.description = description;
+    public Seance(Long id, LocalDate dateSeance, LocalTime heureDebut, LocalTime heureFin, int duree, Salle salle, Enseignant enseignant, EC ec) {
+        this.id = id;
         this.dateSeance = dateSeance;
         this.heureDebut = heureDebut;
         this.heureFin = heureFin;
-        this.classe = classe;
+        this.duree = duree;
+        this.salle = salle;
         this.enseignant = enseignant;
-        this.module = module;
+        this.ec = ec;
     }
-
-    // Getters and Setters
 
     public Long getId() {
         return id;
@@ -73,22 +47,6 @@ public class Seance {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getTitre() {
-        return titre;
-    }
-
-    public void setTitre(String titre) {
-        this.titre = titre;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public LocalDate getDateSeance() {
@@ -115,12 +73,20 @@ public class Seance {
         this.heureFin = heureFin;
     }
 
-    public Classe getClasse() {
-        return classe;
+    public int getDuree() {
+        return duree;
     }
 
-    public void setClasse(Classe classe) {
-        this.classe = classe;
+    public void setDuree(int duree) {
+        this.duree = duree;
+    }
+
+    public Salle getSalle() {
+        return salle;
+    }
+
+    public void setSalle(Salle salle) {
+        this.salle = salle;
     }
 
     public Enseignant getEnseignant() {
@@ -131,63 +97,11 @@ public class Seance {
         this.enseignant = enseignant;
     }
 
-    public Module getModule() {
-        return module;
+    public EC getEc() {
+        return ec;
     }
 
-    public void setModule(Module module) {
-        this.module = module;
-    }
-
-    public String getSalle() {
-        return salle;
-    }
-
-    public void setSalle(String salle) {
-        this.salle = salle;
-    }
-
-    public String getTypeSeance() {
-        return typeSeance;
-    }
-
-    public void setTypeSeance(String typeSeance) {
-        this.typeSeance = typeSeance;
-    }
-
-    public boolean isEstTerminee() {
-        return estTerminee;
-    }
-
-    public void setEstTerminee(boolean estTerminee) {
-        this.estTerminee = estTerminee;
-    }
-
-    public LocalDateTime getDateCreation() {
-        return dateCreation;
-    }
-
-    public void setDateCreation(LocalDateTime dateCreation) {
-        this.dateCreation = dateCreation;
-    }
-
-    public LocalDateTime getDateModification() {
-        return dateModification;
-    }
-
-    public void setDateModification(LocalDateTime dateModification) {
-        this.dateModification = dateModification;
-    }
-
-    @Override
-    public String toString() {
-        return "Seance{" +
-                "id=" + id +
-                ", titre='" + titre + '\'' +
-                ", dateSeance=" + dateSeance +
-                ", heureDebut=" + heureDebut +
-                ", heureFin=" + heureFin +
-                ", typeSeance='" + typeSeance + '\'' +
-                '}';
+    public void setEc(EC ec) {
+        this.ec = ec;
     }
 }
