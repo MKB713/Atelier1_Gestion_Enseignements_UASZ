@@ -59,7 +59,7 @@ public class NoteCahierTexteController {
     public String addNote(Model model) {
         NoteCahierTexte note = new NoteCahierTexte();
         model.addAttribute("note", note);
-        model.addAttribute("seances", seanceService.getSeancesNonTerminees());
+        model.addAttribute("seances", seanceService.getAllSeances());
         return "note-cahier-add";
     }
 
@@ -72,7 +72,7 @@ public class NoteCahierTexteController {
                           RedirectAttributes redirectAttributes,
                           Model model) {
         if (bindingResult.hasErrors()) {
-            model.addAttribute("seances", seanceService.getSeancesNonTerminees());
+            model.addAttribute("seances", seanceService.getAllSeances());
             return "note-cahier-add";
         }
 
@@ -100,11 +100,11 @@ public class NoteCahierTexteController {
             return "redirect:/lst-notes-cahier";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
-            model.addAttribute("seances", seanceService.getSeancesNonTerminees());
+            model.addAttribute("seances", seanceService.getAllSeances());
             return "note-cahier-add";
         } catch (Exception e) {
             model.addAttribute("error", "Erreur lors de l'enregistrement : " + e.getMessage());
-            model.addAttribute("seances", seanceService.getSeancesNonTerminees());
+            model.addAttribute("seances", seanceService.getAllSeances());
             return "note-cahier-add";
         }
     }

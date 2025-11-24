@@ -37,11 +37,12 @@ public class HomeController {
                 return "redirect:/dashboard/etudiant";
             case ENSEIGNANT:
                 return "redirect:/dashboard/enseignant";
-            case RESPONSABLE:
+            case RESPONSABLE_MASTER:
                 return "redirect:/dashboard/responsable";
-            case COORDINATEUR:
+            case COORDONATEUR_DES_LICENCES:
                 return "redirect:/dashboard/coordinateur";
             case ADMIN:
+            case CHEF_DE_DEPARTEMENT:
                 return "redirect:/dashboard/admin";
             default:
                 return "redirect:/select-role";
@@ -84,7 +85,7 @@ public class HomeController {
     @GetMapping("/dashboard/responsable")
     public String dashboardResponsable(HttpSession session, Model model) {
         Role userRole = (Role) session.getAttribute("userRole");
-        if (userRole == null || userRole != Role.RESPONSABLE) {
+        if (userRole == null || userRole != Role.RESPONSABLE_MASTER) {
             return "redirect:/select-role";
         }
 
@@ -101,7 +102,7 @@ public class HomeController {
     @GetMapping("/dashboard/coordinateur")
     public String dashboardCoordinateur(HttpSession session, Model model) {
         Role userRole = (Role) session.getAttribute("userRole");
-        if (userRole == null || userRole != Role.COORDINATEUR) {
+        if (userRole == null || userRole != Role.COORDONATEUR_DES_LICENCES) {
             return "redirect:/select-role";
         }
 

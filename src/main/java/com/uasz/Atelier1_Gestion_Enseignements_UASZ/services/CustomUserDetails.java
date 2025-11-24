@@ -42,7 +42,12 @@ public class CustomUserDetails implements UserDetails {
     }
 
     public Role getRole() {
-        return (utilisateur != null) ? utilisateur.getRole() : enseignant.getRole();
+        if (utilisateur != null) {
+            return utilisateur.getRole();
+        } else {
+            // Pour les enseignants, on retourne le rôle ENSEIGNANT par défaut
+            return Role.ENSEIGNANT;
+        }
     }
 
     /** Retourne l’entité d'origine (Utilisateur OU Enseignant) */
@@ -60,7 +65,12 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return (utilisateur != null) ? utilisateur.getPassword() : enseignant.getPassword();
+        if (utilisateur != null) {
+            return utilisateur.getPassword();
+        } else {
+            // Pour les enseignants, pas de mot de passe dans ce système
+            return "";
+        }
     }
 
     @Override
