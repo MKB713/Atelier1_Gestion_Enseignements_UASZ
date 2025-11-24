@@ -27,8 +27,28 @@
     </div>
 
     <ul class="nav flex-column px-2 mt-3">
-        <li class="nav-item mb-1">
+        <li class="nav-item mb-1" th:if="${currentUser.role.name() == 'ADMIN'}">
             <a class="nav-link" th:classappend="${activePage == 'accueil'} ? 'active'" th:href="@{/}">
+                <i class="bi bi-speedometer2"></i> Tableau de bord
+            </a>
+        </li>
+        <li class="nav-item mb-1" th:if="${currentUser.role.name() == 'ETUDIANT'}">
+            <a class="nav-link" th:classappend="${activePage == 'dash-etudiant'} ? 'active'" th:href="@{/dash-etudiant}">
+                <i class="bi bi-speedometer2"></i> Tableau de bord Etu
+            </a>
+        </li>
+        <li class="nav-item mb-1" th:if="${currentUser.role.name() == 'COORDONATEUR_DES_LICENCES'}">
+            <a class="nav-link" th:classappend="${activePage == 'accueil'} ? 'active'" th:href="@{/dashboard-coordinateur}">
+                <i class="bi bi-speedometer2"></i> Tableau de bord
+            </a>
+        </li>
+        <li class="nav-item mb-1" th:if="${currentUser.role.name() == 'ENSEIGNANT'}">
+            <a class="nav-link" th:classappend="${activePage == 'accueil'} ? 'active'" th:href="@{/dash-enseignant}">
+                <i class="bi bi-speedometer2"></i> Tableau de bord Ens
+            </a>
+        </li>
+        <li class="nav-item mb-1" th:if="${currentUser.role.name() == 'RESPONSABLE_MASTER'}">
+            <a class="nav-link" th:classappend="${activePage == 'accueil'} ? 'active'" th:href="@{/dash-responsable}">
                 <i class="bi bi-speedometer2"></i> Tableau de bord
             </a>
         </li>
