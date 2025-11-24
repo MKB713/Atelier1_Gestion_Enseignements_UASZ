@@ -1,19 +1,14 @@
 package com.uasz.Atelier1_Gestion_Enseignements_UASZ.services;
 
-import com.itextpdf.kernel.colors.ColorConstants;
-import com.itextpdf.kernel.colors.DeviceRgb;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Cell;
-import com.itextpdf.layout.element.Paragraph;
-import com.itextpdf.layout.element.Table;
-import com.itextpdf.layout.properties.TextAlignment;
-import com.itextpdf.layout.properties.UnitValue;
+import com.lowagie.text.*;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
 import com.uasz.Atelier1_Gestion_Enseignements_UASZ.entities.NoteCahierTexte;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -25,7 +20,7 @@ public class CahierTextePdfService {
     @Autowired
     private NoteCahierTexteService noteCahierTexteService;
 
-    private static final DeviceRgb HEADER_COLOR = new DeviceRgb(102, 126, 234);
+    private static final Color HEADER_COLOR = new Color(102, 126, 234);
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
@@ -54,9 +49,9 @@ public class CahierTextePdfService {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         try {
-            PdfWriter writer = new PdfWriter(baos);
-            PdfDocument pdf = new PdfDocument(writer);
-            Document document = new Document(pdf);
+            Document document = new Document(PageSize.A4);
+            PdfWriter.getInstance(document, baos);
+            document.open();
 
             // En-tête du document
             ajouterEntete(document, enseignantId, notes);
@@ -65,9 +60,11 @@ public class CahierTextePdfService {
             if (!notes.isEmpty()) {
                 ajouterTableauNotes(document, notes);
             } else {
-                document.add(new Paragraph("Aucune note validée trouvée.")
-                        .setTextAlignment(TextAlignment.CENTER)
-                        .setMarginTop(50));
+                Font font = FontFactory.getFont(FontFactory.HELVETICA, 12);
+                Paragraph p = new Paragraph("Aucune note validée trouvée.", font);
+                p.setAlignment(Element.ALIGN_CENTER);
+                p.setSpacingBefore(50);
+                document.add(p);
             }
 
             // Pied de page avec signatures
@@ -81,147 +78,170 @@ public class CahierTextePdfService {
         return baos.toByteArray();
     }
 
-    private void ajouterEntete(Document document, Long enseignantId, List<NoteCahierTexte> notes) {
+    private void ajouterEntete(Document document, Long enseignantId, List<NoteCahierTexte> notes) throws DocumentException {
         // Titre principal
-        Paragraph titre = new Paragraph("UNIVERSITE ASSANE SECK DE ZIGUINCHOR")
-                .setBold()
-                .setFontSize(16)
-                .setTextAlignment(TextAlignment.CENTER);
+        Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16, Font.BOLD);
+        Paragraph titre = new Paragraph("UNIVERSITE ASSANE SECK DE ZIGUINCHOR", titleFont);
+        titre.setAlignment(Element.ALIGN_CENTER);
         document.add(titre);
 
-        Paragraph sousTitre = new Paragraph("CAHIER DE TEXTE")
-                .setBold()
-                .setFontSize(14)
-                .setTextAlignment(TextAlignment.CENTER)
-                .setMarginBottom(10);
+        Font subtitleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 14, Font.BOLD);
+        Paragraph sousTitre = new Paragraph("CAHIER DE TEXTE", subtitleFont);
+        sousTitre.setAlignment(Element.ALIGN_CENTER);
+        sousTitre.setSpacingAfter(10);
         document.add(sousTitre);
 
         // Informations sur l'enseignant si spécifié
         if (enseignantId != null && !notes.isEmpty()) {
             NoteCahierTexte premiereNote = notes.get(0);
             if (premiereNote.getEnseignant() != null) {
+                Font normalFont = FontFactory.getFont(FontFactory.HELVETICA, 11);
                 Paragraph enseignantInfo = new Paragraph("Enseignant: " +
                         premiereNote.getEnseignant().getNom() + " " +
-                        premiereNote.getEnseignant().getPrenom())
-                        .setFontSize(11)
-                        .setTextAlignment(TextAlignment.LEFT);
+                        premiereNote.getEnseignant().getPrenom(), normalFont);
+                enseignantInfo.setAlignment(Element.ALIGN_LEFT);
                 document.add(enseignantInfo);
             }
         }
 
         // Date de génération
+        Font dateFont = FontFactory.getFont(FontFactory.HELVETICA, 10);
         Paragraph dateGeneration = new Paragraph("Généré le: " +
-                LocalDateTime.now().format(DATETIME_FORMATTER))
-                .setFontSize(10)
-                .setTextAlignment(TextAlignment.RIGHT)
-                .setMarginBottom(20);
+                LocalDateTime.now().format(DATETIME_FORMATTER), dateFont);
+        dateGeneration.setAlignment(Element.ALIGN_RIGHT);
+        dateGeneration.setSpacingAfter(20);
         document.add(dateGeneration);
 
         // Ligne de séparation
-        document.add(new Paragraph("─".repeat(80))
-                .setTextAlignment(TextAlignment.CENTER)
-                .setMarginBottom(15));
+        Font separatorFont = FontFactory.getFont(FontFactory.HELVETICA, 12);
+        Paragraph separator = new Paragraph("─────────────────────────────────────────────────────────────────────────────────", separatorFont);
+        separator.setAlignment(Element.ALIGN_CENTER);
+        separator.setSpacingAfter(15);
+        document.add(separator);
     }
 
-    private void ajouterTableauNotes(Document document, List<NoteCahierTexte> notes) {
-        // Créer le tableau
-        Table table = new Table(UnitValue.createPercentArray(new float[]{15, 15, 25, 25, 20}))
-                .setWidth(UnitValue.createPercentValue(100));
+    private void ajouterTableauNotes(Document document, List<NoteCahierTexte> notes) throws DocumentException {
+        // Créer le tableau avec 5 colonnes
+        PdfPTable table = new PdfPTable(5);
+        table.setWidthPercentage(100);
+        table.setWidths(new float[]{15, 15, 25, 25, 20});
 
         // En-têtes du tableau
+        Font headerFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, Font.BOLD);
+        headerFont.setColor(Color.WHITE);
         String[] headers = {"Date", "EC/Module", "Titre", "Contenu", "Objectifs"};
         for (String header : headers) {
-            Cell cell = new Cell()
-                    .add(new Paragraph(header).setBold().setFontColor(ColorConstants.WHITE))
-                    .setBackgroundColor(HEADER_COLOR)
-                    .setTextAlignment(TextAlignment.CENTER)
-                    .setPadding(5);
-            table.addHeaderCell(cell);
+            PdfPCell cell = new PdfPCell(new Phrase(header, headerFont));
+            cell.setBackgroundColor(HEADER_COLOR);
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            cell.setPadding(5);
+            table.addCell(cell);
         }
 
         // Données des notes
+        Font cellFont = FontFactory.getFont(FontFactory.HELVETICA, 9);
         for (NoteCahierTexte note : notes) {
             // Date
             String dateStr = "-";
             if (note.getSeance() != null && note.getSeance().getDateSeance() != null) {
                 dateStr = note.getSeance().getDateSeance().format(DATE_FORMATTER);
             }
-            table.addCell(creerCellule(dateStr));
+            table.addCell(creerCellule(dateStr, cellFont));
 
             // Module/EC
             String moduleStr = "-";
             if (note.getSeance() != null && note.getSeance().getModule() != null) {
                 moduleStr = note.getSeance().getModule().getNom();
             }
-            table.addCell(creerCellule(moduleStr));
+            table.addCell(creerCellule(moduleStr, cellFont));
 
             // Titre
-            table.addCell(creerCellule(note.getTitre() != null ? note.getTitre() : "-"));
+            table.addCell(creerCellule(note.getTitre() != null ? note.getTitre() : "-", cellFont));
 
             // Contenu (limité)
             String contenu = note.getContenu() != null ? note.getContenu() : "-";
             if (contenu.length() > 100) {
                 contenu = contenu.substring(0, 97) + "...";
             }
-            table.addCell(creerCellule(contenu));
+            table.addCell(creerCellule(contenu, cellFont));
 
             // Objectifs
             String objectifs = note.getObjectifsPedagogiques() != null ? note.getObjectifsPedagogiques() : "-";
             if (objectifs.length() > 80) {
                 objectifs = objectifs.substring(0, 77) + "...";
             }
-            table.addCell(creerCellule(objectifs));
+            table.addCell(creerCellule(objectifs, cellFont));
         }
 
         document.add(table);
 
         // Statistiques
-        document.add(new Paragraph("\nTotal: " + notes.size() + " note(s) validée(s)")
-                .setFontSize(10)
-                .setItalic()
-                .setMarginTop(10));
+        Font statsFont = FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 10, Font.ITALIC);
+        Paragraph stats = new Paragraph("\nTotal: " + notes.size() + " note(s) validée(s)", statsFont);
+        stats.setSpacingBefore(10);
+        document.add(stats);
     }
 
-    private Cell creerCellule(String texte) {
-        return new Cell()
-                .add(new Paragraph(texte).setFontSize(9))
-                .setPadding(4);
+    private PdfPCell creerCellule(String texte, Font font) {
+        PdfPCell cell = new PdfPCell(new Phrase(texte, font));
+        cell.setPadding(4);
+        return cell;
     }
 
-    private void ajouterSignatures(Document document) {
+    private void ajouterSignatures(Document document) throws DocumentException {
         document.add(new Paragraph("\n\n"));
 
         // Zone de signatures
-        Table signatures = new Table(UnitValue.createPercentArray(new float[]{50, 50}))
-                .setWidth(UnitValue.createPercentValue(100))
-                .setMarginTop(50);
+        PdfPTable signatures = new PdfPTable(2);
+        signatures.setWidthPercentage(100);
+        signatures.setSpacingBefore(50);
+
+        Font signatureFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 11, Font.BOLD);
+        Font dateSignatureFont = FontFactory.getFont(FontFactory.HELVETICA, 10);
 
         // Signature enseignant
-        Cell cellEnseignant = new Cell()
-                .add(new Paragraph("Signature de l'Enseignant").setBold().setFontSize(11))
-                .add(new Paragraph("\n\n\n"))
-                .add(new Paragraph("Date: ____/____/________"))
-                .setBorder(null)
-                .setTextAlignment(TextAlignment.CENTER);
+        PdfPCell cellEnseignant = new PdfPCell();
+        cellEnseignant.setBorder(Rectangle.NO_BORDER);
+        cellEnseignant.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+        Paragraph enseignantTitle = new Paragraph("Signature de l'Enseignant", signatureFont);
+        enseignantTitle.setAlignment(Element.ALIGN_CENTER);
+        cellEnseignant.addElement(enseignantTitle);
+        cellEnseignant.addElement(new Paragraph("\n\n\n"));
+
+        Paragraph enseignantDate = new Paragraph("Date: ____/____/________", dateSignatureFont);
+        enseignantDate.setAlignment(Element.ALIGN_CENTER);
+        cellEnseignant.addElement(enseignantDate);
+
         signatures.addCell(cellEnseignant);
 
         // Signature chef de département
-        Cell cellChef = new Cell()
-                .add(new Paragraph("Visa du Chef de Département").setBold().setFontSize(11))
-                .add(new Paragraph("\n\n\n"))
-                .add(new Paragraph("Date: ____/____/________"))
-                .setBorder(null)
-                .setTextAlignment(TextAlignment.CENTER);
+        PdfPCell cellChef = new PdfPCell();
+        cellChef.setBorder(Rectangle.NO_BORDER);
+        cellChef.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+        Paragraph chefTitle = new Paragraph("Visa du Chef de Département", signatureFont);
+        chefTitle.setAlignment(Element.ALIGN_CENTER);
+        cellChef.addElement(chefTitle);
+        cellChef.addElement(new Paragraph("\n\n\n"));
+
+        Paragraph chefDate = new Paragraph("Date: ____/____/________", dateSignatureFont);
+        chefDate.setAlignment(Element.ALIGN_CENTER);
+        cellChef.addElement(chefDate);
+
         signatures.addCell(cellChef);
 
         document.add(signatures);
 
         // Pied de page
-        document.add(new Paragraph("\n─".repeat(80))
-                .setTextAlignment(TextAlignment.CENTER));
-        document.add(new Paragraph("Document généré automatiquement - UASZ Gestion des Enseignements")
-                .setFontSize(8)
-                .setItalic()
-                .setTextAlignment(TextAlignment.CENTER));
+        Font separatorFont = FontFactory.getFont(FontFactory.HELVETICA, 12);
+        Paragraph separator = new Paragraph("\n─────────────────────────────────────────────────────────────────────────────────", separatorFont);
+        separator.setAlignment(Element.ALIGN_CENTER);
+        document.add(separator);
+
+        Font footerFont = FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 8, Font.ITALIC);
+        Paragraph footer = new Paragraph("Document généré automatiquement - UASZ Gestion des Enseignements", footerFont);
+        footer.setAlignment(Element.ALIGN_CENTER);
+        document.add(footer);
     }
 }
