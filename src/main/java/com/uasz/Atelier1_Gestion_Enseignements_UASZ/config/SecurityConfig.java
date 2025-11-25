@@ -14,15 +14,25 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final CustomAuthenticationSuccessHandler successHandler;
+
+    public SecurityConfig(CustomAuthenticationSuccessHandler successHandler) {
+        this.successHandler = successHandler;
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/login", "/auth2", "/css/**", "/js/**", "/img/**").permitAll()
+                .requestMatchers("/login", "/auth2", "/css/**", "/js/**", "/img/**", "/images/**").permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/login")
+                .loginProcessingUrl("/auth2")
+                .usernameParameter("email")
+                .passwordParameter("password")
+                .successHandler(successHandler)
                 .permitAll()
             )
             .logout(logout -> logout
