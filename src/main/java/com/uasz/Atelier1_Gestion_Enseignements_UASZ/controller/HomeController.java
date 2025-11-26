@@ -22,21 +22,22 @@ public class HomeController {
     private FormationService formationService;
 
     /**
-     * Page d'accueil - Redirige vers le dashboard approprié selon le rôle
+     * Page d'accueil - Affiche welcome.html ou redirige vers le dashboard selon l'authentification
      */
     @GetMapping("/")
     public String index() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+        // Si non authentifié, afficher la page d'accueil publique
         if (authentication == null || !authentication.isAuthenticated() ||
             authentication.getPrincipal().equals("anonymousUser")) {
-            return "redirect:/login";
+            return "welcome";
         }
 
+        // Si authentifié, rediriger vers le dashboard approprié selon le rôle
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Role userRole = userDetails.getRole();
 
-        // Rediriger vers le dashboard approprié selon le rôle
         switch (userRole) {
             case ETUDIANT:
                 return "redirect:/dashboard/etudiant";
